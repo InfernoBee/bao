@@ -173,6 +173,99 @@ body{background:var(--cream);font-family:'Lora',serif;color:var(--deep);min-heig
 .game-btn{display:block;margin:.75rem auto 0;background:var(--peach);color:var(--deep);border:none;border-radius:30px;padding:.55rem 1.7rem;font-family:'Playfair Display',serif;font-size:.92rem;cursor:pointer;font-style:italic;box-shadow:0 4px 0 rgba(0,0,0,.2);transition:transform .1s;}
 .game-btn:active{transform:scale(.97);}
 footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-size:1.6rem;color:var(--rose);letter-spacing:4px;}
+
+
+/* ===== CONNECT 4 RPG ===== */
+.c4-section{position:relative;z-index:1;margin:0 1.2rem 2rem;}
+.c4-label{text-align:center;font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--deep);padding:0 1.5rem .5rem;margin-bottom:1rem;}
+.c4-label small{display:block;font-family:'Lora',serif;font-style:italic;font-size:.85rem;color:var(--gold);margin-top:.2rem;}
+#c4-wrap{background:var(--deep);border-radius:24px;padding:1.2rem;box-shadow:0 10px 40px rgba(61,43,31,.25);}
+
+/* Difficulty row */
+/* Level progress bar for Connect Bao */
+#c4-level-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem;gap:8px;}
+#c4-level-label{font-family:'Playfair Display',serif;color:var(--gold);font-size:.75rem;white-space:nowrap;}
+#c4-level-bar-wrap{flex:1;background:rgba(255,255,255,.1);border-radius:6px;height:6px;}
+#c4-level-bar{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--peach),var(--gold));transition:width .5s ease;}
+
+/* Battle HUD */
+#c4-hud{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center;margin-bottom:.7rem;}
+.c4-fighter{background:rgba(255,255,255,.05);border-radius:14px;padding:.5rem .7rem;text-align:center;}
+.c4-fighter-name{font-family:'Playfair Display',serif;font-size:.72rem;color:var(--peach);margin-bottom:3px;}
+.c4-hp-wrap{background:rgba(255,255,255,.1);border-radius:4px;height:7px;overflow:hidden;margin-bottom:3px;}
+.c4-hp-bar{height:100%;border-radius:4px;transition:width .4s ease;}
+.c4-hp-text{font-size:.6rem;color:rgba(253,246,236,.5);}
+.c4-fighter.enemy .c4-fighter-name{color:#FF9999;}
+.c4-vs{font-family:'Playfair Display',serif;color:var(--gold);font-size:.9rem;text-align:center;}
+
+/* Round / streak counter */
+#c4-round-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;font-size:.65rem;color:rgba(253,246,236,.55);font-family:'Playfair Display',serif;}
+
+/* Status */
+#c4-status{min-height:2.5rem;text-align:center;margin-bottom:.5rem;}
+#c4-status-main{font-family:'Playfair Display',serif;font-size:.88rem;color:var(--cream);line-height:1.4;}
+#c4-status-sub{font-size:.65rem;color:rgba(253,246,236,.5);font-style:italic;margin-top:2px;}
+
+/* Board */
+#c4-board-area{position:relative;margin-bottom:.6rem;}
+#c4-board{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;background:rgba(33,150,243,.18);border-radius:14px;padding:6px;border:2px solid rgba(33,150,243,.3);}
+.c4-cell{aspect-ratio:1;border-radius:50%;background:rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.06);transition:background .2s,box-shadow .2s;cursor:pointer;position:relative;overflow:hidden;}
+.c4-cell.hover-col{background:rgba(255,255,255,.1);}
+.c4-cell.player{background:var(--peach);border-color:var(--gold);box-shadow:0 0 8px rgba(244,165,106,.5);}
+.c4-cell.enemy{background:#E8736A;border-color:#C0392B;box-shadow:0 0 8px rgba(232,115,106,.45);}
+.c4-cell.win-cell{animation:c4win .5s ease-in-out 4;box-shadow:0 0 18px var(--gold);}
+@keyframes c4win{0%,100%{transform:scale(1)}50%{transform:scale(1.15);}}
+.c4-cell.drop-anim{animation:c4drop .25s ease-out;}
+@keyframes c4drop{0%{transform:scaleY(0.3);opacity:.4}100%{transform:scaleY(1);opacity:1}}
+
+/* Column drop arrows */
+#c4-col-btns{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:3px;}
+.c4-col-btn{text-align:center;font-size:.8rem;cursor:pointer;color:rgba(253,246,236,.3);transition:color .15s,transform .1s;user-select:none;padding:2px 0;}
+.c4-col-btn:hover{color:var(--peach);transform:translateY(-2px);}
+.c4-col-btn.disabled{pointer-events:none;opacity:.15;}
+
+/* Skills */
+#c4-skills{display:flex;gap:6px;margin-bottom:.7rem;}
+.c4-skill-btn{flex:1;border:none;border-radius:12px;padding:.42rem .3rem;cursor:pointer;font-family:'Playfair Display',serif;font-size:.68rem;transition:filter .15s,transform .1s;position:relative;}
+.c4-skill-btn:active:not(:disabled){transform:scale(.96);}
+.c4-skill-btn:disabled{opacity:.35;cursor:default;}
+.c4-skill-btn .sk-name{display:block;font-size:.7rem;}
+.c4-skill-btn .sk-cd{position:absolute;top:3px;right:5px;font-size:.5rem;color:rgba(255,255,255,.6);}
+.c4-skill-btn .sk-desc{display:block;font-size:.54rem;opacity:.72;font-family:'Lora',serif;font-style:italic;margin-top:1px;}
+.sk-c4-attack{background:linear-gradient(135deg,#E8736A,#C0392B);color:white;}
+.sk-c4-defend{background:linear-gradient(135deg,#2196F3,#1565C0);color:white;}
+.sk-c4-special{background:linear-gradient(135deg,#9C27B0,#6A1B9A);color:white;}
+
+/* Active buffs */
+#c4-buffs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.5rem;min-height:16px;}
+.c4-buff-chip{border-radius:20px;padding:2px 7px;font-size:.58rem;display:flex;align-items:center;gap:2px;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7);background:rgba(255,255,255,.07);}
+
+/* Enemy intent */
+.c4-intent{font-size:.66rem;color:#FF9999;font-style:italic;text-align:center;margin-bottom:.45rem;min-height:1.1em;}
+
+/* Result overlay */
+#c4-overlay{display:none;position:absolute;inset:0;background:rgba(61,43,31,.96);border-radius:12px;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1.2rem 1rem;z-index:10;}
+#c4-overlay.show{display:flex;}
+#c4-overlay h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--peach);margin-bottom:.4rem;}
+#c4-overlay p{font-size:.8rem;color:var(--cream);font-style:italic;line-height:1.6;margin-bottom:.4rem;}
+.c4-streak-text{font-family:'Playfair Display',serif;color:var(--gold);font-size:.9rem;}
+
+/* Thinking shimmer */
+.c4-cell.thinking{animation:c4think .8s ease-in-out infinite;}
+@keyframes c4think{0%,100%{background:rgba(0,0,0,.35)}50%{background:rgba(255,107,107,.12)}}
+
+/* I LUB YOU POPUP */
+#lub-popup{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .15s ease;}
+#lub-popup.show{opacity:1;pointer-events:all;}
+#lub-popup.show #lub-card{animation:lubPop .45s cubic-bezier(.17,.67,.4,1.4) forwards;}
+#lub-card{background:var(--rose);border-radius:28px;padding:2.5rem 2rem 2rem;text-align:center;box-shadow:0 20px 80px rgba(61,43,31,.5),0 0 0 6px rgba(255,255,255,.25);max-width:86vw;width:320px;transform:scale(0) rotate(-8deg);position:relative;}
+@keyframes lubPop{0%{transform:scale(0) rotate(-8deg)}60%{transform:scale(1.08) rotate(3deg)}80%{transform:scale(.97) rotate(-1deg)}100%{transform:scale(1) rotate(0deg)}}
+#lub-card .lub-emoji{font-size:4rem;display:block;margin-bottom:.5rem;animation:lubBounce 1s ease-in-out infinite;}
+@keyframes lubBounce{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+#lub-card .lub-text{font-family:'Playfair Display',serif;font-style:italic;font-size:2rem;color:white;text-shadow:1px 2px 4px rgba(61,43,31,.25);margin-bottom:.3rem;}
+#lub-card .lub-sub{font-family:'Lora',serif;font-style:italic;font-size:.9rem;color:rgba(255,255,255,.85);margin-bottom:1.2rem;}
+#lub-close{background:white;color:var(--rose);border:none;border-radius:14px;padding:.55rem 1.4rem;font-family:'Playfair Display',serif;font-size:.9rem;cursor:pointer;font-weight:700;box-shadow:0 4px 12px rgba(61,43,31,.2);touch-action:manipulation;}
+#lub-close:active{transform:scale(.96);}
 </style>
 </head>
 <body>
@@ -354,6 +447,117 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
     </div>
     <p style="font-size:.65rem;opacity:.45;text-align:center;margin-top:.8rem;font-style:italic">Scores visible to everyone who plays this game</p>
   </div>
+
+
+  <!-- ===== CONNECT 4 RPG ===== -->
+  <div class="c4-section">
+    <div class="c4-label">
+      Connect Bao 🔴
+      <small>connect 4 RPG · minimax AI · skill battles · 4 difficulties</small>
+    </div>
+
+    <!-- Character select -->
+    <div class="char-select" style="margin-bottom:.8rem;">
+      <h4>Choose your fighter</h4>
+      <div class="char-cards" id="c4-char-cards">
+        <div class="char-card active" data-c4-char="bao" onclick="c4SelectChar('bao')">
+          <div class="char-avatar">
+            <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="22" cy="25" rx="18" ry="14" fill="url(#c4bao)"/>
+              <path d="M10 22 Q22 8 34 22" fill="#F0EAE0" stroke="#D4B896" stroke-width="1"/>
+              <ellipse cx="22" cy="15" rx="6" ry="5" fill="#F5F0E8" stroke="#D4B896" stroke-width="1.2"/>
+              <ellipse cx="22" cy="14" rx="4" ry="3" fill="#E8E0D4"/>
+              <circle cx="19" cy="26" r="2" fill="#D4806A" opacity="0.5"/>
+              <circle cx="25" cy="26" r="2" fill="#D4806A" opacity="0.5"/>
+              <path d="M19 30 Q22 32 25 30" stroke="#C4786A" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <defs><radialGradient id="c4bao" cx="0.4" cy="0.3" r="0.7"><stop offset="0%" stop-color="#FFFCF7"/><stop offset="100%" stop-color="#EDE3D4"/></radialGradient></defs>
+            </svg>
+          </div>
+          <div class="char-name">Bao</div>
+          <span class="passive-badge pb-bao">Nomnom</span>
+          <div class="char-passive">Heal 6 HP every 4 turns. Steam Shield blocks 1 attack.</div>
+        </div>
+        <div class="char-card" data-c4-char="dudu" onclick="c4SelectChar('dudu')">
+          <div class="char-avatar"><img src="" id="c4-dudu-portrait" alt="Dudu" style="width:44px;height:44px;object-fit:contain;border-radius:50%;"/></div>
+          <div class="char-name">Dudu</div>
+          <span class="passive-badge pb-dudu">Angry Aura</span>
+          <div class="char-passive">5-disc streak deals 2x damage. Burst removes enemy discs.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Level progress display -->
+    <div id="c4-level-row">
+      <span id="c4-level-label">⚔️ Level 1</span>
+      <div id="c4-level-bar-wrap"><div id="c4-level-bar" style="width:0%"></div></div>
+      <span id="c4-level-label-r" style="font-size:.65rem;color:rgba(61,43,31,.45);font-style:italic">vs Baby Dough</span>
+    </div>
+
+    <div id="c4-wrap">
+      <!-- HUD -->
+      <div id="c4-hud">
+        <div class="c4-fighter">
+          <div class="c4-fighter-name" id="c4-p-name">Bao 🥟</div>
+          <div class="c4-hp-wrap"><div class="c4-hp-bar" id="c4-p-bar" style="width:100%;background:linear-gradient(90deg,#E8736A,#FF9ECD)"></div></div>
+          <div class="c4-hp-text" id="c4-p-hp">30/30 HP</div>
+        </div>
+        <div class="c4-vs">VS</div>
+        <div class="c4-fighter enemy">
+          <div class="c4-fighter-name" id="c4-e-name">???</div>
+          <div class="c4-hp-wrap"><div class="c4-hp-bar" id="c4-e-bar" style="width:100%;background:linear-gradient(90deg,#FF6B6B,#C0392B)"></div></div>
+          <div class="c4-hp-text" id="c4-e-hp">??? HP</div>
+        </div>
+      </div>
+      <div id="c4-round-bar">
+        <span id="c4-round-text">Round 1</span>
+        <span id="c4-streak-hud">Win streak: 0 🔥</span>
+      </div>
+
+      <!-- Buffs + Intent -->
+      <div id="c4-buffs"></div>
+      <div class="c4-intent" id="c4-intent"></div>
+
+      <!-- Board -->
+      <div id="c4-board-area">
+        <div id="c4-col-btns"></div>
+        <div id="c4-board"></div>
+        <div id="c4-overlay">
+          <h3 id="c4-ov-title">Round Over!</h3>
+          <p id="c4-ov-body"></p>
+          <p class="c4-streak-text" id="c4-ov-streak"></p>
+          <button class="game-btn" id="c4-next-btn" onclick="c4NextRound()">Next Round ⚔️</button>
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div id="c4-status">
+        <div id="c4-status-main">Pick your character and start!</div>
+        <div id="c4-status-sub"></div>
+      </div>
+
+      <!-- Skills -->
+      <div id="c4-skills">
+        <button class="c4-skill-btn sk-c4-attack" id="c4-sk0" onclick="c4UseSkill(0)">
+          <span class="sk-name" id="c4-sk0-name">⚔️</span>
+          <span class="sk-desc" id="c4-sk0-desc">Normal drop</span>
+          <span class="sk-cd" id="c4-sk0-cd"></span>
+        </button>
+        <button class="c4-skill-btn sk-c4-defend" id="c4-sk1" onclick="c4UseSkill(1)">
+          <span class="sk-name" id="c4-sk1-name">🛡️</span>
+          <span class="sk-desc" id="c4-sk1-desc">Block next hit</span>
+          <span class="sk-cd" id="c4-sk1-cd"></span>
+        </button>
+        <button class="c4-skill-btn sk-c4-special" id="c4-sk2" onclick="c4UseSkill(2)">
+          <span class="sk-name" id="c4-sk2-name">✨</span>
+          <span class="sk-desc" id="c4-sk2-desc">Special</span>
+          <span class="sk-cd" id="c4-sk2-cd"></span>
+        </button>
+      </div>
+
+      <button class="game-btn" id="c4-start-btn" onclick="c4StartGame(0)" style="width:100%;margin-top:0;">Start from Level 1 💕</button>
+    </div>
+  </div>
+
 
   <footer>🧡 🌸 💛 🌷 💕</footer>
 </div>
@@ -1140,6 +1344,10 @@ document.getElementById('envBtn').addEventListener('click',()=>{
   document.getElementById('landing').classList.add('gone');
   document.getElementById('main').classList.add('visible');
   spawnHeartsBg();updateStatsPanel();renderShop();
+  // Sync Dudu portrait to Connect Bao card
+  const mainPortrait=document.getElementById('dudu-portrait');
+  const c4Portrait=document.getElementById('c4-dudu-portrait');
+  if(mainPortrait&&c4Portrait) c4Portrait.src=mainPortrait.src;
 });
 function spawnHeartsBg(){
   const bg=document.getElementById('heartsBg');
@@ -1233,6 +1441,626 @@ function promptLeaderboard(){
   const status=document.getElementById('lb-status');
   if(status) status.textContent=`New high score: ${P.highScore}! Go post it to the leaderboard 🏆`;
 }
+
+
+// ============================================================
+// CONNECT BAO — Connect 4 RPG ENGINE
+// ============================================================
+const C4_ROWS=6, C4_COLS=7;
+
+// ── Connect Bao: Level-based enemy ladder ─────────────────────────────────
+// Each level entry: enemy stats are ABSOLUTE (not multiplied).
+// Player always has full HP at start of each level.
+// AI depth grows gently so the game stays beatable.
+// Key balance rule: enemy does at most ~10-15 HP per turn early, ~20 late.
+const C4_LEVELS=[
+  // Lv 1  — tutorial
+  {name:'Baby Dough',   emoji:'🫓', maxHP:18, atk:4,  aiDepth:1, rand:0.7,  special:'none',    reward:3,  flavor:'A soft lump of dough. Just learning.'},
+  // Lv 2
+  {name:'Flour Ghost',  emoji:'👻', maxHP:22, atk:5,  aiDepth:1, rand:0.55, special:'none',    reward:4,  flavor:'Spooky but harmless. Drifts randomly.'},
+  // Lv 3
+  {name:'Sesame Seed',  emoji:'🌰', maxHP:26, atk:6,  aiDepth:2, rand:0.4,  special:'none',    reward:5,  flavor:'Small but scrappy. Starting to think.'},
+  // Lv 4
+  {name:'Soy Boss',     emoji:'🍜', maxHP:30, atk:7,  aiDepth:2, rand:0.3,  special:'regen',   reward:6,  flavor:'Regenerates 4 HP every 4 turns.'},
+  // Lv 5
+  {name:'Steam Bun',    emoji:'♨️', maxHP:34, atk:7,  aiDepth:3, rand:0.25, special:'shield',  reward:7,  flavor:'Sometimes blocks your hits with steam.'},
+  // Lv 6
+  {name:'Rice Demon',   emoji:'🍚', maxHP:36, atk:8,  aiDepth:3, rand:0.2,  special:'none',    reward:8,  flavor:'Getting serious now. Prefers the center.'},
+  // Lv 7
+  {name:'Chili Pepper', emoji:'🌶️', maxHP:38, atk:8,  aiDepth:4, rand:0.15, special:'burn',    reward:10, flavor:'Burns you for 3 HP/turn after being hit.'},
+  // Lv 8
+  {name:'Dumpling Lord',emoji:'🥟', maxHP:42, atk:9,  aiDepth:4, rand:0.1,  special:'counter', reward:12, flavor:'Hits 30% harder when you are on a streak.'},
+  // Lv 9
+  {name:'Iron Wok',     emoji:'🫕', maxHP:46, atk:9,  aiDepth:5, rand:0.08, special:'regen',   reward:14, flavor:'Regenerates AND defends. A real chef.'},
+  // Lv 10
+  {name:'Lord Chili Burn',emoji:'🔥',maxHP:50,atk:10, aiDepth:5, rand:0.05, special:'burn',    reward:16, flavor:'Inferno mode. You will feel the heat.'},
+  // Lv 11
+  {name:'Shadow Bao',   emoji:'🌑', maxHP:52, atk:10, aiDepth:6, rand:0.04, special:'shield',  reward:18, flavor:'Dark mirror of Bao. Blocks and counters.'},
+  // Lv 12  — boss
+  {name:'DARK BAO',     emoji:'💀', maxHP:55, atk:11, aiDepth:6, rand:0.02, special:'copy',    reward:25, flavor:'The final darkness. Nearly perfect play.'},
+];
+
+const C4_CHARS={
+  bao:{
+    name:'Bao', emoji:'🥟', maxHP:40, atk:7,
+    skills:[
+      {id:'drop',   name:'⚔️ Drop',      desc:'Drop disc + dmg',   maxCd:0},
+      {id:'shield', name:'🛡️ Steam Bun', desc:'Block next hit',    maxCd:3},
+      {id:'bloom',  name:'🌸 Bao Bloom', desc:'Drop 2 discs! (cd:4)', maxCd:4},
+    ],
+    passiveDesc:'Regen 5 HP every 3 turns • 🌸 Bloom: drop 2 discs at once',
+  },
+  dudu:{
+    name:'Dudu', emoji:'🐻', maxHP:36, atk:10,
+    skills:[
+      {id:'drop',   name:'⚔️ Rage Drop',  desc:'Drop disc + dmg',      maxCd:0},
+      {id:'aura',   name:'💥 Angry Aura', desc:'Next drop ×2 damage',   maxCd:3},
+      {id:'slam',   name:'💢 Rage Slam',  desc:'3× ATK, resets streak (cd:4)', maxCd:4},
+    ],
+    passiveDesc:'5-disc streak = ×1.6 dmg • 💢 Slam: 3× burst, resets streak',
+  },
+};
+
+// Game state
+let c4={
+  active:false, char:'bao',
+  board:[],
+  pHP:40, pMaxHP:40, eHP:18, eMaxHP:18,
+  pShield:false, eShield:false,
+  pAuraActive:false, pStreak:0,
+  skillCDs:[0,0,0],
+  turn:0, level:0,   // level = index into C4_LEVELS (0-based)
+  burnActive:false, burnCounter:0,
+  enemy:null, playerTurn:true, thinking:false,
+  pendingSkill:-1,
+};
+let c4Char='bao';
+
+function c4MakeBoard(){
+  const b=[];
+  for(let r=0;r<C4_ROWS;r++){b.push(Array(C4_COLS).fill(null));}
+  return b;
+}
+
+function c4SelectChar(ch){
+  c4Char=ch;
+  document.querySelectorAll('#c4-char-cards .char-card').forEach(c=>{
+    c.classList.toggle('active', c.dataset.c4Char===ch);
+  });
+}
+
+function c4StartGame(lvIdx){
+  const ch=C4_CHARS[c4Char];
+  const lv=C4_LEVELS[lvIdx||0];
+  c4={
+    active:true, char:c4Char,
+    board:c4MakeBoard(),
+    pHP:ch.maxHP, pMaxHP:ch.maxHP,
+    eHP:lv.maxHP, eMaxHP:lv.maxHP,
+    pShield:false, eShield:false,
+    pAuraActive:false, pStreak:0,
+    skillCDs:[0,0,0],
+    turn:0, level:lvIdx||0,
+    burnActive:false, burnCounter:0,
+    enemy:lv, playerTurn:true, thinking:false,
+    pendingSkill:-1,
+  };
+  document.getElementById('c4-start-btn').style.display='none';
+  document.getElementById('c4-overlay').classList.remove('show');
+  c4BuildBoard();
+  c4UpdateSkillLabels();
+  c4Render();
+  c4Msg('Level '+(c4.level+1)+': '+lv.name+'!', lv.flavor);
+  c4UpdateIntent();
+  c4UpdateLevelBar();
+}
+
+function c4UpdateLevelBar(){
+  const pct=((c4.level)/(C4_LEVELS.length-1))*100;
+  document.getElementById('c4-level-bar').style.width=pct+'%';
+  document.getElementById('c4-level-label').textContent='⚔️ Level '+(c4.level+1)+' / '+C4_LEVELS.length;
+  if(c4.enemy) document.getElementById('c4-level-label-r').textContent='vs '+c4.enemy.emoji+' '+c4.enemy.name;
+}
+
+// Build DOM board + col buttons
+function c4BuildBoard(){
+  const board=document.getElementById('c4-board');
+  const colBtns=document.getElementById('c4-col-btns');
+  board.innerHTML='';colBtns.innerHTML='';
+  for(let col=0;col<C4_COLS;col++){
+    const btn=document.createElement('div');
+    btn.className='c4-col-btn';btn.textContent='▼';btn.dataset.col=col;
+    btn.onclick=()=>c4ColClick(col);
+    colBtns.appendChild(btn);
+  }
+  for(let row=0;row<C4_ROWS;row++){
+    for(let col=0;col<C4_COLS;col++){
+      const cell=document.createElement('div');
+      cell.className='c4-cell';cell.dataset.row=row;cell.dataset.col=col;
+      board.appendChild(cell);
+    }
+  }
+}
+
+function c4ColClick(col){
+  if(!c4.active||!c4.playerTurn||c4.thinking) return;
+  c4DoPlayerDrop(col);
+}
+
+function c4UseSkill(sk){
+  if(!c4.active||!c4.playerTurn||c4.thinking) return;
+  if(c4.skillCDs[sk]>0) return;
+  const ch=C4_CHARS[c4.char];
+  const skillId=ch.skills[sk].id;
+  if(skillId==='shield'){
+    c4.pShield=true;
+    c4.skillCDs[sk]=ch.skills[sk].maxCd;
+    c4Msg('Steam Shield up! Next hit blocked.','');
+    c4Render();c4EnemyTurn();
+  } else if(skillId==='aura'){
+    c4.pAuraActive=true;
+    c4.skillCDs[sk]=ch.skills[sk].maxCd;
+    c4Msg('Angry Aura armed! Next drop deals x2 damage!','');
+    c4Render();c4EnemyTurn();
+  } else if(skillId==='bloom'){
+    // Bao Bloom: drop 2 discs — first is chosen by column click, second auto-drops in best adjacent column
+    c4.skillCDs[sk]=ch.skills[sk].maxCd;
+    c4.pendingSkill=sk;
+    c4Msg('🌸 Bao Bloom! Pick a column — a second disc blooms nearby!','');
+  } else if(skillId==='slam'){
+    // Rage Slam: 3× ATK damage this drop, but resets pStreak to 0
+    c4.skillCDs[sk]=ch.skills[sk].maxCd;
+    c4.pendingSkill=sk;
+    c4Msg('💢 Rage Slam charged! Pick a column for a 3× strike!','');
+  } else {
+    // Drop skill — set pending, wait for column click
+    c4.pendingSkill=sk;
+    c4Msg('Choose a column to drop your disc!','');
+  }
+}
+
+function c4DoPlayerDrop(col){
+  const row=c4FindRow(col);
+  if(row===-1){c4Msg('Column full! Choose another.','');return;}
+
+  const ch=C4_CHARS[c4.char];
+  const activeSkillId=c4.pendingSkill>=0?ch.skills[c4.pendingSkill].id:'drop';
+  c4.board[row][col]='p';
+  c4.turn++;c4.pStreak++;
+  c4.pendingSkill=-1;
+
+  // Cooldown ticks
+  for(let i=0;i<c4.skillCDs.length;i++) if(c4.skillCDs[i]>0) c4.skillCDs[i]--;
+
+  // Bao passive: regen every 4 turns
+  if(c4.char==='bao'&&c4.turn%4===0&&c4.turn>0){
+    c4.pHP=Math.min(c4.pMaxHP,c4.pHP+6);
+    c4Msg('Nomnom regen! +6 HP','');
+  }
+
+  // === RAGE SLAM: 3x ATK, resets streak ===
+  const slamActive=activeSkillId==='slam';
+  const bloomActive=activeSkillId==='bloom';
+
+  // Damage calc
+  let dmg=ch.atk;
+  if(slamActive){
+    dmg=ch.atk*3;
+    c4.pStreak=0; // slam burns out the streak
+  } else {
+    if(c4.pAuraActive){dmg*=2;c4.pAuraActive=false;}
+    if(c4.char==='dudu'&&c4.pStreak>=5) dmg=Math.round(dmg*1.8);
+  }
+
+  // Apply damage
+  if(!c4.eShield){
+    c4.eHP=Math.max(0,c4.eHP-dmg);
+    if(slamActive) c4Msg('💢 RAGE SLAM! -'+dmg+' dmg! (streak reset)','');
+    else c4Msg('Disc dropped! -'+dmg+' damage to '+c4.enemy.name,'');
+    c4.eShield=false;
+  } else {
+    c4.eShield=false;
+    c4Msg(c4.enemy.name+' shield blocked your disc!','');
+  }
+
+  // === BAO BLOOM: drop a 2nd disc in best adjacent column ===
+  if(bloomActive){
+    const adj=[col-1,col+1].filter(c=>c>=0&&c<C4_COLS&&c4FindRow(c)>-1);
+    if(adj.length>0){
+      const bcol=adj.sort((a,b)=>Math.abs(a-3)-Math.abs(b-3))[0];
+      const brow=c4FindRow(bcol);
+      c4.board[brow][bcol]='p';
+      c4.pStreak++;c4.turn++;
+      const bloom2Dmg=Math.floor(ch.atk*0.7);
+      if(!c4.eShield){
+        c4.eHP=Math.max(0,c4.eHP-bloom2Dmg);
+        c4Msg('🌸 Bao Bloom! 2nd disc blooms next door! -'+bloom2Dmg+' bonus!','');
+      }
+      setTimeout(()=>{c4AnimateDrop(brow,bcol,'player');c4Render();},220);
+    } else {
+      c4Msg('🌸 Bao Bloom! (no space for 2nd disc!)','');
+    }
+  }
+
+  // Animate primary drop
+  c4AnimateDrop(row,col,'player');
+  c4Render();
+
+  // Check 4-in-a-row for player
+  const pLine=c4CheckWin('p');
+  if(pLine){
+    const bonusDmg=18;
+    c4.eHP=Math.max(0,c4.eHP-bonusDmg);
+    c4HighlightWin(pLine);
+    c4Msg('CONNECT 4! Bonus -'+bonusDmg+' damage!','');
+    c4Render();
+    if(c4.eHP<=0){setTimeout(()=>c4Win(),700);return;}
+    setTimeout(()=>{c4.board=c4MakeBoard();c4BuildBoard();c4Render();setTimeout(c4EnemyTurn,400);},1400);
+    return;
+  }
+
+  if(c4.eHP<=0){c4Win();return;}
+  if(c4BoardFull()){c4.board=c4MakeBoard();c4BuildBoard();c4Msg('Board full - reset!','');c4Render();setTimeout(c4EnemyTurn,500);return;}
+  c4EnemyTurn();
+}
+
+function c4FindRow(col){
+  for(let r=C4_ROWS-1;r>=0;r--) if(c4.board[r][col]===null) return r;
+  return -1;
+}
+
+function c4BoardFull(){
+  return c4.board[0].every(c=>c!==null);
+}
+
+function c4AnimateDrop(row,col,who){
+  const cell=document.querySelector('[data-row="'+row+'"][data-col="'+col+'"]');
+  if(cell) cell.classList.add('drop-anim');
+  setTimeout(()=>{if(cell)cell.classList.remove('drop-anim');},280);
+}
+
+// ===== ENEMY AI =====
+function c4EnemyTurn(){
+  if(!c4.active||!c4.playerTurn) return;
+  c4.playerTurn=false;c4.thinking=true;c4Render();
+  const lv=c4.enemy;
+
+  // Regen tick (every 4 turns)
+  if(lv.special==='regen'&&c4.turn>0&&c4.turn%4===0){
+    c4.eHP=Math.min(c4.eMaxHP,c4.eHP+4);
+    c4Msg(lv.emoji+' '+lv.name+' regens 4 HP!','');
+  }
+
+  // Burn tick on player (only after 2+ turns so player has time to react)
+  if(lv.special==='burn'&&c4.burnActive&&c4.turn>=2){
+    c4.pHP=Math.max(0,c4.pHP-3);
+    c4.burnCounter=Math.max(0,c4.burnCounter-1);
+    if(c4.burnCounter<=0) c4.burnActive=false;
+    c4Msg('🔥 Burn! -3 HP','');
+  }
+
+  setTimeout(()=>{
+    // Pick column using level's own aiDepth + rand
+    let col;
+    if(Math.random()<lv.rand){
+      const open=[];for(let c=0;c<C4_COLS;c++) if(c4FindRow(c)>-1) open.push(c);
+      col=open.length?open[Math.floor(Math.random()*open.length)]:undefined;
+    } else {
+      col=c4BestMove(c4.board,lv.aiDepth);
+    }
+
+    if(col===undefined){c4.playerTurn=true;c4.thinking=false;c4Render();return;}
+    const row=c4FindRow(col);
+    if(row===-1){c4.playerTurn=true;c4.thinking=false;c4Render();return;}
+    c4.board[row][col]='e';
+    c4.turn++;
+
+    // Damage: use lv.atk directly — this is the EXACT damage per turn, already balanced
+    let eDmg=lv.atk;
+    // Shield special: 25% chance enemy shields self, deals half dmg this turn
+    if(lv.special==='shield'&&Math.random()<0.25){c4.eShield=true;eDmg=Math.max(1,Math.round(eDmg*0.5));}
+    // Burn: apply burn status (3 turns), but only if not already burning
+    if(lv.special==='burn'&&!c4.burnActive){c4.burnActive=true;c4.burnCounter=3;}
+    // Counter: +30% dmg when player is on a streak (toned down from 40%)
+    if(lv.special==='counter'&&c4.pStreak>=4) eDmg=Math.round(eDmg*1.3);
+
+    if(!c4.pShield){
+      c4.pHP=Math.max(0,c4.pHP-eDmg);
+      c4Msg(lv.emoji+' '+lv.name+' drops! -'+eDmg+' HP','');
+    } else {
+      c4.pShield=false;
+      c4Msg('🛡️ Steam Shield blocked '+lv.name+'!','');
+    }
+
+    c4AnimateDrop(row,col,'enemy');
+    const eLine=c4CheckWin('e');
+    c4Render();
+
+    if(eLine){
+      // Connect 4 bonus: REDUCED so it is not instant kill
+      const bonusDmg=Math.min(10, Math.round(c4.pMaxHP*0.25));
+      c4.pHP=Math.max(0,c4.pHP-bonusDmg);
+      c4HighlightWin(eLine);
+      c4Msg('Enemy Connect 4! -'+bonusDmg+' bonus dmg!','');
+      c4Render();
+      if(c4.pHP<=0){setTimeout(()=>c4Lose(),700);c4.thinking=false;return;}
+      setTimeout(()=>{c4.board=c4MakeBoard();c4BuildBoard();c4Render();c4.playerTurn=true;c4.thinking=false;c4UpdateIntent();},1400);
+      return;
+    }
+
+    if(c4.pHP<=0){c4.thinking=false;c4Lose();return;}
+    if(c4BoardFull()){c4.board=c4MakeBoard();c4BuildBoard();c4Msg('Board full - reset!','');}
+    c4.playerTurn=true;c4.thinking=false;
+    c4UpdateIntent();c4Render();
+  },650);
+}
+
+// ===== MINIMAX + ALPHA-BETA FOR CONNECT 4 =====
+function c4BestMove(board,depth){
+  let bestScore=-Infinity,bestCol=3;
+  const colOrder=[3,2,4,1,5,0,6];
+  for(const col of colOrder){
+    const row=c4FindRowOnBoard(board,col);
+    if(row===-1) continue;
+    const nb=c4CloneBoard(board);nb[row][col]='e';
+    const score=c4Minimax(nb,Math.max(1,depth-1),false,-Infinity,Infinity);
+    if(score>bestScore){bestScore=score;bestCol=col;}
+  }
+  return bestCol;
+}
+
+function c4Minimax(board,depth,isMax,alpha,beta){
+  const eWin=c4CheckWinOnBoard(board,'e');
+  const pWin=c4CheckWinOnBoard(board,'p');
+  if(eWin) return 1000+depth;
+  if(pWin) return -1000-depth;
+  if(depth===0) return c4Score(board);
+  const colOrder=[3,2,4,1,5,0,6];
+  const open=colOrder.filter(c=>c4FindRowOnBoard(board,c)>-1);
+  if(!open.length) return 0;
+  if(isMax){
+    let best=-Infinity;
+    for(const col of open){
+      const row=c4FindRowOnBoard(board,col);
+      const nb=c4CloneBoard(board);nb[row][col]='e';
+      best=Math.max(best,c4Minimax(nb,depth-1,false,alpha,beta));
+      alpha=Math.max(alpha,best);if(beta<=alpha) break;
+    }
+    return best;
+  } else {
+    let best=Infinity;
+    for(const col of open){
+      const row=c4FindRowOnBoard(board,col);
+      const nb=c4CloneBoard(board);nb[row][col]='p';
+      best=Math.min(best,c4Minimax(nb,depth-1,true,alpha,beta));
+      beta=Math.min(beta,best);if(beta<=alpha) break;
+    }
+    return best;
+  }
+}
+
+function c4Score(board){
+  let score=0;
+  // Horizontal
+  for(let r=0;r<C4_ROWS;r++)
+    for(let c=0;c<C4_COLS-3;c++) score+=c4EvalWindow([board[r][c],board[r][c+1],board[r][c+2],board[r][c+3]]);
+  // Vertical
+  for(let c=0;c<C4_COLS;c++)
+    for(let r=0;r<C4_ROWS-3;r++) score+=c4EvalWindow([board[r][c],board[r+1][c],board[r+2][c],board[r+3][c]]);
+  // Diagonal \
+  for(let r=0;r<C4_ROWS-3;r++)
+    for(let c=0;c<C4_COLS-3;c++) score+=c4EvalWindow([board[r][c],board[r+1][c+1],board[r+2][c+2],board[r+3][c+3]]);
+  // Diagonal /
+  for(let r=3;r<C4_ROWS;r++)
+    for(let c=0;c<C4_COLS-3;c++) score+=c4EvalWindow([board[r][c],board[r-1][c+1],board[r-2][c+2],board[r-3][c+3]]);
+  // Center preference
+  for(let r=0;r<C4_ROWS;r++) if(board[r][3]==='e') score+=3;
+  return score;
+}
+
+function c4EvalWindow(w){
+  const e=w.filter(c=>c==='e').length, p=w.filter(c=>c==='p').length, n=w.filter(c=>c===null).length;
+  if(e===4) return 100;
+  if(e===3&&n===1) return 8;
+  if(e===2&&n===2) return 2;
+  if(p===3&&n===1) return -7;
+  if(p===4) return -100;
+  return 0;
+}
+
+function c4CheckWin(who){return c4CheckWinOnBoard(c4.board,who);}
+function c4CheckWinOnBoard(board,who){
+  // Horizontal
+  for(let r=0;r<C4_ROWS;r++)
+    for(let c=0;c<C4_COLS-3;c++)
+      if(board[r][c]===who&&board[r][c+1]===who&&board[r][c+2]===who&&board[r][c+3]===who)
+        return[[r,c],[r,c+1],[r,c+2],[r,c+3]];
+  // Vertical
+  for(let c=0;c<C4_COLS;c++)
+    for(let r=0;r<C4_ROWS-3;r++)
+      if(board[r][c]===who&&board[r+1][c]===who&&board[r+2][c]===who&&board[r+3][c]===who)
+        return[[r,c],[r+1,c],[r+2,c],[r+3,c]];
+  // Diagonal \
+  for(let r=0;r<C4_ROWS-3;r++)
+    for(let c=0;c<C4_COLS-3;c++)
+      if(board[r][c]===who&&board[r+1][c+1]===who&&board[r+2][c+2]===who&&board[r+3][c+3]===who)
+        return[[r,c],[r+1,c+1],[r+2,c+2],[r+3,c+3]];
+  // Diagonal /
+  for(let r=3;r<C4_ROWS;r++)
+    for(let c=0;c<C4_COLS-3;c++)
+      if(board[r][c]===who&&board[r-1][c+1]===who&&board[r-2][c+2]===who&&board[r-3][c+3]===who)
+        return[[r,c],[r-1,c+1],[r-2,c+2],[r-3,c+3]];
+  return null;
+}
+
+function c4FindRowOnBoard(board,col){
+  for(let r=C4_ROWS-1;r>=0;r--) if(board[r][col]===null) return r;
+  return -1;
+}
+
+function c4CloneBoard(board){return board.map(r=>[...r]);}
+
+function c4HighlightWin(line){
+  line.forEach(([r,c])=>{
+    const cell=document.querySelector('[data-row="'+r+'"][data-col="'+c+'"]');
+    if(cell) cell.classList.add('win-cell');
+  });
+}
+
+// ===== WIN/LOSE =====
+function c4Win(){
+  c4.active=false;
+  const lv=c4.enemy;
+  const isLast=c4.level>=C4_LEVELS.length-1;
+  const reward=lv.reward;
+  coins+=reward;P.coins+=reward;P.coinsEarned+=reward;saveP();
+  const nextLv=Math.min(c4.level+1, C4_LEVELS.length-1);
+  document.getElementById('c4-ov-title').textContent=isLast?'YOU WIN! 🎉':'Victory! 🏆';
+  document.getElementById('c4-ov-body').innerHTML=
+    'Defeated <strong>'+lv.emoji+' '+lv.name+'</strong>!<br>'+
+    '<span style="color:var(--gold)">+'+reward+' coins!</span>'+(isLast?'<br><span style="color:var(--peach)">You cleared all 12 levels! 💕</span>':
+    '<br><span style="opacity:.6;font-size:.7rem">Next: '+C4_LEVELS[nextLv].emoji+' '+C4_LEVELS[nextLv].name+'</span>');
+  document.getElementById('c4-ov-streak').textContent='Level '+(c4.level+1)+' / '+C4_LEVELS.length+' cleared! ⭐';
+  document.getElementById('c4-next-btn').textContent=isLast?'Play Again 💕':'Next Level ▶️';
+  document.getElementById('c4-overlay').classList.add('show');
+  c4Render();
+  c4UpdateLevelBar();
+}
+
+function c4Lose(){
+  c4.active=false;
+  const lv=c4.enemy;
+  document.getElementById('c4-ov-title').textContent='Defeated... 💀';
+  document.getElementById('c4-ov-body').innerHTML=
+    '<strong>'+lv.emoji+' '+lv.name+'</strong> won!<br>'+
+    '<span style="opacity:.65">'+lv.flavor+'</span>';
+  document.getElementById('c4-ov-streak').textContent='Retry Level '+(c4.level+1)+'! 💪';
+  document.getElementById('c4-next-btn').textContent='Retry ↩️';
+  document.getElementById('c4-overlay').classList.add('show');
+  c4Render();
+}
+
+function c4NextRound(){
+  document.getElementById('c4-overlay').classList.remove('show');
+  // On lose → retry same level; on win → next level
+  const isWin=document.getElementById('c4-next-btn').textContent.includes('Next')||document.getElementById('c4-next-btn').textContent.includes('Play Again');
+  const nextLv=isWin?Math.min(c4.level+1,C4_LEVELS.length-1):c4.level;
+  c4StartGame(nextLv);
+}
+
+// ===== RENDER =====
+function c4Render(){
+  const ch=C4_CHARS[c4.char];
+  // HP bars
+  document.getElementById('c4-p-bar').style.width=Math.max(0,(c4.pHP/c4.pMaxHP)*100)+'%';
+  document.getElementById('c4-e-bar').style.width=c4.enemy?Math.max(0,(c4.eHP/c4.eMaxHP)*100)+'%':'100%';
+  document.getElementById('c4-p-hp').textContent=c4.pHP+'/'+c4.pMaxHP+' HP';
+  document.getElementById('c4-p-name').textContent=ch.name+' '+ch.emoji;
+  if(c4.enemy){
+    document.getElementById('c4-e-name').textContent=c4.enemy.emoji+' '+c4.enemy.name;
+    document.getElementById('c4-e-hp').textContent=c4.eHP+'/'+c4.eMaxHP+' HP';
+  }
+  document.getElementById('c4-round-text').textContent='Level '+(c4.level+1)+' / '+C4_LEVELS.length;
+  document.getElementById('c4-streak-hud').textContent=(c4.enemy?c4.enemy.emoji+' '+c4.enemy.name:'');
+
+  // Board cells
+  document.querySelectorAll('.c4-cell').forEach(cell=>{
+    const r=+cell.dataset.row, c=+cell.dataset.col;
+    cell.className='c4-cell';
+    const v=c4.board[r][c];
+    if(v==='p') cell.classList.add('player');
+    else if(v==='e') cell.classList.add('enemy');
+    else if(!c4.playerTurn&&c4.thinking) cell.classList.add('thinking');
+  });
+
+  // Column buttons
+  document.querySelectorAll('.c4-col-btn').forEach(btn=>{
+    const col=+btn.dataset.col;
+    btn.classList.toggle('disabled', !c4.active||!c4.playerTurn||c4.thinking||c4FindRow(col)===-1);
+  });
+
+  // Skill buttons
+  ch.skills.forEach((sk,i)=>{
+    const btn=document.getElementById('c4-sk'+i);
+    const cd=document.getElementById('c4-sk'+i+'-cd');
+    if(btn){
+      btn.disabled=!c4.active||!c4.playerTurn||c4.thinking||c4.skillCDs[i]>0;
+      cd.textContent=c4.skillCDs[i]>0?'cd:'+c4.skillCDs[i]:'';
+    }
+  });
+
+  // Buffs
+  const bArr=[];
+  if(c4.pShield) bArr.push('🛡️ Shield');
+  if(c4.pAuraActive) bArr.push('💥 Aura');
+  if(c4.burnActive) bArr.push('🔥 Burned');
+  if(c4.eShield) bArr.push('♨️ Enemy Shield');
+  document.getElementById('c4-buffs').innerHTML=bArr.map(b=>'<div class="c4-buff-chip">'+b+'</div>').join('');
+}
+
+function c4Msg(main,sub){
+  document.getElementById('c4-status-main').textContent=main;
+  document.getElementById('c4-status-sub').textContent=sub;
+}
+
+function c4UpdateSkillLabels(){
+  const ch=C4_CHARS[c4.char];
+  ch.skills.forEach((sk,i)=>{
+    const nameEl=document.getElementById('c4-sk'+i+'-name');
+    const descEl=document.getElementById('c4-sk'+i+'-desc');
+    if(nameEl) nameEl.textContent=sk.name;
+    if(descEl) descEl.textContent=sk.desc;
+  });
+}
+
+function c4UpdateIntent(){
+  if(!c4.enemy||!c4.active){document.getElementById('c4-intent').textContent='';return;}
+  const intents={none:'planning its next move...',regen:'regenerating strength...',shield:'preparing a defense...',counter:'watching your streak...',burn:'heating the board...',copy:'reading your mind...',rage:'getting stronger...'};
+  const burnStr=c4.burnActive?' (burning '+c4.burnCounter+' turns)':'';
+  document.getElementById('c4-intent').textContent=c4.enemy.emoji+' '+c4.enemy.name+' is '+(intents[c4.enemy.special]||'thinking...')+burnStr;
+}
+
+// ===== I LUB YOU POPUP =====
+const LUB_NAMES=['amber','permea','bao','bubu'];
+function checkLubName(val){
+  const clean=(val||'').trim().toLowerCase();
+  if(LUB_NAMES.includes(clean)) showLubPopup();
+}
+function showLubPopup(){
+  const pop=document.getElementById('lub-popup');
+  if(!pop) return;
+  pop.classList.add('show');
+}
+function closeLubPopup(){
+  const pop=document.getElementById('lub-popup');
+  if(pop) pop.classList.remove('show');
+}
+// Hook into the leaderboard name input
+document.addEventListener('DOMContentLoaded',()=>{
+  const inp=document.getElementById('lb-name-input');
+  if(inp){
+    inp.addEventListener('change',()=>checkLubName(inp.value));
+    inp.addEventListener('blur',()=>checkLubName(inp.value));
+  }
+});
+// Also hook immediately (script runs after DOM in this file)
+(function(){
+  const inp=document.getElementById('lb-name-input');
+  if(inp){
+    inp.addEventListener('change',()=>checkLubName(inp.value));
+    inp.addEventListener('blur',()=>checkLubName(inp.value));
+  }
+})();
+
 </script>
+<!-- I LUB YOU POPUP -->
+<div id="lub-popup">
+  <div id="lub-card">
+    <span class="lub-emoji">💛</span>
+    <div class="lub-text">I lub you!!</div>
+    <div class="lub-sub">...did that scare you a little? 🥹</div>
+    <button id="lub-close" onclick="closeLubPopup()">okay okay 🧡</button>
+  </div>
+</div>
 </body>
 </html>
