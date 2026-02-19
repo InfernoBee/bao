@@ -253,19 +253,19 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
 /* Thinking shimmer */
 .c4-cell.thinking{animation:c4think .8s ease-in-out infinite;}
 @keyframes c4think{0%,100%{background:rgba(0,0,0,.35)}50%{background:rgba(255,107,107,.12)}}
+/* SHARE MODAL */
+#share-modal{position:fixed;inset:0;z-index:9998;display:flex;align-items:center;justify-content:center;background:rgba(61,43,31,.75);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .2s ease;}
+#share-modal.show{opacity:1;pointer-events:all;}
+#share-card-wrap{background:white;border-radius:24px;padding:1.4rem 1.2rem 1.1rem;max-width:92vw;width:360px;box-shadow:0 24px 80px rgba(61,43,31,.45);transform:scale(.9);transition:transform .25s cubic-bezier(.17,.67,.4,1.3);}
+#share-modal.show #share-card-wrap{transform:scale(1);}
+#share-preview{width:100%;border-radius:14px;display:block;margin-bottom:.85rem;}
+.share-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+.share-btn{flex:1;min-width:100px;border:none;border-radius:14px;padding:.5rem .8rem;font-family:'Playfair Display',serif;font-size:.82rem;cursor:pointer;font-style:italic;transition:transform .1s,filter .1s;}
+.share-btn:active{transform:scale(.96);}
+.share-btn.copy-btn{background:var(--soft);color:var(--deep);}
+.share-btn.dl-btn{background:var(--peach);color:var(--deep);}
+.share-btn.close-btn{background:var(--deep);color:var(--cream);}
 
-/* I LUB YOU POPUP */
-#lub-popup{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .15s ease;}
-#lub-popup.show{opacity:1;pointer-events:all;}
-#lub-popup.show #lub-card{animation:lubPop .45s cubic-bezier(.17,.67,.4,1.4) forwards;}
-#lub-card{background:var(--rose);border-radius:28px;padding:2.5rem 2rem 2rem;text-align:center;box-shadow:0 20px 80px rgba(61,43,31,.5),0 0 0 6px rgba(255,255,255,.25);max-width:86vw;width:320px;transform:scale(0) rotate(-8deg);position:relative;}
-@keyframes lubPop{0%{transform:scale(0) rotate(-8deg)}60%{transform:scale(1.08) rotate(3deg)}80%{transform:scale(.97) rotate(-1deg)}100%{transform:scale(1) rotate(0deg)}}
-#lub-card .lub-emoji{font-size:4rem;display:block;margin-bottom:.5rem;animation:lubBounce 1s ease-in-out infinite;}
-@keyframes lubBounce{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
-#lub-card .lub-text{font-family:'Playfair Display',serif;font-style:italic;font-size:2rem;color:white;text-shadow:1px 2px 4px rgba(61,43,31,.25);margin-bottom:.3rem;}
-#lub-card .lub-sub{font-family:'Lora',serif;font-style:italic;font-size:.9rem;color:rgba(255,255,255,.85);margin-bottom:1.2rem;}
-#lub-close{background:white;color:var(--rose);border:none;border-radius:14px;padding:.55rem 1.4rem;font-family:'Playfair Display',serif;font-size:.9rem;cursor:pointer;font-weight:700;box-shadow:0 4px 12px rgba(61,43,31,.2);touch-action:manipulation;}
-#lub-close:active{transform:scale(.96);}
 </style>
 </head>
 <body>
@@ -478,7 +478,7 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
           <div class="char-passive">Heal 6 HP every 4 turns. Steam Shield blocks 1 attack.</div>
         </div>
         <div class="char-card" data-c4-char="dudu" onclick="c4SelectChar('dudu')">
-          <div class="char-avatar"><img src="" id="c4-dudu-portrait" alt="Dudu" style="width:44px;height:44px;object-fit:contain;border-radius:50%;"/></div>
+          <div class="char-avatar" style="font-size:2.2rem">🐻</div>
           <div class="char-name">Dudu</div>
           <span class="passive-badge pb-dudu">Angry Aura</span>
           <div class="char-passive">5-disc streak deals 2x damage. Burst removes enemy discs.</div>
@@ -618,41 +618,55 @@ const LEVELS=[
 
 // ===================== TIERED BUFFS =====================
 const ALL_BUFFS=[
-  // COMMON
-  {id:'wide_s',  rarity:'common',   name:'🛒 Wider Basket',  emoji:'🛒',short:'Wide',   desc:'Basket 30% wider for 10s',      dur:10,w:30},
-  {id:'slow_s',  rarity:'common',   name:'🐌 Slow Drizzle',  emoji:'🐌',short:'Slow',   desc:'Hearts 20% slower for 10s',     dur:10,w:30},
-  {id:'coins_s', rarity:'common',   name:'💰 Coin Shower',   emoji:'💰',short:'Coins',  desc:'+5 bonus coins now',            dur:0, w:25,instant:true,fn:(g)=>{g.coins+=5;g.P.coins+=5;g.P.coinsEarned+=5;}},
-  {id:'xp_s',    rarity:'common',   name:'⚡ XP Trickle',    emoji:'⚡',short:'XP+',    desc:'+20% XP for 8s — earn levels faster!',                dur:8, w:25},
-  // UNCOMMON
-  {id:'wide_m',  rarity:'uncommon', name:'🛒 Big Basket',    emoji:'🛒',short:'Big',    desc:'Basket 50% wider for 14s',      dur:14,w:18},
-  {id:'slow_m',  rarity:'uncommon', name:'🐌 Slow Fall',     emoji:'🐌',short:'Slower', desc:'Hearts 35% slower for 12s',     dur:12,w:18},
-  {id:'shield',  rarity:'uncommon', name:'🛡️ Love Shield',   emoji:'🛡️',short:'Shield', desc:'Blocks next bad heart',         dur:Infinity,w:16},
-  {id:'magnet_s',rarity:'uncommon', name:'🧲 Mini Magnet',   emoji:'🧲',short:'Magnet', desc:'Hearts drift to basket 8s',     dur:8, w:15},
-  {id:'coins_m', rarity:'uncommon', name:'💰 Coin Burst',    emoji:'💰',short:'Coins+', desc:'+12 bonus coins now',           dur:0, w:14,instant:true,fn:(g)=>{g.coins+=12;g.P.coins+=12;g.P.coinsEarned+=12;}},
-  // RARE
-  {id:'double',  rarity:'rare',     name:'💎 Double Points', emoji:'💎',short:'2×',     desc:'Hearts worth 2× score for 12s', dur:12,w:10},
-  {id:'slow_l',  rarity:'rare',     name:'🐌 Glacier Mode',  emoji:'🐌',short:'Glacier',desc:'Hearts 55% slower for 10s',     dur:10,w:9},
-  {id:'magnet_m',rarity:'rare',     name:'🧲 Heart Magnet',  emoji:'🧲',short:'Magnet+',desc:'Strong magnet for 12s',         dur:12,w:9},
-  {id:'xp_m',    rarity:'rare',     name:'⚡ XP Surge',      emoji:'⚡',short:'XP++',   desc:'+60% XP for 12s — level up faster!',               dur:12,w:8},
-  {id:'freeze',  rarity:'rare',     name:'❄️ Freeze Baddies',emoji:'❄️',short:'Freeze', desc:'Bad items crawl 10s',           dur:10,w:8},
-  // EPIC
-  {id:'triple',  rarity:'epic',     name:'🌟 Triple Points', emoji:'🌟',short:'3×',     desc:'Hearts worth 3× for 10s',       dur:10,w:4},
-  {id:'wide_l',  rarity:'epic',     name:'🛒 Mega Basket',   emoji:'🛒',short:'MEGA',   desc:'Basket 80% wider for 14s',      dur:14,w:4},
-  {id:'shield2', rarity:'epic',     name:'🛡️ Fortress',      emoji:'🛡️',short:'Fortress',desc:'Blocks next 3 bad hearts',     dur:Infinity,w:3},
-  {id:'coins_l', rarity:'epic',     name:'💰 Gold Rush',     emoji:'💰',short:'GOLD',   desc:'+30 coins now',                 dur:0, w:3,instant:true,fn:(g)=>{g.coins+=30;g.P.coins+=30;g.P.coinsEarned+=30;}},
-  {id:'extralife',rarity:'epic',    name:'❤️ Extra Life',    emoji:'❤️',short:'+HP',    desc:'Gain 1 extra life',             dur:0, w:3,instant:true,fn:(g)=>{g.lives=Math.min(g.lives+1,6);}},
-  // LEGENDARY
-  {id:'godmode', rarity:'legendary',name:'👑 Queen Mode',    emoji:'👑',short:'QUEEN',  desc:'2× pts + magnet + slow 15s',    dur:15,w:1},
-  {id:'xp_l',    rarity:'legendary',name:'⚡ XP OVERDRIVE',  emoji:'📚',short:'OVER',   desc:'+100% XP for 20s — insane level gains!',              dur:20,w:1},
-  {id:'coins_xl',rarity:'legendary',name:'💰 JACKPOT',       emoji:'💰',short:'JACK',   desc:'+60 coins now + 2× 10s',        dur:10,w:1,instant:true,fn:(g)=>{g.coins+=60;g.P.coins+=60;g.P.coinsEarned+=60;}},
-  {id:'phoenix', rarity:'legendary',name:'🔥 Phoenix',       emoji:'🔥',short:'PHŒNIX', desc:'Revive once with 3 HP',         dur:Infinity,w:1},
+  // COMMON (tier unlocks at lv1)
+  {id:'wide_s',    rarity:'common',   name:'🛒 Wider Basket',   emoji:'🛒',short:'Wide',    desc:'Basket 30% wider for 10s',             dur:10,w:28},
+  {id:'slow_s',    rarity:'common',   name:'🐌 Slow Drizzle',   emoji:'🐌',short:'Slow',    desc:'Hearts 20% slower for 10s',            dur:10,w:28},
+  {id:'coins_s',   rarity:'common',   name:'💰 Coin Shower',    emoji:'💰',short:'Coins',   desc:'+5 bonus coins now',                   dur:0, w:22,instant:true,fn:(g)=>{g.coins+=5;g.P.coins+=5;g.P.coinsEarned+=5;}},
+  {id:'xp_s',      rarity:'common',   name:'⚡ XP Trickle',     emoji:'⚡',short:'XP+',     desc:'+20% XP for 8s',                       dur:8, w:22},
+  {id:'lucky_s',   rarity:'common',   name:'🍀 Lucky Break',    emoji:'🍀',short:'Lucky',   desc:'Next bad heart is harmless (1 block)',  dur:Infinity,w:18},
+  {id:'rally',     rarity:'common',   name:'💪 Rally',          emoji:'💪',short:'Rally',   desc:'+1 pt bonus per heart for 8s',         dur:8, w:16},
+  {id:'heartstorm',rarity:'common',   name:'🌧️ Heart Rain',     emoji:'🌧️',short:'Rain',    desc:'Extra hearts fall for 6s',             dur:6, w:14},
+  // UNCOMMON (tier unlocks at lv2)
+  {id:'wide_m',    rarity:'uncommon', name:'🛒 Big Basket',     emoji:'🛒',short:'Big',     desc:'Basket 50% wider for 14s',             dur:14,w:18},
+  {id:'slow_m',    rarity:'uncommon', name:'🐌 Slow Fall',      emoji:'🐌',short:'Slower',  desc:'Hearts 35% slower for 12s',            dur:12,w:18},
+  {id:'shield',    rarity:'uncommon', name:'🛡️ Love Shield',    emoji:'🛡️',short:'Shield',  desc:'Blocks next bad heart',                dur:Infinity,w:16},
+  {id:'magnet_s',  rarity:'uncommon', name:'🧲 Mini Magnet',    emoji:'🧲',short:'Magnet',  desc:'Hearts drift to basket for 8s',        dur:8, w:15},
+  {id:'coins_m',   rarity:'uncommon', name:'💰 Coin Burst',     emoji:'💰',short:'Coins+',  desc:'+12 bonus coins now',                  dur:0, w:14,instant:true,fn:(g)=>{g.coins+=12;g.P.coins+=12;g.P.coinsEarned+=12;}},
+  {id:'streak_up', rarity:'uncommon', name:'🔥 Streak Saver',   emoji:'🔥',short:'StrSave', desc:'Streak stays on 1 miss for 15s',       dur:15,w:12},
+  {id:'blitz',     rarity:'uncommon', name:'⚡ Blitz',           emoji:'⚡',short:'Blitz',   desc:'Catch speed doubled, pts +1 for 8s',   dur:8, w:11},
+  {id:'liferegen', rarity:'uncommon', name:'💗 Life Regen',      emoji:'💗',short:'+Life',   desc:'Recover 1 lost life right now',        dur:0, w:10,instant:true,fn:(g)=>{g.lives=Math.min(g.lives+1,6);}},
+  // RARE (tier unlocks at lv3)
+  {id:'double',    rarity:'rare',     name:'💎 Double Points',  emoji:'💎',short:'2×',      desc:'Hearts worth 2× score for 12s',        dur:12,w:10},
+  {id:'slow_l',    rarity:'rare',     name:'🐌 Glacier Mode',   emoji:'🐌',short:'Glacier', desc:'Hearts 55% slower for 10s',            dur:10,w:9},
+  {id:'magnet_m',  rarity:'rare',     name:'🧲 Heart Magnet',   emoji:'🧲',short:'Magnet+', desc:'Strong magnet for 12s',                dur:12,w:9},
+  {id:'xp_m',      rarity:'rare',     name:'⚡ XP Surge',       emoji:'⚡',short:'XP++',    desc:'+60% XP for 12s',                      dur:12,w:8},
+  {id:'freeze',    rarity:'rare',     name:'❄️ Freeze Baddies', emoji:'❄️',short:'Freeze',  desc:'Bad items crawl for 10s',              dur:10,w:8},
+  {id:'vacuum',    rarity:'rare',     name:'🌀 Vacuum',         emoji:'🌀',short:'Vacuum',  desc:'All hearts on screen snap to basket',  dur:0, w:7,instant:true,fn:(g)=>{g._vacuum=true;}},
+  {id:'timewarp',  rarity:'rare',     name:'⏱️ Time Warp',      emoji:'⏱️',short:'Warp',    desc:'Freeze all items for 4s',              dur:4, w:7},
+  {id:'coinrain',  rarity:'rare',     name:'💰 Coin Rain',      emoji:'💰',short:'CRain',   desc:'+3 coins per heart for 10s',           dur:10,w:6},
+  // EPIC (tier unlocks at lv5)
+  {id:'triple',    rarity:'epic',     name:'🌟 Triple Points',  emoji:'🌟',short:'3×',      desc:'Hearts worth 3× for 10s',              dur:10,w:4},
+  {id:'wide_l',    rarity:'epic',     name:'🛒 Mega Basket',    emoji:'🛒',short:'MEGA',    desc:'Basket 80% wider for 14s',             dur:14,w:4},
+  {id:'shield2',   rarity:'epic',     name:'🛡️ Fortress',       emoji:'🛡️',short:'Fortress',desc:'Blocks next 3 bad hearts',             dur:Infinity,w:3},
+  {id:'coins_l',   rarity:'epic',     name:'💰 Gold Rush',      emoji:'💰',short:'GOLD',    desc:'+30 coins now',                        dur:0, w:3,instant:true,fn:(g)=>{g.coins+=30;g.P.coins+=30;g.P.coinsEarned+=30;}},
+  {id:'extralife', rarity:'epic',     name:'❤️ Extra Life',     emoji:'❤️',short:'+HP',     desc:'Gain 1 extra life',                    dur:0, w:3,instant:true,fn:(g)=>{g.lives=Math.min(g.lives+1,6);}},
+  {id:'frenzy',    rarity:'epic',     name:'🎆 Frenzy',         emoji:'🎆',short:'Frenzy',  desc:'4× pts + speed up hearts for 8s',      dur:8, w:2},
+  {id:'ghost',     rarity:'epic',     name:'👻 Ghost Mode',     emoji:'👻',short:'Ghost',   desc:'Bad items pass through you for 12s',   dur:12,w:2},
+  {id:'starburst', rarity:'epic',     name:'💫 Starburst',      emoji:'💫',short:'Burst',   desc:'+2 streak & score boost for 10s',      dur:10,w:2},
+  // LEGENDARY (tier unlocks at lv7)
+  {id:'godmode',   rarity:'legendary',name:'👑 Queen Mode',     emoji:'👑',short:'QUEEN',   desc:'2× pts + magnet + slow for 15s',       dur:15,w:1},
+  {id:'xp_l',      rarity:'legendary',name:'📚 XP OVERDRIVE',   emoji:'📚',short:'OVER',    desc:'+100% XP for 20s',                     dur:20,w:1},
+  {id:'coins_xl',  rarity:'legendary',name:'💰 JACKPOT',        emoji:'💰',short:'JACK',    desc:'+60 coins now + 2× coins for 10s',     dur:10,w:1,instant:true,fn:(g)=>{g.coins+=60;g.P.coins+=60;g.P.coinsEarned+=60;}},
+  {id:'phoenix',   rarity:'legendary',name:'🔥 Phoenix',        emoji:'🔥',short:'PHŒNIX',  desc:'Revive once with 3 HP',                dur:Infinity,w:1},
+  {id:'omni',      rarity:'legendary',name:'✨ Omnipower',      emoji:'✨',short:'OMNI',    desc:'3× pts + magnet + freeze bad + 20s',   dur:20,w:1},
+  {id:'ultralife', rarity:'legendary',name:'💖 Ultra Life',     emoji:'💖',short:'ULTRA',   desc:'+3 lives right now',                   dur:0, w:1,instant:true,fn:(g)=>{g.lives=Math.min(g.lives+3,8);}},
 ];
 
 const RARITY_ORDER=['common','uncommon','rare','epic','legendary'];
 const RARITY_LABELS={common:'COMMON',uncommon:'UNCOMMON',rare:'RARE',epic:'EPIC',legendary:'LEGENDARY'};
 
 function getRarityPool(lv){
-  const thresholds=[0,1,2,4,6];
+  const thresholds=[0,1,2,4,6]; // min lv to see common/uncommon/rare/epic/legendary
   return ALL_BUFFS.filter(b=>lv>=thresholds[RARITY_ORDER.indexOf(b.rarity)]+1);
 }
 function pickWeighted(pool){
@@ -679,16 +693,29 @@ function pick3Buffs(lv,legendLuck){
 
 // ===================== SHOP ITEMS =====================
 const SHOP_ITEMS=[
-  {id:'start_wide',  rarity:'common',   price:15, name:'🧺 Wider Start',    desc:'Begin each game with wider basket', icon:'🧺'},
-  {id:'start_life',  rarity:'common',   price:20, name:'❤️ Bonus Life',     desc:'Start with 4 lives instead of 3',  icon:'❤️'},
-  {id:'coin_mult',   rarity:'uncommon', price:40, name:'💰 Coin Saver',     desc:'+25% coins earned per game',       icon:'💰'},
-  {id:'xp_passive',  rarity:'uncommon', price:45, name:'⚡ XP Booster',     desc:'+15% XP gain always',              icon:'⚡'},
-  {id:'slow_start',  rarity:'uncommon', price:35, name:'🕰️ Easy Start',     desc:'Slower hearts first 30s',          icon:'🕰️'},
-  {id:'shield_start',rarity:'rare',     price:70, name:'🛡️ Starter Shield', desc:'Begin each game with a shield',    icon:'🛡️'},
-  {id:'streak_bonus',rarity:'rare',     price:80, name:'🔥 Streak Master',  desc:'Streaks 5+ give +2 pts each',      icon:'🔥'},
-  {id:'magnet_start',rarity:'epic',     price:120,name:'🧲 Born Magnetic',  desc:'Always have mini magnet active',   icon:'🧲'},
-  {id:'double_coins',rarity:'epic',     price:150,name:'💎 Double Coins',   desc:'2× coins earned every game',       icon:'💎'},
-  {id:'legend_luck', rarity:'legendary',price:250,name:'👑 Queen\'s Luck',  desc:'Legendary buff odds tripled',      icon:'👑'},
+  // COMMON
+  {id:'start_wide',      rarity:'common',   price:15,  name:'🧺 Wider Start',       desc:'Begin each game with a wider basket',         icon:'🧺'},
+  {id:'start_life',      rarity:'common',   price:20,  name:'❤️ Bonus Life',        desc:'Start with 4 lives instead of 3',             icon:'❤️'},
+  {id:'lucky_start',     rarity:'common',   price:18,  name:'🍀 Lucky Start',       desc:'Begin each game with Lucky Break active',     icon:'🍀'},
+  {id:'potato_boost',    rarity:'common',   price:22,  name:'🥔 Potato Lover',      desc:'Bao needs 1 fewer potato to trigger Nomnom',  icon:'🥔'},
+  // UNCOMMON
+  {id:'coin_mult',       rarity:'uncommon', price:40,  name:'💰 Coin Saver',        desc:'+25% coins earned per game',                  icon:'💰'},
+  {id:'xp_passive',      rarity:'uncommon', price:45,  name:'⚡ XP Booster',        desc:'+15% XP gain always',                         icon:'⚡'},
+  {id:'slow_start',      rarity:'uncommon', price:35,  name:'🕰️ Easy Start',        desc:'Slower hearts for the first 30s',             icon:'🕰️'},
+  {id:'heart_storm_start',rarity:'uncommon',price:38,  name:'🌧️ Storm Ready',       desc:'Always active: extra hearts spawn each wave', icon:'🌧️'},
+  // RARE
+  {id:'shield_start',    rarity:'rare',     price:70,  name:'🛡️ Starter Shield',    desc:'Begin each game with a shield',               icon:'🛡️'},
+  {id:'streak_bonus',    rarity:'rare',     price:80,  name:'🔥 Streak Master',     desc:'Streaks 5+ give +2 pts each',                 icon:'🔥'},
+  {id:'xp_master',       rarity:'rare',     price:85,  name:'📚 XP Master',         desc:'+35% XP gain always (stacks with Booster)',   icon:'📚'},
+  {id:'bad_shrink',      rarity:'rare',     price:75,  name:'💀 Bad Shrink',        desc:'Bad items are 35% smaller — easier to dodge', icon:'💀'},
+  // EPIC
+  {id:'magnet_start',    rarity:'epic',     price:120, name:'🧲 Born Magnetic',     desc:'Always have a mini magnet active',            icon:'🧲'},
+  {id:'double_coins',    rarity:'epic',     price:150, name:'💎 Double Coins',      desc:'2× coins earned every game',                  icon:'💎'},
+  {id:'phoenix_start',   rarity:'epic',     price:160, name:'🔥 Born Phoenix',      desc:'Always start with Phoenix revive ready',      icon:'🔥'},
+  {id:'armor',           rarity:'epic',     price:140, name:'🪖 Armor Plating',     desc:'First hit each game does 0 damage',           icon:'🪖'},
+  // LEGENDARY
+  {id:'legend_luck',     rarity:'legendary',price:250, name:'👑 Queen\'s Luck',     desc:'Legendary buff odds tripled',                 icon:'👑'},
+  {id:'omni_start',      rarity:'legendary',price:300, name:'✨ Omni Aura',         desc:'Start every game with Omnipower buff (8s)',   icon:'✨'},
 ];
 
 // ===================== PERSISTENT STORAGE =====================
@@ -736,31 +763,45 @@ function shopHas(id){return P.owned.includes(id);}
 function maxLives(){return shopHas('start_life')?4:3;}
 
 function computeState(){
-  st={bw:1,sm:1,x2:false,x3:false,magnet:false,xpM:1,freezeBad:false,coinM:1,streakBonus:false,coinX2:false};
+  st={bw:1,sm:1,x2:false,x3:false,x4:false,magnet:false,xpM:1,freezeBad:false,coinM:1,streakBonus:false,coinX2:false,
+      streakSave:false,timeFrozen:false,ghost:false,coinPerHeart:0,rallyBonus:0,starburstBonus:false,heartstorm:false};
   if(shopHas('start_wide'))  st.bw=Math.max(st.bw,1.3);
   if(shopHas('xp_passive'))  st.xpM=Math.max(st.xpM,1.15);
   if(shopHas('coin_mult'))   st.coinM=Math.max(st.coinM,1.25);
   if(shopHas('streak_bonus'))st.streakBonus=true;
   if(shopHas('magnet_start'))st.magnet=true;
   if(shopHas('double_coins'))st.coinM=Math.max(st.coinM,2);
+  if(shopHas('xp_master'))   st.xpM=Math.max(st.xpM,1.35);
+  if(shopHas('heart_storm_start')) st.heartstorm=true;
+  if(shopHas('armor'))       st.armor=true;
+  if(shopHas('bad_shrink'))  st.badShrink=true;
 
   activeBuffs=activeBuffs.filter(b=>b.endsAt===Infinity||b.endsAt>frame);
   for(const b of activeBuffs){
-    if(b.id==='wide_s') st.bw=Math.max(st.bw,1.3);
-    if(b.id==='wide_m') st.bw=Math.max(st.bw,1.5);
-    if(b.id==='wide_l') st.bw=Math.max(st.bw,1.8);
-    if(b.id==='slow_s') st.sm=Math.min(st.sm,.8);
-    if(b.id==='slow_m') st.sm=Math.min(st.sm,.65);
-    if(b.id==='slow_l') st.sm=Math.min(st.sm,.45);
+    if(b.id==='wide_s')    st.bw=Math.max(st.bw,1.3);
+    if(b.id==='wide_m')    st.bw=Math.max(st.bw,1.5);
+    if(b.id==='wide_l')    st.bw=Math.max(st.bw,1.8);
+    if(b.id==='slow_s')    st.sm=Math.min(st.sm,.8);
+    if(b.id==='slow_m')    st.sm=Math.min(st.sm,.65);
+    if(b.id==='slow_l')    st.sm=Math.min(st.sm,.45);
     if(b.id==='magnet_s'||b.id==='magnet_m') st.magnet=true;
-    if(b.id==='double') st.x2=true;
-    if(b.id==='triple') st.x3=true;
-    if(b.id==='xp_s')   st.xpM=Math.max(st.xpM,1.2);
-    if(b.id==='xp_m')   st.xpM=Math.max(st.xpM,1.6);
-    if(b.id==='xp_l')   st.xpM=Math.max(st.xpM,2.0);
-    if(b.id==='freeze') st.freezeBad=true;
-    if(b.id==='coins_xl') st.coinX2=true;
-    if(b.id==='godmode'){st.x2=true;st.magnet=true;st.sm=Math.min(st.sm,.7);}
+    if(b.id==='double')    st.x2=true;
+    if(b.id==='triple')    st.x3=true;
+    if(b.id==='frenzy')    st.x4=true;
+    if(b.id==='xp_s')      st.xpM=Math.max(st.xpM,1.2);
+    if(b.id==='xp_m')      st.xpM=Math.max(st.xpM,1.6);
+    if(b.id==='xp_l')      st.xpM=Math.max(st.xpM,2.0);
+    if(b.id==='freeze')    st.freezeBad=true;
+    if(b.id==='coins_xl')  st.coinX2=true;
+    if(b.id==='streak_up') st.streakSave=true;
+    if(b.id==='timewarp')  st.timeFrozen=true;
+    if(b.id==='ghost')     st.ghost=true;
+    if(b.id==='coinrain')  st.coinPerHeart=3;
+    if(b.id==='rally')     st.rallyBonus=1;
+    if(b.id==='starburst') {st.starburstBonus=true;}
+    if(b.id==='heartstorm') st.heartstorm=true;
+    if(b.id==='omni')      {st.x3=true;st.magnet=true;st.freezeBad=true;}
+    if(b.id==='godmode')   {st.x2=true;st.magnet=true;st.sm=Math.min(st.sm,.7);}
   }
 }
 
@@ -903,11 +944,20 @@ function gameLoop(){
   if(!running) return;
   frame++;
   computeState();
+
+  // Vacuum: snap all hearts to basket immediately
+  if(st._vacuum){
+    st._vacuum=false;
+    items.filter(it=>!it.bad&&!it.isPotato).forEach(it=>{it.x=basket.x;it.y=H-BH-20;});
+  }
+
   const rate=Math.max(20,65-level*4);
   if(frame%rate===0){
-    spawnItem();
-    if(level>=4&&Math.random()<.4) spawnItem();
-    if(level>=7&&Math.random()<.3) spawnItem();
+    if(!st.timeFrozen) spawnItem();
+    if(level>=4&&Math.random()<.4&&!st.timeFrozen) spawnItem();
+    if(level>=7&&Math.random()<.3&&!st.timeFrozen) spawnItem();
+    // Heartstorm: extra hearts
+    if(st.heartstorm&&Math.random()<.7) items.push({x:22+Math.random()*(W-44),y:-24,vy:(1.4+Math.random()*1.0)*st.sm,emoji:HEART_EMO[Math.floor(Math.random()*HEART_EMO.length)],bad:false,size:22,frozen:false});
   }
   // Bao passive: occasionally spawn potatoes
   if(currentChar==='bao'&&frame%180===0&&Math.random()<0.55){
@@ -954,13 +1004,14 @@ function gameLoop(){
   // items
   for(let i=items.length-1;i>=0;i--){
     const it=items[i];
-    if(!it.frozen) it.y+=it.vy;
+    if(!it.frozen&&!st.timeFrozen) it.y+=it.vy;
     if(st.magnet&&!it.bad) it.x+=(basket.x-it.x)*0.03;
     ctx.save();
     if(it.bad){
+      const badSize=st.badShrink?Math.round(it.size*0.65):it.size;
       // Red danger glow for bad items
       ctx.shadowBlur=14;ctx.shadowColor='rgba(232,80,80,0.9)';
-      ctx.globalAlpha=.15;ctx.font=it.size+'px serif';ctx.textAlign='center';
+      ctx.globalAlpha=.15;ctx.font=badSize+'px serif';ctx.textAlign='center';
       ctx.fillText(it.emoji,it.x+2,it.y+3);
       ctx.globalAlpha=1;ctx.fillText(it.emoji,it.x,it.y);
     } else if(it.isPotato){
@@ -980,12 +1031,23 @@ function gameLoop(){
     // catch
     if(it.y>=by-4&&it.y<=by+BH+14&&it.x>=bx-8&&it.x<=bx+bw+8){
       if(it.bad){
+        // Ghost mode: bad items pass through
+        if(st.ghost){showPopup('👻 Phased!',it.x,it.y,'#CE93D8');items.splice(i,1);continue;}
+        // Lucky break: one-time block
+        const luckyBuff=activeBuffs.find(b=>b.id==='lucky_s');
+        if(luckyBuff){activeBuffs=activeBuffs.filter(b=>b.id!=='lucky_s');showPopup('🍀 Lucky!',it.x,it.y,'#4CAF50');items.splice(i,1);continue;}
         if(shieldsLeft>0){
           shieldsLeft--;
           if(shieldsLeft===0) activeBuffs=activeBuffs.filter(b=>b.id!=='shield'&&b.id!=='shield2');
           showPopup('🛡️ Blocked!',it.x,it.y,'#90caf9');
         } else {
-          lives--;streak=0;duduAuraReady=false;passiveCharge=0;potatoCount=0;
+          // streak_save: don't reset streak on first miss
+          const hadStreak=streak>0;
+          if(st.streakSave&&hadStreak){streak=Math.max(1,streak-1);showPopup('🔥 Saved!',it.x,it.y,'#FF9800');}
+          else streak=0;
+          // Armor: first hit is free
+          if(st.armor&&!armorUsed){armorUsed=true;showPopup('🪖 Armored!',it.x,it.y,'#90caf9');items.splice(i,1);continue;}
+          lives--;duduAuraReady=false;passiveCharge=0;potatoCount=0;
           showPopup('💢 Ouch!',it.x,it.y,'#E8736A');
           if(lives<=0){
             if(phoenixReady){phoenixReady=false;lives=3;showPopup('🔥 PHOENIX!',W/2,H/2,'#FF9800');activeBuffs=activeBuffs.filter(b=>b.id!=='phoenix');}
@@ -996,7 +1058,7 @@ function gameLoop(){
         // Bao passive: potato collected!
         potatoCount++;
         showPopup('🥔 +1 potato!',it.x,it.y,'#F4A56A');
-        if(potatoCount>=CHARS.bao.passiveTrigger){
+        if(potatoCount>=CHARS.bao.passiveTrigger-(shopHas('potato_boost')?1:0)){
           potatoCount=0;
           lives=Math.min(lives+1,6);
           P.steamShields++; // reuse stat for nomnom procs
@@ -1004,8 +1066,10 @@ function gameLoop(){
         }
         updateHUD();items.splice(i,1);continue;
       } else {
-        // Base pts
-        let pts=st.x3?3:st.x2?2:1;
+        // Base pts — frenzy > triple > double
+        let pts=st.x4?4:st.x3?3:st.x2?2:1;
+        pts+=st.rallyBonus; // Rally +1
+        if(st.starburstBonus) pts+=2; // starburst boost
         const bonusStreak=(st.streakBonus&&streak>=5)?2:0;
 
         // DUDU passive: Angry Aura
@@ -1032,14 +1096,12 @@ function gameLoop(){
           duduAuraReady=true;showPopup('⚡ Aura Ready!',it.x,it.y-14,'#CE93D8');
         }
 
-        // Bao passive: Nomnom - potatoes collected (handled separately in item spawn)
-
-
         if(!bossActive){
           const xpGain=Math.round((pts+(streak>=5?1:0))*st.xpM);
           xp+=xpGain;sessionXP+=xpGain;
           const cBase=Math.random()<0.35?1:0;
-          const cGain=Math.round(cBase*(st.coinX2?2:1)*st.coinM);
+          const cExtra=st.coinPerHeart||0;
+          const cGain=Math.round((cBase+cExtra)*(st.coinX2?2:1)*st.coinM);
           if(cGain>0){coins+=cGain;P.coins+=cGain;P.coinsEarned+=cGain;}
           showPopup(auraBonus>0?`💥+${total}!`:pts>1?`+${total}💞`:'💞',it.x,it.y,lvData(level).color);
           checkLevelUp();
@@ -1261,6 +1323,8 @@ function showLevelUpScreen(){
       if(cat.id==='shield') shieldsLeft=1;
       if(cat.id==='shield2') shieldsLeft=3;
       if(cat.id==='phoenix') phoenixReady=true;
+      if(cat.id==='vacuum') st._vacuum=true; // handled in game loop
+      if(cat.id==='starburst'){streak=Math.min(streak+2,99);score+=2;}
       if(cat.dur>0&&!cat.instant) activeBuffs.push({id:cat.id,rarity:cat.rarity,emoji:cat.emoji,short:cat.short,endsAt:cat.dur===Infinity?Infinity:frame+cat.dur*60});
       overlay.classList.add('hidden');
       // Brief pause so player is ready before items can hit
@@ -1276,6 +1340,7 @@ function showLevelUpScreen(){
 }
 
 // ===================== END GAME =====================
+let lastGameShare={};
 function endGame(){
   running=false;
   P.gamesPlayed++;
@@ -1288,6 +1353,8 @@ function endGame(){
   saveP();updateStatsPanel();renderShop();
   const d=lvData(level);
   const medal=score>=60?'🏅':score>=35?'🥈':score>=18?'🥉':'💕';
+  // Store for share card
+  lastGameShare={score,level,levelTitle:d.title,levelColor:d.color,medal,streak,sessionHearts,bossDefeated,char:currentChar,highScore:P.highScore};
   overlay.classList.remove('hidden');
   overlay.innerHTML=`
     <h2>${score>=40?'🌟 Incredible!':score>=20?'💕 Well done!':'🧡 Good try!'}</h2>
@@ -1296,12 +1363,17 @@ function endGame(){
     Hearts: ${sessionHearts} · Streak: ${streak}${bossDefeated>0?`<br><span style="color:#FFD700">⚔️ Bosses defeated: ${bossDefeated}</span>`:''}
     <br><span style="color:var(--gold)">+${bonusCoins} 💰 bonus coins!</span></p>
     <p style="font-size:.72rem;opacity:.7;margin-bottom:.7rem">${score>=40?'Legendary as always, Bao 💛':score>=20?'Keep collecting nomnoms! 🍜':'Practice makes perfect, sweet Bao 🌸'}</p>
-    <button class="game-btn" id="restart-btn">Play Again 💕</button>`;
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:.4rem">
+      <button class="game-btn" id="restart-btn" style="margin:0">Play Again 💕</button>
+      <button class="game-btn" id="share-btn" style="margin:0;background:var(--rose);color:white">Share Score 📸</button>
+    </div>`;
   document.getElementById('restart-btn').addEventListener('click',startGame);
+  document.getElementById('share-btn').addEventListener('click',openShareModal);
   promptLeaderboard();
 }
 
 // ===================== RESET / START =====================
+let armorUsed=false;
 function resetGame(){
   items=[];popups=[];activeBuffs=[];
   score=0;lives=maxLives();xp=0;level=1;frame=0;
@@ -1309,8 +1381,12 @@ function resetGame(){
   shieldsLeft=0;phoenixReady=false;starCache=null;
   passiveCharge=0;duduAuraReady=false;potatoCount=0;
   bossActive=false;bossShot=[];bossDefeated=0;bossPhase=0;
+  armorUsed=false;
   basket.x=W/2;
-  if(shopHas('shield_start')) shieldsLeft=1;
+  if(shopHas('shield_start'))  shieldsLeft=1;
+  if(shopHas('phoenix_start')) phoenixReady=true;
+  if(shopHas('lucky_start'))   activeBuffs.push({id:'lucky_s',rarity:'common',emoji:'🍀',short:'Lucky',endsAt:Infinity});
+  if(shopHas('omni_start'))    activeBuffs.push({id:'omni',rarity:'legendary',emoji:'✨',short:'OMNI',endsAt:frame+8*60});
   updateHUD();
 }
 function startGame(){resetGame();overlay.classList.add('hidden');running=true;gameLoop();}
@@ -1344,10 +1420,6 @@ document.getElementById('envBtn').addEventListener('click',()=>{
   document.getElementById('landing').classList.add('gone');
   document.getElementById('main').classList.add('visible');
   spawnHeartsBg();updateStatsPanel();renderShop();
-  // Sync Dudu portrait to Connect Bao card
-  const mainPortrait=document.getElementById('dudu-portrait');
-  const c4Portrait=document.getElementById('c4-dudu-portrait');
-  if(mainPortrait&&c4Portrait) c4Portrait.src=mainPortrait.src;
 });
 function spawnHeartsBg(){
   const bg=document.getElementById('heartsBg');
@@ -1486,18 +1558,18 @@ const C4_CHARS={
     skills:[
       {id:'drop',   name:'⚔️ Drop',      desc:'Drop disc + dmg',   maxCd:0},
       {id:'shield', name:'🛡️ Steam Bun', desc:'Block next hit',    maxCd:3},
-      {id:'bloom',  name:'🌸 Bao Bloom', desc:'Drop 2 discs! (cd:4)', maxCd:4},
+      {id:'heal',   name:'🥔 Nomnom',    desc:'Heal 12 HP (cd:3)', maxCd:3},
     ],
-    passiveDesc:'Regen 5 HP every 3 turns • 🌸 Bloom: drop 2 discs at once',
+    passiveDesc:'Regen 5 HP every 3 turns',
   },
   dudu:{
     name:'Dudu', emoji:'🐻', maxHP:36, atk:10,
     skills:[
       {id:'drop',   name:'⚔️ Rage Drop',  desc:'Drop disc + dmg',      maxCd:0},
       {id:'aura',   name:'💥 Angry Aura', desc:'Next drop ×2 damage',   maxCd:3},
-      {id:'slam',   name:'💢 Rage Slam',  desc:'3× ATK, resets streak (cd:4)', maxCd:4},
+      {id:'burst',  name:'🌀 Disc Bomb',  desc:'Remove 1 enemy disc',   maxCd:4},
     ],
-    passiveDesc:'5-disc streak = ×1.6 dmg • 💢 Slam: 3× burst, resets streak',
+    passiveDesc:'5-disc streak = ×1.6 dmg',
   },
 };
 
@@ -1602,16 +1674,21 @@ function c4UseSkill(sk){
     c4.skillCDs[sk]=ch.skills[sk].maxCd;
     c4Msg('Angry Aura armed! Next drop deals x2 damage!','');
     c4Render();c4EnemyTurn();
-  } else if(skillId==='bloom'){
-    // Bao Bloom: drop 2 discs — first is chosen by column click, second auto-drops in best adjacent column
+  } else if(skillId==='heal'){
+    c4.pHP=Math.min(c4.pMaxHP, c4.pHP+10);
     c4.skillCDs[sk]=ch.skills[sk].maxCd;
-    c4.pendingSkill=sk;
-    c4Msg('🌸 Bao Bloom! Pick a column — a second disc blooms nearby!','');
-  } else if(skillId==='slam'){
-    // Rage Slam: 3× ATK damage this drop, but resets pStreak to 0
+    c4Msg('Nomnom! Healed 10 HP','');
+    c4Render();c4EnemyTurn();
+  } else if(skillId==='burst'){
+    // Remove a random enemy disc
+    const enemyCells=[];
+    for(let r=0;r<C4_ROWS;r++) for(let col=0;col<C4_COLS;col++) if(c4.board[r][col]==='e') enemyCells.push([r,col]);
+    if(!enemyCells.length){c4Msg('No enemy discs to remove!','');return;}
+    const [rr,rc]=enemyCells[Math.floor(Math.random()*enemyCells.length)];
+    c4.board[rr][rc]=null;
     c4.skillCDs[sk]=ch.skills[sk].maxCd;
-    c4.pendingSkill=sk;
-    c4Msg('💢 Rage Slam charged! Pick a column for a 3× strike!','');
+    c4Msg('Disc Bomb! Destroyed an enemy disc!','');
+    c4Render();c4EnemyTurn();
   } else {
     // Drop skill — set pending, wait for column click
     c4.pendingSkill=sk;
@@ -1624,7 +1701,6 @@ function c4DoPlayerDrop(col){
   if(row===-1){c4Msg('Column full! Choose another.','');return;}
 
   const ch=C4_CHARS[c4.char];
-  const activeSkillId=c4.pendingSkill>=0?ch.skills[c4.pendingSkill].id:'drop';
   c4.board[row][col]='p';
   c4.turn++;c4.pStreak++;
   c4.pendingSkill=-1;
@@ -1638,51 +1714,22 @@ function c4DoPlayerDrop(col){
     c4Msg('Nomnom regen! +6 HP','');
   }
 
-  // === RAGE SLAM: 3x ATK, resets streak ===
-  const slamActive=activeSkillId==='slam';
-  const bloomActive=activeSkillId==='bloom';
-
   // Damage calc
   let dmg=ch.atk;
-  if(slamActive){
-    dmg=ch.atk*3;
-    c4.pStreak=0; // slam burns out the streak
-  } else {
-    if(c4.pAuraActive){dmg*=2;c4.pAuraActive=false;}
-    if(c4.char==='dudu'&&c4.pStreak>=5) dmg=Math.round(dmg*1.8);
-  }
+  if(c4.pAuraActive){dmg*=2;c4.pAuraActive=false;}
+  if(c4.char==='dudu'&&c4.pStreak>=5) dmg=Math.round(dmg*1.8);
 
   // Apply damage
   if(!c4.eShield){
     c4.eHP=Math.max(0,c4.eHP-dmg);
-    if(slamActive) c4Msg('💢 RAGE SLAM! -'+dmg+' dmg! (streak reset)','');
-    else c4Msg('Disc dropped! -'+dmg+' damage to '+c4.enemy.name,'');
+    c4Msg('Disc dropped! -'+dmg+' damage to '+c4.enemy.name,'');
     c4.eShield=false;
   } else {
     c4.eShield=false;
     c4Msg(c4.enemy.name+' shield blocked your disc!','');
   }
 
-  // === BAO BLOOM: drop a 2nd disc in best adjacent column ===
-  if(bloomActive){
-    const adj=[col-1,col+1].filter(c=>c>=0&&c<C4_COLS&&c4FindRow(c)>-1);
-    if(adj.length>0){
-      const bcol=adj.sort((a,b)=>Math.abs(a-3)-Math.abs(b-3))[0];
-      const brow=c4FindRow(bcol);
-      c4.board[brow][bcol]='p';
-      c4.pStreak++;c4.turn++;
-      const bloom2Dmg=Math.floor(ch.atk*0.7);
-      if(!c4.eShield){
-        c4.eHP=Math.max(0,c4.eHP-bloom2Dmg);
-        c4Msg('🌸 Bao Bloom! 2nd disc blooms next door! -'+bloom2Dmg+' bonus!','');
-      }
-      setTimeout(()=>{c4AnimateDrop(brow,bcol,'player');c4Render();},220);
-    } else {
-      c4Msg('🌸 Bao Bloom! (no space for 2nd disc!)','');
-    }
-  }
-
-  // Animate primary drop
+  // Animate drop
   c4AnimateDrop(row,col,'player');
   c4Render();
 
@@ -2020,47 +2067,124 @@ function c4UpdateIntent(){
   document.getElementById('c4-intent').textContent=c4.enemy.emoji+' '+c4.enemy.name+' is '+(intents[c4.enemy.special]||'thinking...')+burnStr;
 }
 
-// ===== I LUB YOU POPUP =====
-const LUB_NAMES=['amber','permea','bao','bubu'];
-function checkLubName(val){
-  const clean=(val||'').trim().toLowerCase();
-  if(LUB_NAMES.includes(clean)) showLubPopup();
+// ===================== SCORE SHARE =====================
+function openShareModal(){
+  const modal=document.getElementById('share-modal');
+  if(!modal) return;
+  generateShareCard();
+  modal.classList.add('show');
 }
-function showLubPopup(){
-  const pop=document.getElementById('lub-popup');
-  if(!pop) return;
-  pop.classList.add('show');
+function closeShareModal(){
+  const modal=document.getElementById('share-modal');
+  if(modal) modal.classList.remove('show');
 }
-function closeLubPopup(){
-  const pop=document.getElementById('lub-popup');
-  if(pop) pop.classList.remove('show');
-}
-// Hook into the leaderboard name input
-document.addEventListener('DOMContentLoaded',()=>{
-  const inp=document.getElementById('lb-name-input');
-  if(inp){
-    inp.addEventListener('change',()=>checkLubName(inp.value));
-    inp.addEventListener('blur',()=>checkLubName(inp.value));
-  }
-});
-// Also hook immediately (script runs after DOM in this file)
-(function(){
-  const inp=document.getElementById('lb-name-input');
-  if(inp){
-    inp.addEventListener('change',()=>checkLubName(inp.value));
-    inp.addEventListener('blur',()=>checkLubName(inp.value));
-  }
-})();
 
-</script>
-<!-- I LUB YOU POPUP -->
-<div id="lub-popup">
-  <div id="lub-card">
-    <span class="lub-emoji">💛</span>
-    <div class="lub-text">I lub you!!</div>
-    <div class="lub-sub">...did that scare you a little? 🥹</div>
-    <button id="lub-close" onclick="closeLubPopup()">okay okay 🧡</button>
+function generateShareCard(){
+  const g=lastGameShare;
+  const sc=document.getElementById('share-canvas');
+  if(!sc) return;
+  const W2=540,H2=300;
+  sc.width=W2;sc.height=H2;
+  const ctx2=sc.getContext('2d');
+
+  // Background gradient
+  const bg=ctx2.createLinearGradient(0,0,W2,H2);
+  bg.addColorStop(0,'#3D2B1F');bg.addColorStop(.6,'#5C3D2A');bg.addColorStop(1,'#2A1810');
+  ctx2.fillStyle=bg;ctx2.fillRect(0,0,W2,H2);
+
+  // Soft decorative circles
+  ctx2.save();ctx2.globalAlpha=.07;
+  ctx2.fillStyle='#F4A56A';ctx2.beginPath();ctx2.arc(W2*0.82,H2*0.18,110,0,Math.PI*2);ctx2.fill();
+  ctx2.fillStyle='#E8736A';ctx2.beginPath();ctx2.arc(W2*0.12,H2*0.85,90,0,Math.PI*2);ctx2.fill();
+  ctx2.restore();
+
+  // Top accent line
+  const line=ctx2.createLinearGradient(0,0,W2,0);
+  line.addColorStop(0,'#E8736A');line.addColorStop(.5,'#F4A56A');line.addColorStop(1,'#D4A853');
+  ctx2.fillStyle=line;ctx2.fillRect(0,0,W2,4);
+
+  // Title
+  ctx2.fillStyle='#F4A56A';ctx2.font='italic bold 18px Georgia,serif';ctx2.textAlign='left';
+  ctx2.fillText('Happy Bao 🧡',32,44);
+
+  // Score — big
+  ctx2.fillStyle='#FDF6EC';ctx2.font='bold 72px Georgia,serif';ctx2.textAlign='left';
+  ctx2.fillText(g.score,32,130);
+  ctx2.fillStyle='rgba(253,246,236,.45)';ctx2.font='16px Georgia,serif';
+  ctx2.fillText('SCORE',32,152);
+
+  // Stats column
+  const sx=32,sy=178,gap=24;
+  const stats=[
+    {label:'Level',val:`${g.level} — ${g.levelTitle}`},
+    {label:'Hearts',val:String(g.sessionHearts)},
+    {label:'Best Streak',val:String(g.streak)},
+    {label:'Personal Best',val:String(g.highScore)},
+  ];
+  if(g.bossDefeated>0) stats.push({label:'Bosses',val:'⚔️ '+g.bossDefeated});
+  stats.forEach((s,i)=>{
+    ctx2.fillStyle='rgba(253,246,236,.5)';ctx2.font='12px Georgia,serif';ctx2.textAlign='left';
+    ctx2.fillText(s.label.toUpperCase(),sx,sy+i*gap);
+    ctx2.fillStyle='#FDF6EC';ctx2.font='bold 13px Georgia,serif';
+    ctx2.fillText(s.val,sx+90,sy+i*gap);
+  });
+
+  // Medal big
+  ctx2.font='64px serif';ctx2.textAlign='right';
+  ctx2.fillText(g.medal,W2-36,120);
+
+  // Character
+  const charLabel=g.char==='bao'?'🍡 Bao':'🐻 Dudu';
+  ctx2.fillStyle='rgba(253,246,236,.55)';ctx2.font='italic 14px Georgia,serif';ctx2.textAlign='right';
+  ctx2.fillText(charLabel,W2-36,148);
+
+  // Bottom tag
+  ctx2.fillStyle='rgba(253,246,236,.25)';ctx2.font='11px Georgia,serif';ctx2.textAlign='right';
+  ctx2.fillText('💕 play Happy Bao',W2-32,H2-18);
+
+  // Update preview
+  const preview=document.getElementById('share-preview');
+  if(preview) preview.src=sc.toDataURL('image/png');
+}
+
+function copyShareText(){
+  const g=lastGameShare;
+  const lines=[
+    `${g.medal} Happy Bao — Score: ${g.score}`,
+    `📊 Level ${g.level} · ${g.levelTitle}`,
+    `💕 ${g.sessionHearts} hearts · ${g.streak} streak`,
+    g.bossDefeated>0?`⚔️ ${g.bossDefeated} boss${g.bossDefeated>1?'es':''} defeated`:'',
+    `🏆 Personal best: ${g.highScore}`,
+    '',
+    '💌 Play Happy Bao 🧡'
+  ].filter(Boolean).join('\n');
+  navigator.clipboard.writeText(lines).then(()=>{
+    const btn=document.querySelector('.copy-btn');
+    if(btn){const orig=btn.textContent;btn.textContent='Copied! ✓';setTimeout(()=>btn.textContent=orig,2000);}
+  }).catch(()=>alert('Copy failed — try the download instead!'));
+}
+
+function downloadShareCard(){
+  const sc=document.getElementById('share-canvas');
+  if(!sc) return;
+  const a=document.createElement('a');
+  a.href=sc.toDataURL('image/png');
+  a.download='happy-bao-score.png';
+  a.click();
+}
+
+</script><!-- SHARE MODAL -->
+<div id="share-modal" onclick="if(event.target===this)closeShareModal()">
+  <div id="share-card-wrap">
+    <img id="share-preview" alt="Score card preview" style="width:100%;border-radius:14px;display:block;margin-bottom:.85rem;"/>
+    <canvas id="share-canvas" style="display:none"></canvas>
+    <div class="share-btns">
+      <button class="share-btn copy-btn" onclick="copyShareText()">Copy Text 📋</button>
+      <button class="share-btn dl-btn" onclick="downloadShareCard()">Save Image 💾</button>
+      <button class="share-btn close-btn" onclick="closeShareModal()">Close</button>
+    </div>
   </div>
 </div>
+
 </body>
 </html>
