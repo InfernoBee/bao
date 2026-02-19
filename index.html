@@ -814,11 +814,11 @@ function gameLoop(){
         }
 
         const total=pts+bonusStreak+auraBonus;
-        // Boss hit detection — hearts flying upward hit boss
-        if(bossActive&&checkBossHit(it.x,it.y)){
-          // Still count score
-          score+=total;streak++;sessionHearts++;P.totalHearts++;
-          updateHUD();items.splice(i,1);continue;
+        // Boss hit detection — every caught heart damages the boss
+        if(bossActive){
+          bossHP--;
+          showPopup('⚔️ Hit! -1',bossX,55,'#FFD700');
+          if(bossHP<=0){defeatBoss();score+=total;streak++;sessionHearts++;P.totalHearts++;updateHUD();items.splice(i,1);continue;}
         }
         score+=total;streak++;sessionHearts++;P.totalHearts++;
         if(streak>P.bestStreak) P.bestStreak=streak;
@@ -831,13 +831,15 @@ function gameLoop(){
         // Bao passive: Nomnom - potatoes collected (handled separately in item spawn)
 
 
-        const xpGain=Math.round((pts+(streak>=5?1:0))*st.xpM);
-        xp+=xpGain;sessionXP+=xpGain;
-        const cBase=Math.random()<0.35?1:0;
-        const cGain=Math.round(cBase*(st.coinX2?2:1)*st.coinM);
-        if(cGain>0){coins+=cGain;P.coins+=cGain;P.coinsEarned+=cGain;}
-        showPopup(auraBonus>0?`💥+${total}!`:pts>1?`+${total}💕`:'💕',it.x,it.y,lvData(level).color);
-        checkLevelUp();
+        if(!bossActive){
+          const xpGain=Math.round((pts+(streak>=5?1:0))*st.xpM);
+          xp+=xpGain;sessionXP+=xpGain;
+          const cBase=Math.random()<0.35?1:0;
+          const cGain=Math.round(cBase*(st.coinX2?2:1)*st.coinM);
+          if(cGain>0){coins+=cGain;P.coins+=cGain;P.coinsEarned+=cGain;}
+          showPopup(auraBonus>0?`💥+${total}!`:pts>1?`+${total}💞`:'💞',it.x,it.y,lvData(level).color);
+          checkLevelUp();
+        }
       }
       updateHUD();items.splice(i,1);continue;
     }
@@ -931,7 +933,7 @@ function spawnBoss(lv){
   bossHP=bossMaxHP;
   bossX=W/2;bossDir=1;bossFrame=0;bossPhase=0;
   bossShot=[];bossNextSpawn=frame+90;
-  showMsg('💀 BOSS FIGHT! Catch hearts to deal damage!');
+  showToast('💀 BOSS FIGHT! Catch hearts to deal damage!');
 }
 
 function updateBoss(){
