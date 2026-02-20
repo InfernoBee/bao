@@ -1021,6 +1021,7 @@ function saveP(){localStorage.setItem('bao_v4',JSON.stringify(P));}
 const canvas=document.getElementById('gameCanvas');
 const ctx=canvas.getContext('2d');
 const overlay=document.getElementById('overlay');
+let basket={x:0};
 let W,H;
 function resize(){
   W=canvas.width=document.getElementById('canvas-wrap').clientWidth;
@@ -1038,7 +1039,6 @@ const BASE_W=70,BH=22;
 const HEART_EMO=['💕','🧡','💛','🌸','💖','💗'];
 const BAD_EMO=['💀','🔥','🖤','🦠','😈'];
 
-let basket={x:0};
 let items=[],popups=[];
 let score=0,lives=3,xp=0,level=1,frame=0; // running declared above
 let streak=0,sessionHearts=0,coins=0,sessionXP=0;
@@ -1244,12 +1244,14 @@ function showToast(msg){
 function gameSecs(){return Math.min(frame/60,180);}
 
 function spawnItem(){
-  const isBad=Math.random()<(0.09+level*0.01); // fewer bad items early on
   const t=gameSecs();
-  // Speed: 0.8 px/frame at t=0, climbs to ~2.5 at t=180s, tiny level bump on top
-  // Hard cap 3.0 so it never becomes impossible
-  const base=0.8+(t/180)*1.7+level*0.06;
-  let spd=Math.min(3.0, base*(0.88+Math.random()*0.24))*st.sm;
+  // Bad chance: starts gentle, ramps up with time and level, capped to stay fair
+  const badChance=Math.min(0.28,0.05+(t/180)*0.15+level*0.006);
+  const isBad=Math.random()<badChance;
+  // Speed: 0.55 px/frame at t=0, climbs to ~2.1 by 180s + tiny level bump
+  // Hard cap 2.75 so late-game is hard but still dodgeable
+  const base=0.55+(t/180)*1.55+level*0.045;
+  let spd=Math.min(2.75, base*(0.88+Math.random()*0.24))*st.sm;
   if(shopHas('slow_start')&&frame<30*60) spd*=0.6;
   items.push({
     x:22+Math.random()*(W-44),y:-24,
@@ -1289,9 +1291,9 @@ function gameLoop(){
     showPopup('🚫 Bad items cleared!',W/2,H/2,'#aaa');
   }
 
-  // Spawn interval: 150 frames (~2.5 s) at start, ramps to 32 frames (~0.5 s) by 3 min
+  // Spawn interval: 190 frames (~3.2 s) at start, ramps to 40 frames (~0.67 s) by 3 min
   const _t=gameSecs();
-  const rate=Math.max(32,Math.round(150-(_t/180)*110-level*1.5));
+  const rate=Math.max(40,Math.round(190-(_t/180)*140-level*1.2));
   if(frame%rate===0&&!st.timeFrozen){
     spawnItem(); // always exactly one heart at base rate
     // 2nd heart: only after 75 s AND level ≥ 3, chance grows with time
