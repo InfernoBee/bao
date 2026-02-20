@@ -1022,6 +1022,7 @@ const canvas=document.getElementById('gameCanvas');
 const ctx=canvas.getContext('2d');
 const overlay=document.getElementById('overlay');
 let W,H;
+let basket={x:0};
 function resize(){
   W=canvas.width=document.getElementById('canvas-wrap').clientWidth;
   // Taller canvas on desktop so items have real space to fall
@@ -1038,7 +1039,6 @@ const BASE_W=70,BH=22;
 const HEART_EMO=['💕','🧡','💛','🌸','💖','💗'];
 const BAD_EMO=['💀','🔥','🖤','🦠','😈'];
 
-let basket={x:0};
 let items=[],popups=[];
 let score=0,lives=3,xp=0,level=1,frame=0; // running declared above
 let streak=0,sessionHearts=0,coins=0,sessionXP=0;
@@ -1244,8 +1244,9 @@ function showToast(msg){
 function gameSecs(){return Math.min(frame/60,180);}
 
 function spawnItem(){
-  const isBad=Math.random()<(0.09+level*0.01); // fewer bad items early on
   const t=gameSecs();
+  const badChance=Math.min(0.26,0.05+(t/180)*0.13+level*0.005);
+  const isBad=Math.random()<badChance;
   // Speed: 0.8 px/frame at t=0, climbs to ~2.5 at t=180s, tiny level bump on top
   // Hard cap 3.0 so it never becomes impossible
   const base=0.8+(t/180)*1.7+level*0.06;
@@ -1289,9 +1290,9 @@ function gameLoop(){
     showPopup('🚫 Bad items cleared!',W/2,H/2,'#aaa');
   }
 
-  // Spawn interval: 150 frames (~2.5 s) at start, ramps to 32 frames (~0.5 s) by 3 min
+  // Spawn interval: 180 frames (~3 s) at start, ramps to 34 frames (~0.57 s) by 3 min
   const _t=gameSecs();
-  const rate=Math.max(32,Math.round(150-(_t/180)*110-level*1.5));
+  const rate=Math.max(34,Math.round(180-(_t/180)*130-level*1.2));
   if(frame%rate===0&&!st.timeFrozen){
     spawnItem(); // always exactly one heart at base rate
     // 2nd heart: only after 75 s AND level ≥ 3, chance grows with time
