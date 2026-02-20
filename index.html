@@ -286,7 +286,6 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
     <p id="note-line2"></p>
     <p id="note-line3"></p>
     <p class="signature">— Your Dudu 💛</p>
-    <div style="display:flex;justify-content:center;gap:6px;margin-top:.9rem;" id="note-dots"></div>
   </div>
 
   <div class="section-label">
@@ -597,9 +596,6 @@ const LOVE_NOTES=[
   document.getElementById('note-line1').textContent=n.l1;
   document.getElementById('note-line2').textContent=n.l2;
   document.getElementById('note-line3').textContent=n.l3;
-  // Remove the dots element — no rotation UI needed
-  const dots=document.getElementById('note-dots');
-  if(dots) dots.remove();
 })();
 
 // ===================== CHARACTERS =====================
