@@ -282,7 +282,7 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
 .machine-light:nth-child(3){animation-delay:0.54s;}
 .gacha-machine.spinning #lever-knob,.gacha-machine.spinning #big-lever-knob{animation:leverPull .55s ease-in-out;}
 /* ===== GACHA PULL OVERLAY ===== */
-#gacha-anim-overlay{position:fixed;inset:0;z-index:9999;background:rgba(8,2,0,0.97);display:none;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;}
+#gacha-anim-overlay{position:fixed;inset:0;z-index:9999;background:rgba(2,0,12,0.97);display:none;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;}
 #gacha-anim-overlay.show{display:flex;}
 @keyframes bigReelBlur{0%,100%{filter:blur(0);opacity:1}40%{filter:blur(3px);opacity:0.3}60%{filter:blur(3px);opacity:0.3}}
 .big-reel-spinning{animation:bigReelBlur 0.15s linear infinite;}
@@ -303,14 +303,14 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
 @keyframes legendaryRays{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
 #gacha-rays{position:absolute;width:280px;height:280px;pointer-events:none;animation:legendaryRays 5s linear infinite;opacity:0;transition:opacity .5s;z-index:-1;}
 #gacha-rays.show{opacity:0.2;}
-@keyframes overlayPulse{0%,100%{background:rgba(8,2,0,0.97)}50%{background:rgba(35,15,2,0.98)}}
+@keyframes overlayPulse{0%,100%{background:rgba(2,0,12,0.97)}50%{background:rgba(20,5,40,0.98)}}
 #gacha-anim-overlay.pulsing{animation:overlayPulse 0.35s ease 4;}
-.gacha-anim-label{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--gold);letter-spacing:.1em;opacity:.8;min-height:1.4em;text-align:center;}
+.gacha-anim-label{font-family:'Playfair Display',serif;font-size:.95rem;color:#a78bfa;letter-spacing:.1em;opacity:.8;min-height:1.4em;text-align:center;}
 .gacha-pull-btns{display:flex;gap:8px;margin:.7rem 0;}
 .gpb{flex:1;border:none;border-radius:14px;padding:.55rem .4rem;font-family:'Playfair Display',serif;font-size:.8rem;cursor:pointer;font-style:italic;transition:transform .1s,filter .1s;}
 .gpb:active{transform:scale(.96);}
-.gpb.single{background:linear-gradient(135deg,#E8736A,#F4A56A);color:#fff;}
-.gpb.ten{background:linear-gradient(135deg,#9C27B0,#CE93D8);color:#fff;}
+.gpb.single{background:linear-gradient(135deg,#7B68EE,#CE93D8);color:#fff;}
+.gpb.ten{background:linear-gradient(135deg,#4422aa,#7B68EE);color:#fff;}
 .gpb:disabled{filter:grayscale(.7);opacity:.55;cursor:not-allowed;}
 .gacha-pity{font-size:.65rem;color:rgba(244,195,130,.5);margin-bottom:.6rem;}
 .gacha-result{min-height:54px;margin:.5rem 0;}
@@ -562,6 +562,7 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
     <div class="stat-row"><span class="stat-label">🎮 Games Played</span><span class="stat-val" id="st-gp">0</span></div>
     <div class="stat-row"><span class="stat-label">🔥 Best Streak</span><span class="stat-val" id="st-st">0</span></div>
     <div class="stat-row"><span class="stat-label">💰 Total Coins Earned</span><span class="stat-val" id="st-ce">0</span></div>
+    <div class="stat-row"><span class="stat-label">💎 Diamonds</span><span class="stat-val" id="st-dm" style="color:#a78bfa;">0</span></div>
     <div class="stat-row"><span class="stat-label">🛒 Items Purchased</span><span class="stat-val" id="st-ip">0</span></div>
     <div class="stat-row"><span class="stat-label">✨ Buffs Picked</span><span class="stat-val" id="st-bp">0</span></div>
     <div class="stat-row"><span class="stat-label">⚡ Best XP / Game</span><span class="stat-val" id="st-xp">0</span></div>
@@ -600,55 +601,58 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
   <div id="tab-shop" class="panel hidden" style="border-top:4px solid var(--gold);">
     <div class="shop-header">
       <h3>🛒 Bao's Shop</h3>
-      <div class="wallet">💰 <span id="shop-wallet">0</span></div>
+      <div class="wallet">💰 <span id="shop-wallet">0</span> &nbsp;💎 <span id="shop-diamond-wallet" style="color:#a78bfa;">0</span></div>
     </div>
 
     <!-- ── INLINE CAPSULE MACHINE ─────────────────────────────── -->
-    <div id="inline-gacha" style="background:linear-gradient(160deg,#2a1200,#1a0800);border:2px solid var(--gold);border-radius:20px;padding:1.1rem 1rem 1rem;margin-bottom:1rem;text-align:center;">
-      <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold);margin-bottom:.15rem;">🎰 Capsule Machine</div>
-      <div style="font-size:.7rem;color:rgba(244,195,130,.55);margin-bottom:.7rem;">Collect pets &amp; bonuses!</div>
-      <div class="gacha-machine" id="gacha-ball" onclick="gachaPull(1)" title="Pull! (costs 15 🪙)" style="cursor:pointer;display:block;text-align:center;">
-        <svg id="slot-machine-svg" viewBox="0 0 120 110" xmlns="http://www.w3.org/2000/svg" style="width:110px;height:100px;display:block;margin:0 auto;filter:drop-shadow(0 4px 18px rgba(255,165,0,0.45))">
+    <div id="inline-gacha" style="background:linear-gradient(160deg,#0a0a2a,#080818);border:2px solid #7B68EE;border-radius:20px;padding:1.1rem 1rem 1rem;margin-bottom:1rem;text-align:center;">
+      <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#a78bfa;margin-bottom:.15rem;">💎 Capsule Machine</div>
+      <div style="font-size:.7rem;color:rgba(167,139,250,.55);margin-bottom:.4rem;">Premium pulls · Collect pets &amp; bonuses!</div>
+      <div style="font-size:.75rem;color:rgba(167,139,250,.75);margin-bottom:.7rem;">💎 Diamonds: <span id="gacha-diamond-display" style="font-family:'Playfair Display',serif;color:#a78bfa;font-size:.9rem;">0</span>
+        <span style="opacity:.5;margin-left:.4rem;font-size:.65rem;font-style:italic;">earn from bosses &amp; high scores</span>
+      </div>
+      <div class="gacha-machine" id="gacha-ball" onclick="gachaPull(1)" title="Pull! (costs 3 💎)" style="cursor:pointer;display:block;text-align:center;">
+        <svg id="slot-machine-svg" viewBox="0 0 120 110" xmlns="http://www.w3.org/2000/svg" style="width:110px;height:100px;display:block;margin:0 auto;filter:drop-shadow(0 4px 18px rgba(120,80,220,0.55))">
           <rect x="8" y="18" width="104" height="72" rx="14" fill="url(#machineGrad)"/>
-          <rect x="8" y="18" width="104" height="72" rx="14" fill="none" stroke="#D4A853" stroke-width="2.5"/>
+          <rect x="8" y="18" width="104" height="72" rx="14" fill="none" stroke="#7B68EE" stroke-width="2.5"/>
           <rect x="14" y="22" width="40" height="14" rx="6" fill="rgba(255,255,255,0.08)"/>
-          <rect x="18" y="30" width="84" height="46" rx="8" fill="#0d0608" stroke="#b8860b" stroke-width="1.5"/>
-          <line x1="46" y1="30" x2="46" y2="76" stroke="#b8860b" stroke-width="1" opacity="0.6"/>
-          <line x1="74" y1="30" x2="74" y2="76" stroke="#b8860b" stroke-width="1" opacity="0.6"/>
-          <text id="reel1" x="32" y="59" text-anchor="middle" font-size="20">💕</text>
+          <rect x="18" y="30" width="84" height="46" rx="8" fill="#060210" stroke="#6644cc" stroke-width="1.5"/>
+          <line x1="46" y1="30" x2="46" y2="76" stroke="#6644cc" stroke-width="1" opacity="0.6"/>
+          <line x1="74" y1="30" x2="74" y2="76" stroke="#6644cc" stroke-width="1" opacity="0.6"/>
+          <text id="reel1" x="32" y="59" text-anchor="middle" font-size="20">💎</text>
           <text id="reel2" x="60" y="59" text-anchor="middle" font-size="20">⭐</text>
-          <text id="reel3" x="88" y="59" text-anchor="middle" font-size="20">💰</text>
-          <line x1="18" y1="53" x2="102" y2="53" stroke="rgba(255,215,0,0.3)" stroke-width="1.5" stroke-dasharray="4 3"/>
-          <rect x="101" y="36" width="11" height="38" rx="5.5" fill="url(#leverGrad)" stroke="#D4A853" stroke-width="1.2"/>
-          <circle id="lever-knob" cx="106.5" cy="38" r="6.5" fill="url(#knobGrad)" stroke="#D4A853" stroke-width="1.5"/>
-          <rect x="22" y="6" width="76" height="15" rx="7.5" fill="url(#signGrad)" stroke="#D4A853" stroke-width="1.5"/>
-          <text x="60" y="17" text-anchor="middle" font-family="serif" font-size="7.5" fill="#3D2B1F" font-weight="bold" letter-spacing="0.8">CAPSULE MACHINE</text>
-          <rect x="46" y="92" width="28" height="5" rx="2.5" fill="#0d0608" stroke="#b8860b" stroke-width="1"/>
-          <text x="60" y="106" text-anchor="middle" font-size="6.5" fill="rgba(244,195,130,0.45)" font-family="serif">TAP TO PULL</text>
-          <circle class="machine-light" cx="20" cy="24" r="3" fill="#ff6b6b" opacity="0.9"/>
-          <circle class="machine-light" cx="100" cy="24" r="3" fill="#FFD700" opacity="0.9"/>
+          <text id="reel3" x="88" y="59" text-anchor="middle" font-size="20">💜</text>
+          <line x1="18" y1="53" x2="102" y2="53" stroke="rgba(167,139,250,0.35)" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <rect x="101" y="36" width="11" height="38" rx="5.5" fill="url(#leverGrad)" stroke="#7B68EE" stroke-width="1.2"/>
+          <circle id="lever-knob" cx="106.5" cy="38" r="6.5" fill="url(#knobGrad)" stroke="#7B68EE" stroke-width="1.5"/>
+          <rect x="22" y="6" width="76" height="15" rx="7.5" fill="url(#signGrad)" stroke="#7B68EE" stroke-width="1.5"/>
+          <text x="60" y="17" text-anchor="middle" font-family="serif" font-size="7.5" fill="#e9e0ff" font-weight="bold" letter-spacing="0.8">CAPSULE MACHINE</text>
+          <rect x="46" y="92" width="28" height="5" rx="2.5" fill="#060210" stroke="#6644cc" stroke-width="1"/>
+          <text x="60" y="106" text-anchor="middle" font-size="6.5" fill="rgba(167,139,250,0.5)" font-family="serif">3 💎 PER PULL</text>
+          <circle class="machine-light" cx="20" cy="24" r="3" fill="#CE93D8" opacity="0.9"/>
+          <circle class="machine-light" cx="100" cy="24" r="3" fill="#a78bfa" opacity="0.9"/>
           <circle class="machine-light" cx="60" cy="24" r="3" fill="#90caf9" opacity="0.9"/>
           <defs>
             <linearGradient id="machineGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#5a1f0f"/>
-              <stop offset="50%" stop-color="#3a1208"/>
-              <stop offset="100%" stop-color="#1e0804"/>
+              <stop offset="0%" stop-color="#2a1060"/>
+              <stop offset="50%" stop-color="#180838"/>
+              <stop offset="100%" stop-color="#0a0418"/>
             </linearGradient>
             <linearGradient id="leverGrad" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stop-color="#888"/><stop offset="50%" stop-color="#ddd"/><stop offset="100%" stop-color="#888"/>
             </linearGradient>
             <radialGradient id="knobGrad" cx="0.35" cy="0.3">
-              <stop offset="0%" stop-color="#E8736A"/><stop offset="100%" stop-color="#8B1A1A"/>
+              <stop offset="0%" stop-color="#CE93D8"/><stop offset="100%" stop-color="#5B1A8B"/>
             </radialGradient>
             <linearGradient id="signGrad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="#C4940f"/><stop offset="50%" stop-color="#FFD700"/><stop offset="100%" stop-color="#C4940f"/>
+              <stop offset="0%" stop-color="#4422aa"/><stop offset="50%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#4422aa"/>
             </linearGradient>
           </defs>
         </svg>
       </div>
       <div class="gacha-pull-btns" style="margin:.6rem 0 .4rem;">
-        <button class="gpb single" onclick="gachaPull(1)" id="gpb1">✨ ×1 Pull — 15 🪙</button>
-        <button class="gpb ten" onclick="gachaPull(10)" id="gpb10">💫 ×10 Pull — 120 🪙</button>
+        <button class="gpb single" onclick="gachaPull(1)" id="gpb1">✨ ×1 Pull — 3 💎</button>
+        <button class="gpb ten" onclick="gachaPull(10)" id="gpb10">💫 ×10 Pull — 25 💎</button>
       </div>
       <div class="gacha-pity" id="gacha-pity-txt">Pity: 0 / 10 pulls until rare+</div>
       <div class="gacha-result" id="gacha-result"></div>
@@ -711,52 +715,52 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
         <polygon points="30,70 138,130 130,140" opacity="0.4"/>
       </g>
     </svg>
-    <svg id="gacha-big-machine" viewBox="0 0 220 185" xmlns="http://www.w3.org/2000/svg" style="width:220px;height:185px;filter:drop-shadow(0 6px 36px rgba(255,165,0,0.55))">
+    <svg id="gacha-big-machine" viewBox="0 0 220 185" xmlns="http://www.w3.org/2000/svg" style="width:220px;height:185px;filter:drop-shadow(0 6px 36px rgba(120,80,220,0.65))">
       <!-- Body -->
       <rect x="10" y="30" width="185" height="118" rx="18" fill="url(#bMG)"/>
-      <rect x="10" y="30" width="185" height="118" rx="18" fill="none" stroke="#D4A853" stroke-width="3"/>
+      <rect x="10" y="30" width="185" height="118" rx="18" fill="none" stroke="#7B68EE" stroke-width="3"/>
       <!-- Shine -->
       <rect x="18" y="36" width="65" height="18" rx="9" fill="rgba(255,255,255,0.09)"/>
       <!-- Screen -->
-      <rect x="22" y="46" width="158" height="76" rx="10" fill="#060203" stroke="#b8860b" stroke-width="2"/>
+      <rect x="22" y="46" width="158" height="76" rx="10" fill="#050115" stroke="#6644cc" stroke-width="2"/>
       <!-- Dividers -->
-      <line x1="74.5" y1="46" x2="74.5" y2="122" stroke="#b8860b" stroke-width="1.5" opacity="0.5"/>
-      <line x1="130.5" y1="46" x2="130.5" y2="122" stroke="#b8860b" stroke-width="1.5" opacity="0.5"/>
+      <line x1="74.5" y1="46" x2="74.5" y2="122" stroke="#6644cc" stroke-width="1.5" opacity="0.5"/>
+      <line x1="130.5" y1="46" x2="130.5" y2="122" stroke="#6644cc" stroke-width="1.5" opacity="0.5"/>
       <!-- Reels -->
-      <text id="ov-reel1" x="48.5" y="96" text-anchor="middle" font-size="38">💕</text>
+      <text id="ov-reel1" x="48.5" y="96" text-anchor="middle" font-size="38">💎</text>
       <text id="ov-reel2" x="102.5" y="96" text-anchor="middle" font-size="38">⭐</text>
-      <text id="ov-reel3" x="156.5" y="96" text-anchor="middle" font-size="38">💰</text>
+      <text id="ov-reel3" x="156.5" y="96" text-anchor="middle" font-size="38">💜</text>
       <!-- Scanline -->
-      <line x1="22" y1="84" x2="180" y2="84" stroke="rgba(255,215,0,0.35)" stroke-width="2" stroke-dasharray="6 4"/>
+      <line x1="22" y1="84" x2="180" y2="84" stroke="rgba(167,139,250,0.4)" stroke-width="2" stroke-dasharray="6 4"/>
       <!-- Lever -->
-      <rect x="182" y="54" width="18" height="62" rx="9" fill="url(#bLG)" stroke="#D4A853" stroke-width="1.5"/>
-      <circle id="ov-lever-knob" cx="191" cy="56" r="11" fill="url(#bKG)" stroke="#D4A853" stroke-width="2"/>
+      <rect x="182" y="54" width="18" height="62" rx="9" fill="url(#bLG)" stroke="#7B68EE" stroke-width="1.5"/>
+      <circle id="ov-lever-knob" cx="191" cy="56" r="11" fill="url(#bKG)" stroke="#7B68EE" stroke-width="2"/>
       <!-- Coin slot -->
-      <rect x="82" y="150" width="40" height="8" rx="4" fill="#060203" stroke="#b8860b" stroke-width="1.5"/>
-      <text x="102" y="168" text-anchor="middle" font-size="9" fill="rgba(244,195,130,0.4)" font-family="serif">INSERT COIN</text>
+      <rect x="82" y="150" width="40" height="8" rx="4" fill="#050115" stroke="#6644cc" stroke-width="1.5"/>
+      <text x="102" y="168" text-anchor="middle" font-size="9" fill="rgba(167,139,250,0.5)" font-family="serif">INSERT DIAMOND</text>
       <!-- Sign -->
-      <rect x="30" y="12" width="145" height="22" rx="11" fill="url(#bSG)" stroke="#D4A853" stroke-width="2"/>
-      <text x="102.5" y="26.5" text-anchor="middle" font-family="serif" font-size="10.5" fill="#3D2B1F" font-weight="bold" letter-spacing="1.5">✨ CAPSULE MACHINE ✨</text>
+      <rect x="30" y="12" width="145" height="22" rx="11" fill="url(#bSG)" stroke="#7B68EE" stroke-width="2"/>
+      <text x="102.5" y="26.5" text-anchor="middle" font-family="serif" font-size="10.5" fill="#e9e0ff" font-weight="bold" letter-spacing="1.5">✨ CAPSULE MACHINE ✨</text>
       <!-- Lights row -->
-      <circle class="big-light" cx="30" cy="40" r="5" fill="#ff6b6b"/>
-      <circle class="big-light" cx="175" cy="40" r="5" fill="#FFD700"/>
+      <circle class="big-light" cx="30" cy="40" r="5" fill="#CE93D8"/>
+      <circle class="big-light" cx="175" cy="40" r="5" fill="#a78bfa"/>
       <circle class="big-light" cx="102" cy="40" r="5" fill="#90caf9"/>
-      <circle class="big-light" cx="66" cy="40" r="4.5" fill="#CE93D8"/>
-      <circle class="big-light" cx="139" cy="40" r="4.5" fill="#4CAF50"/>
+      <circle class="big-light" cx="66" cy="40" r="4.5" fill="#b39ddb"/>
+      <circle class="big-light" cx="139" cy="40" r="4.5" fill="#7986CB"/>
       <defs>
         <linearGradient id="bMG" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#6a240e"/>
-          <stop offset="50%" stop-color="#3a1208"/>
-          <stop offset="100%" stop-color="#1a0603"/>
+          <stop offset="0%" stop-color="#2a1060"/>
+          <stop offset="50%" stop-color="#180838"/>
+          <stop offset="100%" stop-color="#0a0418"/>
         </linearGradient>
         <linearGradient id="bLG" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stop-color="#777"/><stop offset="50%" stop-color="#eee"/><stop offset="100%" stop-color="#777"/>
         </linearGradient>
         <radialGradient id="bKG" cx="0.35" cy="0.3">
-          <stop offset="0%" stop-color="#F4A56A"/><stop offset="100%" stop-color="#a03010"/>
+          <stop offset="0%" stop-color="#CE93D8"/><stop offset="100%" stop-color="#5B1A8B"/>
         </radialGradient>
         <linearGradient id="bSG" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#b8800a"/><stop offset="50%" stop-color="#FFD700"/><stop offset="100%" stop-color="#b8800a"/>
+          <stop offset="0%" stop-color="#4422aa"/><stop offset="50%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#4422aa"/>
         </linearGradient>
       </defs>
     </svg>
@@ -1258,7 +1262,7 @@ const SHOP_ITEMS=[
   {id:'coin_mult',        rarity:'uncommon', price:55,  icon:'💰', name:'Coin Saver',         desc:'+25% coins earned per game',                      cat:'Passive'},
   {id:'xp_passive',       rarity:'uncommon', price:60,  icon:'⚡', name:'XP Booster',         desc:'+15% XP gain always',                             cat:'Passive'},
   {id:'slow_start',       rarity:'uncommon', price:50,  icon:'🕰️', name:'Easy Start',         desc:'Slower hearts for the first 30s',                 cat:'Starter'},
-  {id:'heart_storm_start',rarity:'uncommon', price:55,  icon:'🌧️', name:'Storm Ready',        desc:'Always active: extra hearts spawn each wave',     cat:'Passive'},
+  {id:'heart_storm_start',rarity:'uncommon', price:55,  icon:'🌟', name:'Big Heart Mode',     desc:'Always active: hearts are 40% larger and easier to catch. Bad items fall 15% slower.',     cat:'Passive'},
   {id:'streak_shield',    rarity:'uncommon', price:65,  icon:'🔗', name:'Streak Guard',       desc:'Losing a life keeps your streak at half',         cat:'Passive'},
   {id:'second_wind',      rarity:'uncommon', price:70,  icon:'💨', name:'Second Wind',        desc:'Once per game: auto-revive with 1 HP at 0',       cat:'Combat'},
   {id:'coin_hoarder',     rarity:'uncommon', price:72,  icon:'🤑', name:'Coin Hoarder',       desc:'End-game bonus coins doubled',                    cat:'Passive'},
@@ -1302,9 +1306,17 @@ let P=JSON.parse(localStorage.getItem('bao_v4')||'null')||{
   highScore:0,highLevel:1,totalHearts:0,gamesPlayed:0,bestStreak:0,
   coinsEarned:0,itemsBought:0,buffsPicked:0,bestXP:0,legendaryRolled:0,
   baogames:0,dudugames:0,steamShields:0,angryAura:0,bossesDefeated:0,
-  achievedLevels:[1],coins:0,owned:[],bubuUnlocked:false,bubugames:0,
+  achievedLevels:[1],coins:0,diamonds:0,owned:[],bubuUnlocked:false,bubugames:0,
 };
 function saveP(){localStorage.setItem('bao_v4',JSON.stringify(P));}
+function updateWalletDisplays(){
+  if(!P.diamonds) P.diamonds=0;
+  document.getElementById('shop-wallet').textContent=P.coins;
+  const sdw=document.getElementById('shop-diamond-wallet');
+  if(sdw) sdw.textContent=P.diamonds;
+  const gdd=document.getElementById('gacha-diamond-display');
+  if(gdd) gdd.textContent=P.diamonds;
+}
 
 // ===================== CANVAS =====================
 const canvas=document.getElementById('gameCanvas');
@@ -1345,7 +1357,7 @@ function maxLives(){return shopHas('start_life')?4:3;}
 
 function computeState(){
   st={bw:1,sm:1,x2:false,x3:false,x4:false,x5:false,magnet:false,xpM:1,freezeBad:false,coinM:1,streakBonus:false,coinX2:false,
-      streakSave:false,timeFrozen:false,ghost:false,coinPerHeart:0,rallyBonus:0,starburstBonus:false,heartstorm:false,
+      streakSave:false,timeFrozen:false,ghost:false,coinPerHeart:0,rallyBonus:0,starburstBonus:false,heartstorm:false,bigHeartMode:false,
       doubleshotter:false,lifesteal:false,soulbound:false,badShrink:false};
   if(shopHas('start_wide'))  st.bw=Math.max(st.bw,1.3);
   if(shopHas('xp_passive'))  st.xpM=Math.max(st.xpM,1.15);
@@ -1354,7 +1366,7 @@ function computeState(){
   if(shopHas('magnet_start'))st.magnet=true;
   if(shopHas('double_coins'))st.coinM=Math.max(st.coinM,2);
   if(shopHas('xp_master'))   st.xpM=Math.max(st.xpM,1.35);
-  if(shopHas('heart_storm_start')) st.heartstorm=true;
+  if(shopHas('heart_storm_start')) st.bigHeartMode=true;
   if(shopHas('armor'))       st.armor=true;
   if(shopHas('bad_shrink'))  st.badShrink=true;
 
@@ -1380,6 +1392,8 @@ function computeState(){
     if(b.id==='ghost')     st.ghost=true;
     if(b.id==='coinrain')  st.coinPerHeart=3;
     if(b.id==='rally')     st.rallyBonus=1;
+    if(b.id==='rallyplus') st.rallyBonus=Math.max(st.rallyBonus,3);
+    if(b.id==='coinboost_boss') st.coinPerHeart=Math.max(st.coinPerHeart,3);
     if(b.id==='starburst') {st.starburstBonus=true;}
     if(b.id==='heartstorm') st.heartstorm=true;
     if(b.id==='omni')       {st.x3=true;st.magnet=true;st.freezeBad=true;}
@@ -1474,6 +1488,7 @@ function updateStatsPanel(){
   document.getElementById('st-gp').textContent=P.gamesPlayed;
   document.getElementById('st-st').textContent=P.bestStreak;
   document.getElementById('st-ce').textContent=P.coinsEarned;
+  const stDm=document.getElementById('st-dm');if(stDm)stDm.textContent=P.diamonds||0;
   document.getElementById('st-ip').textContent=P.itemsBought;
   document.getElementById('st-bp').textContent=P.buffsPicked;
   document.getElementById('st-xp').textContent=P.bestXP;
@@ -1492,7 +1507,7 @@ function updateStatsPanel(){
   setBar('prog-ce',P.coinsEarned,500);
   setBar('prog-st',P.bestStreak,20);
   renderUnlocks();
-  document.getElementById('shop-wallet').textContent=P.coins;
+  updateWalletDisplays();
 }
 
 function renderUnlocks(){
@@ -1533,7 +1548,7 @@ function setShopPage(p){
 }
 
 function renderShop(){
-  document.getElementById('shop-wallet').textContent = P.coins;
+  updateWalletDisplays();
   // Filter
   let items = SHOP_ITEMS.filter(it=>{
     if(shopCurrentCat !== 'all' && it.cat !== shopCurrentCat) return false;
@@ -1599,6 +1614,7 @@ function renderShop(){
 function buyItem(item){
   if(P.coins<item.price||P.owned.includes(item.id)) return;
   P.coins-=item.price; P.owned.push(item.id); P.itemsBought++; saveP();
+  playBuySound();
   // Apply immediate effects for new items
   applyNewShopItem(item.id);
   renderShop(); updateStatsPanel(); showToast(`${item.icon} ${item.name} purchased!`);
@@ -1634,12 +1650,17 @@ function spawnItem(){
   const lvRamp=level*0.035;            // +0.035 per level (was 0.06)
   const base=0.85+timeRamp+lvRamp;
   let spd=Math.min(2.8,base*(0.88+Math.random()*0.24))*st.sm;  // cap lowered 3.0→2.8
+  const itemSize = st.bigHeartMode ? 31 : 22;
   if(shopHas('slow_start')&&frame<30*60) spd*=0.6;
+  const badSpd = st.bigHeartMode ? spd * 0.85 : spd;
+  // 28% of good hearts get a Perfect Catch window (25 frames long, starts at a random point in their fall)
+  const isPerfect = !isBad && Math.random() < 0.28;
   items.push(petDeerlingFilter({
     x:22+Math.random()*(W-44),y:-24,
-    vy:isBad&&st.freezeBad?0.3:spd,
+    vy:isBad&&st.freezeBad?0.3:isBad?badSpd:spd,
     emoji:isBad?BAD_EMO[Math.floor(Math.random()*BAD_EMO.length)]:HEART_EMO[Math.floor(Math.random()*HEART_EMO.length)],
-    bad:isBad,size:22,frozen:isBad&&st.freezeBad
+    bad:isBad,size:itemSize,frozen:isBad&&st.freezeBad,
+    perfectWindow:isPerfect?{startY:80+Math.random()*120,duration:28}:null,
   }));
 }
 
@@ -1704,33 +1725,310 @@ function gameLoop(){
   const bw=BASE_W*st.bw;
   const bx=basket.x-bw/2,by=H-BH-10;
 
-  // glow
-  if(activeBuffs.length>0||level>=6){
-    ctx.save();ctx.shadowBlur=18;ctx.shadowColor=lvData(level).color;
-    ctx.fillStyle='rgba(0,0,0,0)';ctx.beginPath();ctx.roundRect(bx-1,by-1,bw+2,BH+2,9);ctx.fill();ctx.restore();
+  // ── BASKET PARTICLE SYSTEM ────────────────────────────────────────────────
+  if(!window._bParticles) window._bParticles=[];
+  const bp=window._bParticles;
+  // Spawn particles per character
+  if(running && frame%3===0){
+    if(currentChar==='bao'){
+      // Warm steamy wisps
+      bp.push({x:bx+8+Math.random()*(bw-16),y:by,vx:(Math.random()-.5)*0.6,vy:-0.8-Math.random()*0.5,
+        life:1,maxLife:40+Math.random()*20,r:3+Math.random()*3,
+        color:`hsl(${25+Math.random()*20},90%,${75+Math.random()*15}%)`,type:'wisp'});
+    } else if(currentChar==='dudu'){
+      // Warm amber honey sparks
+      if(Math.random()<0.6) bp.push({x:bx+Math.random()*bw,y:by+Math.random()*BH,
+        vx:(Math.random()-.5)*2,vy:-0.8-Math.random()*1.2,
+        life:1,maxLife:20+Math.random()*14,r:2+Math.random()*2.5,
+        color:`hsl(${28+Math.random()*24},85%,${52+Math.random()*20}%)`,type:'spark'});
+    } else if(currentChar==='bubu'){
+      // Black and white panda paw prints / petals
+      if(Math.random()<0.45) bp.push({x:bx+Math.random()*bw,y:by,
+        vx:(Math.random()-.5)*1.0,vy:-0.5-Math.random()*0.7,
+        life:1,maxLife:38+Math.random()*22,r:3+Math.random()*2.5,
+        color:Math.random()<0.5?`rgba(30,30,30,0.8)`:`rgba(240,240,240,0.85)`,type:'petal',
+        rot:Math.random()*Math.PI*2,rotV:(Math.random()-.5)*0.1});
+    }
   }
-  // Dudu passive glow when aura ready
-  if(currentChar==='dudu'&&duduAuraReady){
-    ctx.save();ctx.shadowBlur=24;ctx.shadowColor='#CE93D8';
-    ctx.fillStyle='rgba(0,0,0,0)';ctx.beginPath();ctx.roundRect(bx-2,by-2,bw+4,BH+4,10);ctx.fill();ctx.restore();
+  // Update & draw particles
+  for(let i=bp.length-1;i>=0;i--){
+    const p=bp[i];
+    p.x+=p.vx; p.y+=p.vy; p.life-=1/p.maxLife;
+    if(p.life<=0){bp.splice(i,1);continue;}
+    const alpha=p.life*(p.life<0.3?p.life/0.3:1);
+    ctx.save(); ctx.globalAlpha=alpha;
+    if(p.type==='wisp'){
+      const g2=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*2);
+      g2.addColorStop(0,p.color); g2.addColorStop(1,'rgba(255,255,255,0)');
+      ctx.fillStyle=g2; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*2,0,Math.PI*2); ctx.fill();
+    } else if(p.type==='spark'){
+      ctx.strokeStyle=p.color; ctx.lineWidth=1.5; ctx.shadowBlur=6; ctx.shadowColor=p.color;
+      ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x-p.vx*4,p.y-p.vy*4); ctx.stroke();
+    } else if(p.type==='petal'){
+      p.rot+=p.rotV;
+      ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.fillStyle=p.color; ctx.shadowBlur=4; ctx.shadowColor=p.color;
+      ctx.beginPath(); ctx.ellipse(0,0,p.r,p.r*0.6,0,0,Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
   }
 
-  // basket fill
+  // ── CHARACTER BASKET DRAWING ──────────────────────────────────────────────
+  const t=frame; // time for animation
+
+  if(currentChar==='bao'){
+    // ── BAO: fluffy steamed bun basket ──────────────────────────────────────
+    const pulse=Math.sin(t*0.06)*1.5; // gentle float/breathe
+    const rainbowMode=level>=7;
+
+    // Outer glow
+    ctx.save();
+    ctx.shadowBlur=rainbowMode?28:20;
+    ctx.shadowColor=rainbowMode?`hsl(${t*2%360},80%,65%)`:'#F4A56A';
+    if(activeBuffs.length>0||level>=6){
+      ctx.shadowBlur=26; ctx.shadowColor=lvData(level).color;
+    }
+
+    // Bun body (rounded rect with slight dome top)
+    if(rainbowMode){
+      const rg=ctx.createLinearGradient(bx,0,bx+bw,0);
+      rg.addColorStop(0,'#FF9ECD'); rg.addColorStop(.5,'#FFD700'); rg.addColorStop(1,'#6FCCAA');
+      ctx.fillStyle=rg;
+    } else {
+      const bg=ctx.createLinearGradient(bx,by+pulse,bx+bw,by+BH+pulse);
+      bg.addColorStop(0,'#FDE8D0'); bg.addColorStop(0.4,'#F4A56A'); bg.addColorStop(1,'#E8875A');
+      ctx.fillStyle=bg;
+    }
+    ctx.beginPath(); ctx.roundRect(bx,by+pulse,bw,BH,10); ctx.fill();
+
+    // Shiny top highlight (bun shine)
+    ctx.fillStyle='rgba(255,255,255,0.35)';
+    ctx.beginPath(); ctx.ellipse(basket.x-bw*0.1,by+pulse+4,bw*0.28,4,0,0,Math.PI*2); ctx.fill();
+
+    // Steamer fold lines (the pleats of a bao)
+    ctx.strokeStyle='rgba(220,150,100,0.5)'; ctx.lineWidth=1;
+    for(let i=1;i<4;i++){
+      const lx=bx+bw*i/4;
+      ctx.beginPath(); ctx.moveTo(lx,by+pulse+3); ctx.lineTo(lx,by+pulse+BH-4); ctx.stroke();
+    }
+
+    // Bao face — tiny happy eyes + blush
+    const fcx=basket.x, fcy=by+pulse+BH*0.48;
+    ctx.fillStyle='#5A2D0C';
+    // eyes
+    ctx.beginPath(); ctx.arc(fcx-8,fcy-1,2,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(fcx+8,fcy-1,2,0,Math.PI*2); ctx.fill();
+    // smile
+    ctx.strokeStyle='#5A2D0C'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(fcx,fcy+2,5,0.1,Math.PI-0.1); ctx.stroke();
+    // blush circles
+    ctx.fillStyle='rgba(255,150,100,0.35)';
+    ctx.beginPath(); ctx.ellipse(fcx-11,fcy+2,4,2.5,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(fcx+11,fcy+2,4,2.5,0,0,Math.PI*2); ctx.fill();
+
+    // Steam wisps above bun
+    ctx.strokeStyle='rgba(255,220,180,0.5)'; ctx.lineWidth=2; ctx.lineCap='round';
+    for(let s=0;s<3;s++){
+      const sx=bx+bw*(0.25+s*0.25), steamWave=Math.sin(t*0.08+s*1.2)*3;
+      ctx.beginPath();
+      ctx.moveTo(sx,by+pulse-4);
+      ctx.quadraticCurveTo(sx+steamWave,by+pulse-10,sx,by+pulse-16);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+  } else if(currentChar==='dudu'){
+    // ── DUDU: warm brown bear basket ────────────────────────────────────────
+    const auraReady=duduAuraReady;
+    const breathe=Math.sin(t*0.05)*1.0; // gentle bear breathing
+    const honeyDrip=((t*0.8)%60)/60; // honey drip cycle 0→1
+
+    ctx.save();
+
+    // Outer honey-amber glow when aura ready, soft warm glow otherwise
+    if(auraReady){
+      ctx.shadowBlur=28; ctx.shadowColor='#FFB300';
+      // Honey amber pulsing border
+      ctx.strokeStyle=`hsla(38,${85+Math.sin(t*0.12)*10}%,${50+Math.sin(t*0.15)*8}%,${0.55+Math.sin(t*0.15)*0.25})`;
+      ctx.lineWidth=3;
+      ctx.beginPath(); ctx.roundRect(bx-3,by+breathe-3,bw+6,BH+6,13); ctx.stroke();
+    } else {
+      ctx.shadowBlur=14; ctx.shadowColor='#8B5E3C';
+    }
+
+    // Bear body — warm brown gradient
+    const dg=ctx.createLinearGradient(bx,by+breathe,bx+bw,by+BH+breathe);
+    if(auraReady){
+      // honey-amber glow when streak ready
+      dg.addColorStop(0,'#E8A020'); dg.addColorStop(0.5,'#C47A10'); dg.addColorStop(1,'#8B5A08');
+    } else {
+      dg.addColorStop(0,'#C68642'); dg.addColorStop(0.4,'#8B5E3C'); dg.addColorStop(1,'#5C3D1E');
+    }
+    ctx.fillStyle=dg;
+    ctx.beginPath(); ctx.roundRect(bx,by+breathe,bw,BH,10); ctx.fill();
+
+    // Belly patch — lighter circle in the centre
+    ctx.fillStyle='rgba(222,180,130,0.45)';
+    ctx.beginPath(); ctx.ellipse(basket.x,by+breathe+BH*0.55,bw*0.28,BH*0.35,0,0,Math.PI*2); ctx.fill();
+
+    // Top highlight
+    ctx.fillStyle='rgba(255,235,200,0.22)';
+    ctx.beginPath(); ctx.roundRect(bx+4,by+breathe+2,bw-8,BH*0.4,8); ctx.fill();
+
+    // Round bear ears on top
+    ctx.shadowBlur=0;
+    ctx.fillStyle=auraReady?'#C47A10':'#6B3F1F';
+    ctx.beginPath(); ctx.arc(basket.x-bw*0.32,by+breathe-5,8,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(basket.x+bw*0.32,by+breathe-5,8,0,Math.PI*2); ctx.fill();
+    // Inner ear
+    ctx.fillStyle=auraReady?'#E8A020':'#A0603A';
+    ctx.beginPath(); ctx.arc(basket.x-bw*0.32,by+breathe-5,4.5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(basket.x+bw*0.32,by+breathe-5,4.5,0,Math.PI*2); ctx.fill();
+
+    // Bear face
+    const dcx=basket.x, dcy=by+breathe+BH*0.42;
+    // Muzzle (lighter oval)
+    ctx.fillStyle='rgba(210,170,120,0.7)';
+    ctx.beginPath(); ctx.ellipse(dcx,dcy+3,8,5,0,0,Math.PI*2); ctx.fill();
+    // Eyes — small dark beads
+    ctx.fillStyle='#1A0A00';
+    ctx.beginPath(); ctx.arc(dcx-7,dcy-2,2.2,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(dcx+7,dcy-2,2.2,0,Math.PI*2); ctx.fill();
+    // Eye shine
+    ctx.fillStyle='rgba(255,255,255,0.75)';
+    ctx.beginPath(); ctx.arc(dcx-6,dcy-3,0.9,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(dcx+8,dcy-3,0.9,0,Math.PI*2); ctx.fill();
+    // Nose
+    ctx.fillStyle='#2A1000';
+    ctx.beginPath(); ctx.ellipse(dcx,dcy+1,2.5,2,0,0,Math.PI*2); ctx.fill();
+
+    // Streak counter / aura state
+    if(auraReady){
+      ctx.fillStyle='#FFD700'; ctx.font='bold 8px serif'; ctx.textAlign='center';
+      ctx.shadowBlur=6; ctx.shadowColor='#FFB300';
+      ctx.fillText('🍯',basket.x,by+breathe+BH-3);
+    } else if(streak>=2){
+      ctx.fillStyle='rgba(255,235,180,0.9)'; ctx.font='bold 8px serif';
+      ctx.shadowBlur=0;
+      ctx.fillText(`🐾×${streak}`,basket.x,by+breathe+BH-2);
+    }
+
+    // Honey drip from bottom when aura ready
+    if(auraReady){
+      const dy=by+breathe+BH;
+      ctx.fillStyle='rgba(255,180,0,0.7)';
+      ctx.beginPath();
+      ctx.moveTo(basket.x-4,dy);
+      ctx.lineTo(basket.x+4,dy);
+      ctx.lineTo(basket.x+2,dy+honeyDrip*10);
+      ctx.quadraticCurveTo(basket.x,dy+honeyDrip*14,basket.x-2,dy+honeyDrip*10);
+      ctx.closePath(); ctx.fill();
+    }
+    ctx.restore();
+
+  } else if(currentChar==='bubu'){
+    // ── BUBU: black-and-white panda basket ──────────────────────────────────
+    const bounce=Math.sin(t*0.07)*1.2;
+    const shimmer=Math.sin(t*0.09);
+
+    ctx.save();
+    ctx.shadowBlur=18; ctx.shadowColor='#555';
+
+    // Body — white with black trim (panda colouring)
+    const bbg=ctx.createLinearGradient(bx,by+bounce,bx+bw,by+BH+bounce);
+    bbg.addColorStop(0,'#F8F8F8'); bbg.addColorStop(0.5,'#E8E8E8'); bbg.addColorStop(1,'#D0D0D0');
+    ctx.fillStyle=bbg;
+    ctx.beginPath(); ctx.roundRect(bx,by+bounce,bw,BH,10); ctx.fill();
+
+    // Black border stripe (panda markings around the basket)
+    ctx.strokeStyle='#222'; ctx.lineWidth=2; ctx.shadowBlur=0;
+    ctx.beginPath(); ctx.roundRect(bx,by+bounce,bw,BH,10); ctx.stroke();
+
+    // Subtle shimmer highlight
+    ctx.fillStyle=`rgba(255,255,255,${0.15+shimmer*0.08})`;
+    ctx.beginPath(); ctx.roundRect(bx+3,by+bounce+2,bw-6,BH*0.38,8); ctx.fill();
+
+    // Panda ears — black circles poking up
+    ctx.fillStyle='#1A1A1A'; ctx.shadowBlur=6; ctx.shadowColor='#000';
+    ctx.beginPath(); ctx.arc(basket.x-bw*0.32,by+bounce-6,9,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(basket.x+bw*0.32,by+bounce-6,9,0,Math.PI*2); ctx.fill();
+
+    // Panda face
+    const pcx=basket.x, pcy=by+bounce+BH*0.42;
+
+    // Large oval black eye patches — classic panda look
+    ctx.fillStyle='#1A1A1A'; ctx.shadowBlur=0;
+    ctx.beginPath(); ctx.ellipse(pcx-8.5,pcy-1,5.5,4.5,Math.PI*0.1,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(pcx+8.5,pcy-1,5.5,4.5,-Math.PI*0.1,0,Math.PI*2); ctx.fill();
+
+    // White eye inside the patch
+    ctx.fillStyle='white';
+    ctx.beginPath(); ctx.arc(pcx-8,pcy-1,2.8,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(pcx+8,pcy-1,2.8,0,Math.PI*2); ctx.fill();
+
+    // Dark pupils
+    ctx.fillStyle='#111';
+    ctx.beginPath(); ctx.arc(pcx-8,pcy-1,1.5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(pcx+8,pcy-1,1.5,0,Math.PI*2); ctx.fill();
+
+    // Eye shine
+    ctx.fillStyle='rgba(255,255,255,0.85)';
+    ctx.beginPath(); ctx.arc(pcx-7,pcy-2,0.8,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(pcx+9,pcy-2,0.8,0,Math.PI*2); ctx.fill();
+
+    // Muzzle — off-white oval
+    ctx.fillStyle='rgba(240,240,230,0.9)';
+    ctx.beginPath(); ctx.ellipse(pcx,pcy+4,7,4.5,0,0,Math.PI*2); ctx.fill();
+
+    // Nose
+    ctx.fillStyle='#333';
+    ctx.beginPath(); ctx.ellipse(pcx,pcy+2,2,1.5,0,0,Math.PI*2); ctx.fill();
+
+    // Tiny smile
+    ctx.strokeStyle='#333'; ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.arc(pcx,pcy+5,3,0.2,Math.PI-0.2); ctx.stroke();
+
+    // Bamboo stalks on either side
+    for(let b2=0;b2<2;b2++){
+      const bsX=b2===0?bx-7:bx+bw+2;
+      ctx.fillStyle='#5A8A3A'; ctx.shadowBlur=0;
+      ctx.fillRect(bsX,by+bounce-8,4,BH+10);
+      // bamboo nodes
+      ctx.fillStyle='#3A6A1A';
+      for(let n=0;n<3;n++){
+        ctx.fillRect(bsX-1,by+bounce-6+n*(BH/2.5),6,2);
+      }
+      // bamboo leaves
+      ctx.fillStyle='#5A8A3A';
+      ctx.beginPath();
+      ctx.ellipse(bsX+2,by+bounce-10,8,4,b2===0?-0.4:0.4,0,Math.PI*2);
+      ctx.fill();
+    }
+
+    // Passive charge — floating bag icons
+    if(passiveCharge>0){
+      ctx.font='9px serif'; ctx.textAlign='center'; ctx.shadowBlur=0;
+      ctx.fillText('🛍️'.repeat(Math.min(passiveCharge,5)), basket.x, by+bounce-14);
+    }
+
+    ctx.restore();
+  }
+
+  // ── LEVEL 7 RAINBOW OVERRIDE (additional shimmer) ─────────────────────────
   if(level>=7){
-    const g=ctx.createLinearGradient(bx,0,bx+bw,0);
-    g.addColorStop(0,'#FF9ECD');g.addColorStop(.5,'#FFD700');g.addColorStop(1,'#6FCCAA');
-    ctx.fillStyle=g;
-  } else {
-    ctx.fillStyle=ch.color;
+    ctx.save(); ctx.globalAlpha=0.18;
+    const rg7=ctx.createLinearGradient(bx,0,bx+bw,0);
+    rg7.addColorStop(0,'#FF9ECD'); rg7.addColorStop(.5,'#FFD700'); rg7.addColorStop(1,'#6FCCAA');
+    ctx.fillStyle=rg7;
+    ctx.beginPath(); ctx.roundRect(bx,by,bw,BH,10); ctx.fill();
+    ctx.restore();
   }
-  ctx.beginPath();ctx.roundRect(bx,by,bw,BH,8);ctx.fill();
-  ctx.fillStyle='#3D2B1F';ctx.font='bold 11px serif';ctx.textAlign='center';
-  ctx.fillText(ch.basketLabel,basket.x,by+14);
 
-  // shield indicator
+  // ── SHIELD INDICATOR ──────────────────────────────────────────────────────
   if(shieldsLeft>0){
-    ctx.save();ctx.font='11px serif';ctx.fillStyle='#90caf9';ctx.textAlign='center';
-    ctx.fillText('🛡️'.repeat(Math.min(shieldsLeft,3)),basket.x,by-5);ctx.restore();
+    ctx.save(); ctx.font='11px serif'; ctx.fillStyle='#90caf9'; ctx.textAlign='center';
+    ctx.shadowBlur=8; ctx.shadowColor='#90caf9';
+    ctx.fillText('🛡️'.repeat(Math.min(shieldsLeft,3)),basket.x,by-8); ctx.restore();
   }
 
   drawBoss();
@@ -1759,6 +2057,38 @@ function gameLoop(){
       ctx.globalAlpha=.1;ctx.font=it.size+'px serif';ctx.textAlign='center';
       ctx.fillText(it.emoji,it.x+2,it.y+3);
       ctx.globalAlpha=1;ctx.fillText(it.emoji,it.x,it.y);
+
+      // ── PERFECT CATCH RING ────────────────────────────────────────────────
+      if(it.perfectWindow){
+        const pw=it.perfectWindow;
+        // Mark when the window opened
+        if(!pw.openedAt && it.y >= pw.startY) pw.openedAt=frame;
+        if(pw.openedAt){
+          const elapsed=frame-pw.openedAt;
+          if(elapsed <= pw.duration){
+            // Active window — draw pulsing golden ring
+            const progress=elapsed/pw.duration;
+            const ringAlpha=1-progress*0.3;
+            const ringScale=1+Math.sin(progress*Math.PI)*0.18;
+            const ringR=(it.size*0.62)*ringScale;
+            ctx.save();
+            ctx.globalAlpha=ringAlpha;
+            ctx.strokeStyle=`hsl(${45+progress*20},100%,62%)`;
+            ctx.lineWidth=2.5;
+            ctx.shadowBlur=12; ctx.shadowColor='#FFD700';
+            ctx.beginPath(); ctx.arc(it.x,it.y-it.size*0.1,ringR,0,Math.PI*2); ctx.stroke();
+            // Star markers at 4 corners of the ring
+            ctx.fillStyle='#FFD700'; ctx.font='8px serif';
+            ctx.fillText('✦',it.x+ringR,it.y-it.size*0.1);
+            ctx.fillText('✦',it.x-ringR,it.y-it.size*0.1);
+            ctx.restore();
+            it.perfectActive=true;
+          } else {
+            it.perfectActive=false;
+            it.perfectWindow=null; // window expired
+          }
+        }
+      }
     }
     ctx.restore();
 
@@ -1817,6 +2147,20 @@ function gameLoop(){
         pts+=st.rallyBonus; // Rally +1
         if(st.starburstBonus) pts+=2; // starburst boost
         const bonusStreak=(st.streakBonus&&streak>=5)?2:0;
+
+        // ── PERFECT CATCH BONUS ───────────────────────────────────────────
+        const isPerfectCatch = it.perfectActive === true;
+        if(isPerfectCatch){
+          pts = pts * 3; // 3× score on perfect catch
+          if(!window._perfectCount) window._perfectCount=0;
+          window._perfectCount++;
+          showPopup(`✨ PERFECT! ×3`,it.x,it.y-18,'#FFD700');
+          // Play a tiny chime
+          if(window._audioCtx){
+            _playTone(1174,'triangle',0,0.12,0.18);
+            _playTone(1568,'triangle',0.1,0.1,0.14);
+          }
+        }
 
         // DUDU passive: Angry Aura
         let auraBonus=0;
@@ -2401,8 +2745,11 @@ function makeBossShot(x, vy, vx, boss, overrideEmoji) {
 function fireBossPattern() {
   const boss = selectedBoss;
   const rage = bossPhase === 2;
-  // MUCH easier difficulty: slow projectile speed, long intervals
-  const baseVy = rage ? 1.6 : 1.1;
+  const isChaos = boss && boss.type === 'hate';
+  // Chaos shots: notably faster; Comfort shots: slower and more telegraphed
+  const baseVy = isChaos
+    ? (rage ? 2.2 : 1.55)
+    : (rage ? 1.3 : 0.9);
   const id = boss ? boss.id : 'generic';
 
   // Clamp shots to arena width with padding
@@ -2657,22 +3004,42 @@ function updateBoss() {
   bossFrame++;
   const boss = selectedBoss;
   const rageMult = boss ? boss.rageMult : 1.2;
-  // Boss moves slower — easier to predict
-  const spd = bossPhase === 2 ? (1.6 * rageMult) : 1.4;
-  bossX += bossDir * spd;
-  if (bossX > W - 30 || bossX < 30) bossDir *= -1;
+  const isChaos = boss && boss.type === 'hate';
 
-  // Enter rage at 1/3 HP (easier — rage kicks in later)
+  // ── MOVEMENT: Chaos bosses move faster & jitter; Comfort drift gently ──────
+  const baseSpd = isChaos ? 1.9 : 1.1;
+  const spd = bossPhase === 2 ? (baseSpd * rageMult) : baseSpd;
+  bossX += bossDir * spd;
+
+  // Chaos bosses randomly reverse direction; Comfort bosses only bounce off walls
+  if (bossX > W - 30 || bossX < 30) bossDir *= -1;
+  if (isChaos && bossPhase === 2 && Math.random() < 0.018) bossDir *= -1; // random jerk
+
+  // ── RAGE THRESHOLD: same for both ──────────────────────────────────────────
   if (bossHP <= Math.floor(bossMaxHP / 3) && bossPhase < 2) {
     bossPhase = 2;
-    showPopup('💢 RAGE!', W/2, H/2, '#FF4444');
+    showPopup(isChaos ? '💢 FRENZY!' : '💜 SURGE!', W/2, H/2, isChaos ? '#FF4444' : '#CE93D8');
   }
 
-  // Fire pattern — longer intervals = easier to dodge
+  // ── FIRE RATE: Chaos fires more frequently ──────────────────────────────────
   if (frame >= bossNextSpawn) {
     fireBossPattern();
-    // Normal: every 100 frames (~1.7s), rage: every 70 frames (~1.2s)
-    bossNextSpawn = frame + (bossPhase === 2 ? 70 : 100);
+    const normalInterval = isChaos ? 78 : 115;
+    const rageInterval  = isChaos ? 52 : 82;
+    bossNextSpawn = frame + (bossPhase === 2 ? rageInterval : normalInterval);
+  }
+
+  // ── CANVAS AURA: tint the background behind the boss ───────────────────────
+  const framesUntilFire = bossNextSpawn - frame;
+  if (bossActive) {
+    const auraAlpha = bossPhase === 2 ? 0.13 : 0.07;
+    const auraColor = isChaos
+      ? `rgba(220,60,30,${auraAlpha + (framesUntilFire<=18?0.07:0)})`
+      : `rgba(180,120,255,${auraAlpha + (framesUntilFire<=18?0.05:0)})`;
+    ctx.save();
+    ctx.fillStyle = auraColor;
+    ctx.fillRect(0, 0, W, H);
+    ctx.restore();
   }
 
   updateBossParticles();
@@ -2699,50 +3066,84 @@ function drawBoss(){
   const boss = selectedBoss;
   const emoji = boss ? boss.emoji : (level===3?'🍖':level===6?'🌶️':'💀');
   const bossColor = boss ? boss.color : '#FF4444';
+  const isChaos = boss && boss.type === 'hate';
   const scale = bossPhase===2 ? 2.6 : 2.1;
-  // Pre-fire warning telegraph: boss glows brightly 20 frames before firing
+
+  // Pre-fire warning telegraph
   const framesUntilFire = bossNextSpawn - frame;
   const telegraphing = framesUntilFire <= 20 && framesUntilFire > 0;
-  // Boss name tag above
+
   ctx.save();
+
   if(telegraphing){
-    // Bright warning flash — player gets visual cue to dodge
     const pulse = Math.sin((20-framesUntilFire)*0.5)*0.5+0.5;
-    ctx.shadowBlur = 40 + pulse*20; ctx.shadowColor = '#FFFF00';
+    // Chaos: harsh red-yellow flash; Comfort: warm purple-pink glow
+    const warnColor = isChaos ? `rgba(255,${80+pulse*80},0,0.9)` : `rgba(220,160,255,0.9)`;
+    ctx.shadowBlur = 40 + pulse*20;
+    ctx.shadowColor = isChaos ? '#FF4400' : '#CE93D8';
+    // Chaos gets a shaking effect
+    if(isChaos) ctx.translate(Math.sin(bossFrame*0.8)*(pulse*2.5), 0);
   } else if(bossPhase===2){
-    ctx.shadowBlur=35;ctx.shadowColor=bossColor;
+    ctx.shadowBlur = isChaos ? 42 : 30;
+    ctx.shadowColor = isChaos ? '#FF2200' : '#CE93D8';
+    if(isChaos) ctx.translate(Math.sin(bossFrame*0.5)*1.5, 0); // subtle rage shake
   } else {
-    ctx.shadowBlur=12;ctx.shadowColor=bossColor;
+    ctx.shadowBlur = isChaos ? 16 : 10;
+    ctx.shadowColor = isChaos ? '#FF6633' : bossColor;
   }
-  ctx.font=`${scale*20}px serif`;ctx.textAlign='center';
-  ctx.fillText(emoji,bossX,52);
+
+  // Boss emoji
+  ctx.font=`${scale*20}px serif`; ctx.textAlign='center';
+  ctx.fillText(emoji, bossX, 52);
   ctx.restore();
-  // Boss name tag
+
+  // Boss name tag + type badge
   if(boss){
     ctx.save();
-    ctx.font='bold 8px serif';ctx.textAlign='center';
-    ctx.fillStyle = bossPhase===2 ? '#FF9999' : 'rgba(255,255,255,0.75)';
+    // Type badge background
+    const badgeColor = isChaos ? 'rgba(220,60,30,0.75)' : 'rgba(120,60,200,0.6)';
+    const badgeW = 62, badgeH = 11;
+    const badgeX = bossX - badgeW/2;
+    ctx.fillStyle = badgeColor;
+    ctx.beginPath(); ctx.roundRect(badgeX, 2, badgeW, badgeH, 5); ctx.fill();
+    ctx.fillStyle = isChaos ? '#FFD0C0' : '#E8D0FF';
+    ctx.font = 'bold 7px serif'; ctx.textAlign = 'center';
+    ctx.fillText(isChaos ? '💢 CHAOS BOSS' : '💜 COMFORT BOSS', bossX, 11);
+
+    // Boss name
+    ctx.fillStyle = bossPhase===2 ? (isChaos ? '#FF9999' : '#E0B0FF') : 'rgba(255,255,255,0.82)';
+    ctx.font = 'bold 8px serif';
     const nameShort = boss.name.length>22 ? boss.name.slice(0,20)+'…' : boss.name;
-    ctx.fillText(nameShort, bossX, 15);
+    ctx.fillText(nameShort, bossX, 24);
+
     if(bossPhase===2){
-      ctx.fillStyle='#FF4444';ctx.font='bold 7px serif';
-      ctx.fillText('💢 RAGE MODE!',bossX,25);
+      ctx.fillStyle = isChaos ? '#FF4444' : '#CE93D8';
+      ctx.font = 'bold 7px serif';
+      ctx.fillText(isChaos ? '💢 FRENZY!' : '💜 SURGE!', bossX, 33);
     }
     ctx.restore();
   }
-  // HP bar
-  const barW=W*0.7,barX=(W-barW)/2,barY=62;
-  ctx.fillStyle='rgba(0,0,0,0.4)';ctx.fillRect(barX,barY,barW,8);
+
+  // HP bar — red for chaos, purple for comfort
+  const barW=W*0.7, barX=(W-barW)/2, barY=62;
+  ctx.fillStyle='rgba(0,0,0,0.4)'; ctx.fillRect(barX,barY,barW,8);
   const pct=bossHP/bossMaxHP;
-  const hpColor=pct>0.5?'#4CAF50':pct>0.25?'#FF9800':'#F44336';
-  ctx.fillStyle=hpColor;ctx.fillRect(barX,barY,barW*pct,8);
-  ctx.strokeStyle='rgba(255,255,255,0.3)';ctx.strokeRect(barX,barY,barW,8);
-  ctx.font='bold 9px serif';ctx.fillStyle='white';ctx.textAlign='center';
-  ctx.fillText(`${boss?boss.emoji:'💀'} HP: ${bossHP}/${bossMaxHP}`,W/2,60);
-  // Draw shots
+  const hpColor = isChaos
+    ? (pct>0.5?'#FF6633':pct>0.25?'#FF3300':'#CC0000')
+    : (pct>0.5?'#9C27B0':pct>0.25?'#7B1FA2':'#CE93D8');
+  ctx.fillStyle=hpColor; ctx.fillRect(barX,barY,barW*pct,8);
+  ctx.strokeStyle='rgba(255,255,255,0.3)'; ctx.strokeRect(barX,barY,barW,8);
+  ctx.font='bold 9px serif'; ctx.fillStyle='white'; ctx.textAlign='center';
+  ctx.fillText(`${boss?boss.emoji:'💀'} HP: ${bossHP}/${bossMaxHP}`, W/2, 60);
+
+  // Draw shots — chaos shots have red tint shadow, comfort have purple
   for(const s of bossShot){
-    ctx.save();ctx.shadowBlur=10;ctx.shadowColor=bossColor||'rgba(255,50,50,0.8)';
-    ctx.font=s.size+'px serif';ctx.textAlign='center';ctx.fillText(s.emoji,s.x,s.y);ctx.restore();
+    ctx.save();
+    ctx.shadowBlur = isChaos ? 14 : 8;
+    ctx.shadowColor = isChaos ? 'rgba(255,80,30,0.85)' : 'rgba(180,100,255,0.7)';
+    ctx.font=s.size+'px serif'; ctx.textAlign='center';
+    ctx.fillText(s.emoji, s.x, s.y);
+    ctx.restore();
   }
 }
 
@@ -2757,6 +3158,83 @@ function checkBossHit(heartX,heartY){
   return false;
 }
 
+// ── BOSS-SPECIFIC REWARDS ────────────────────────────────────────────────────
+// Each boss has a thematic unique buff tied to what they represent
+const BOSS_REWARDS = {
+  // ── Chaos bosses → offensive / score power ──────────────────────────────
+  udon_worm_titan:    {id:'double',    dur:18, name:'🍜 Worm Vanquisher',   desc:'2× score for 18s — you tamed the worm!'},
+  onion_overlord:     {id:'rally',     dur:14, name:'😤 Tear Proof',         desc:'Rally bonus +2pts/heart for 14s — no more crying!'},
+  raw_onion_specter:  {id:'magnet_s',  dur:15, name:'👻 Ghost Repel',        desc:'Magnet for 15s — ghosts can\'t haunt you now!'},
+  bean_sprout_imp:    {id:'breezy',    dur:12, name:'🌱 Sprout Stomp',       desc:'All items 25% slower + wider basket for 12s!'},
+  bean_sprout_hydra:  {id:'shield2',   dur:0,  name:'🌿 Hydra Shield',       desc:'Fortress shield — block 3 bad items! The Hydra fears you.'},
+  raw_bean_tyrant:    {id:'double',    dur:14, name:'🌿 Bean Buster',         desc:'2× score for 14s — that tyrant is silenced!'},
+  bean_sprout_apocalypse:{id:'eclipse',dur:0,  name:'☠️ Apocalypse Ender',  desc:'All bad items vanish + 5× pts + magnet!'},
+  lor_mee_specter:    {id:'coinboost', dur:14, name:'🫙 Sauce Purged',        desc:'+3 coins per heart for 14s — the sauce is yours now!'},
+  lor_mee_demon:      {id:'apotheosis',dur:0,  name:'🫙 Demon Sauce',         desc:'5× pts + clear all bad items + magnet for 10s!'},
+  udon_warlord:       {id:'heartquake',dur:0,  name:'🍜 Noodle Storm',        desc:'5× pts + scatter 6 hearts + freeze bad for 12s!'},
+  udon_demon_king:    {id:'omni',      dur:20, name:'😈 King Slayer',         desc:'3× pts + magnet + freeze bad for 20s — legendary kill!'},
+  onion_colossus:     {id:'liferegen', dur:0,  name:'🧅 Tear Healer',         desc:'+1 life recovered — you suffered, now you heal!'},
+  onion_god:          {id:'ultralife', dur:0,  name:'🌋 God Toppled',         desc:'+3 lives! The ancient onion deity is felled!'},
+
+  // ── Comfort bosses → protective / healing / utility ─────────────────────
+  maroon_queen:       {id:'shieldplus',dur:0,  name:'👑 Queen\'s Blessing',   desc:'Iron Shield — block 2 bad items. She grants you grace.'},
+  broccoli_sprite:    {id:'liferegen', dur:0,  name:'🥦 Gentle Healing',      desc:'+1 life — the soft sprite gifts you health.'},
+  grapefruit_witch:   {id:'magnet_m',  dur:14, name:'🍊 Citrus Charm',        desc:'Strong magnet for 14s — her zesty power is yours!'},
+  potato_sentinel:    {id:'liferegen', dur:0,  name:'🥔 Fluffy Comfort',      desc:'+1 life — the potato sentinel heals your wounds.'},
+  mashed_egg_duchess: {id:'rallyplus', dur:12, name:'🥚 Creamy Rally',        desc:'+3pts per heart for 12s — the duchess is generous!'},
+  maggie_noodle_fiend:{id:'double',    dur:14, name:'🍝 Spicy Power',          desc:'2× score for 14s — the fiend\'s spice fuels you!'},
+  penne_phantom:      {id:'magnet_s',  dur:12, name:'🍝 Pasta Pull',           desc:'Magnet for 12s — penne never lets anything slip!'},
+  kovan_memory:       {id:'soulbound', dur:8,  name:'💌 Memory Pulse',         desc:'Soulbound: hearts heal 1 life each for 8s!'},
+  navyblue_knight:    {id:'shield2',   dur:0,  name:'🫐 Knight\'s Honour',     desc:'Fortress Shield — the knight guards you now.'},
+  brown_pant_phantom: {id:'rally',     dur:14, name:'🤎 Autumn Grace',         desc:'Rally +1pt/heart for 14s — warm and steady!'},
+  steamboat_guardian: {id:'liferegen', dur:0,  name:'🫕 Hotpot Heal',          desc:'+1 life — the steamboat guardian restores your warmth!'},
+  sheng_jian_empress: {id:'double',    dur:12, name:'🥟 Crispy Victory',       desc:'2× score for 12s — the empress\'s fire empowers you!'},
+  crabstick_commander:{id:'magnet_m',  dur:12, name:'🦀 Ocean Pull',           desc:'Strong magnet for 12s — the ocean draws hearts to you!'},
+  enoki_empress:      {id:'shieldplus',dur:0,  name:'🍄 Thread Shield',        desc:'Iron Shield (2 blocks) — the empress weaves your protection!'},
+  si_ji_dou_guardian: {id:'liferegen', dur:0,  name:'🫘 Grandma\'s Love',      desc:'+1 life — grandma\'s green beans heal you deeply.'},
+  cozy_maroon_sentinel:{id:'shield',   dur:0,  name:'🔴 Maroon Ward',          desc:'Love Shield — the sentinel guards your next step!'},
+  nightfall_wanderer: {id:'xp_l',      dur:15, name:'🎧 Midnight Surge',       desc:'+100% XP for 15s — the R&B wanderer enlightens you!'},
+  maroon_empress_eternal:{id:'godmode',dur:15, name:'💜 Eternal Grace',        desc:'Queen Mode for 15s — the empress crowns you!'},
+  steamboat_supreme:  {id:'ultralife', dur:0,  name:'🔥 Supreme Warmth',       desc:'+3 lives — the supreme sovereign heals you fully!'},
+  nostalgia_eclipse:  {id:'soulbound', dur:10, name:'🌒 Eclipse Blessing',     desc:'Soulbound for 10s — every heart heals 1 life!'},
+  duck_rice_overlord: {id:'coins_xl',  dur:0,  name:'🦆 Yew Kee Jackpot',     desc:'+60 coins + 2× coins for 10s — Yew Kee blesses you!'},
+  great_sheng_jian:   {id:'heartquake',dur:0,  name:'🥟 Great Crispy Blast',   desc:'5× pts + scatter 6 hearts + freeze bad for 12s!'},
+  maroon_empress_eternal2:{id:'eclipse',dur:0, name:'💜 Eternal Eclipse',      desc:'All bad items gone + 5× pts + magnet!'},
+  si_ji_dou_deity:    {id:'omni',      dur:20, name:'🌟 Divine Bounty',        desc:'3× pts + magnet + freeze bad for 20s — sacred blessing!'},
+  midnight_weeknd_sorceress:{id:'xp_l',dur:20, name:'🌙 Midnight Mastery',    desc:'+100% XP for 20s — the sorceress reveals all secrets!'},
+  weeknd_colossus:    {id:'apotheosis',dur:0,  name:'⭐ Starboy Ascension',    desc:'5× pts + clear all bad + magnet — the Colossus kneels!'},
+  after_hours_phantom:{id:'godmode',  dur:20,  name:'🎙️ After Hours Mode',     desc:'Queen Mode for 20s — the phantom grants you its power!'},
+  duck_rice_overlord2:{id:'coins_xl',  dur:0,  name:'🦆 Duck Rice Wealth',     desc:'+60 coins + 2× coins for 10s!'},
+};
+
+// A "rallyplus" is +3pts/heart — slightly better than standard rally
+// We handle it via a custom inline buff object
+function getBossSpecificReward(boss) {
+  if (!boss) return null;
+  const spec = BOSS_REWARDS[boss.id];
+  if (!spec) {
+    // Fallback: chaos → double points, comfort → life regen
+    return boss.type === 'hate'
+      ? ALL_BUFFS.find(b=>b.id==='double')
+      : ALL_BUFFS.find(b=>b.id==='liferegen');
+  }
+  // Special case rallyplus
+  if (spec.id === 'rallyplus') {
+    return {id:'rallyplus',rarity:'rare',emoji:'💪',short:'Rally+',name:spec.name,desc:spec.desc,dur:spec.dur||12,w:0};
+  }
+  if (spec.id === 'coinboost') {
+    return {id:'coinboost',rarity:'rare',emoji:'💰',short:'Coins',name:spec.name,desc:spec.desc,dur:spec.dur||12,w:0};
+  }
+  const baseBuff = ALL_BUFFS.find(b=>b.id===spec.id);
+  if (!baseBuff) return ALL_BUFFS.find(b=>b.id==='double');
+  return {
+    ...baseBuff,
+    name: spec.name,
+    desc: spec.desc,
+    dur: spec.dur !== undefined ? spec.dur : baseBuff.dur,
+  };
+}
+
 function defeatBoss(){
   bossActive=false;bossShot=[];bossDefeated++;
   // Fire event for easter egg system
@@ -2764,32 +3242,56 @@ function defeatBoss(){
   P.achievedLevels.push('boss'+level);
   saveP();
   running=false;
-  // Give a guaranteed rare+ buff reward
-  const rareBuff=ALL_BUFFS.filter(b=>['rare','epic','legendary'].includes(b.rarity));
-  const reward=rareBuff[Math.floor(Math.random()*rareBuff.length)];
+
   const boss = selectedBoss;
+  // Boss-specific thematic reward, or rare+ fallback
+  let reward = getBossSpecificReward(boss);
+  if (!reward) {
+    const rareBuff=ALL_BUFFS.filter(b=>['rare','epic','legendary'].includes(b.rarity));
+    reward=rareBuff[Math.floor(Math.random()*rareBuff.length)];
+  }
+  // Boss slayer perk: upgrade to epic if shop has it
+  if(shopHas('boss_slayer') && ['common','uncommon'].includes(reward.rarity)){
+    const epicBuffs=ALL_BUFFS.filter(b=>b.rarity==='epic');
+    const epicReward=epicBuffs[Math.floor(Math.random()*epicBuffs.length)];
+    reward={...epicReward, name:'🗡️ '+epicReward.name, desc:'[Boss Slayer] '+epicReward.desc};
+  }
+
   const bossDisplayName = boss ? `${boss.emoji} ${boss.name}` : (level===3?'🍖 The Greasy Pork Chunk':level===6?'🌶️ Lord Chili Burn':'💀 THE DEMON DUMPLING');
   const bossTypeLabel = boss ? boss.typeLabel : 'Boss';
-  const bossColor = boss ? boss.color : '#FF4444';
+  const isChaos = boss && boss.type === 'hate';
+  const victoryColor = isChaos ? '#FF9977' : '#CE93D8';
+
   overlay.classList.remove('hidden');
   overlay.innerHTML=`
     <h2 style="color:var(--gold)">🏆 BOSS DEFEATED!</h2>
-    <div style="font-size:2rem;margin:.5rem 0">🎉✨🎊</div>
-    <p>You beat the <span style="color:rgba(253,246,236,.6);font-size:.75rem">${bossTypeLabel}</span><br>
+    <div style="font-size:2rem;margin:.4rem 0">${isChaos?'💢⚔️🔥':'💜✨🌸'}</div>
+    <p>You defeated the <span style="color:${victoryColor};font-size:.75rem;font-weight:bold">${bossTypeLabel}</span><br>
     <strong style="color:var(--peach);font-size:1rem">${bossDisplayName}</strong>!</p>
     ${boss?`<p style="font-size:.72rem;opacity:.65;font-style:italic;margin-bottom:.3rem">"${boss.lore.slice(0,80)}…"</p>`:''}
-    <p style="font-size:.8rem">Bonus reward unlocked:</p>
-    <div style="border:1.5px solid var(--${reward.rarity==='legendary'?'legendary':reward.rarity==='epic'?'epic':'rare'});border-radius:10px;padding:.5rem .8rem;margin:.4rem 0;background:rgba(255,255,255,0.05)">
+    <p style="font-size:.78rem;margin-bottom:.2rem">🎁 <strong>Boss Reward:</strong></p>
+    <div style="border:2px solid ${isChaos?'#FF6633':'#CE93D8'};border-radius:12px;padding:.5rem .8rem;margin:.3rem 0;background:${isChaos?'rgba(255,80,30,0.08)':'rgba(180,100,255,0.08)'}">
+      <div style="font-size:.7rem;color:${victoryColor};margin-bottom:.15rem">✦ Thematic Reward — ${bossTypeLabel}</div>
       <strong style="font-family:'Playfair Display',serif">${reward.name}</strong><br>
-      <span style="font-size:.75rem;opacity:.8">${reward.desc}</span>
+      <span style="font-size:.75rem;opacity:.85">${reward.desc}</span>
     </div>
-    <button class="game-btn" id="boss-claim-btn">Claim Reward! 🎁</button>`;
+    <button class="game-btn" id="boss-claim-btn" style="background:${isChaos?'linear-gradient(135deg,#C0392B,#E74C3C)':'linear-gradient(135deg,#7B1FA2,#9C27B0)'}">Claim Reward! ${isChaos?'⚔️':'💜'}</button>`;
   document.getElementById('boss-claim-btn').addEventListener('click',()=>{
     if(reward.instant&&reward.fn){const g={coins,P,lives};reward.fn(g);coins=g.coins;lives=g.lives;}
     if(reward.id==='shield') shieldsLeft=1;
     if(reward.id==='shield2') shieldsLeft=3;
+    if(reward.id==='shieldplus') shieldsLeft=Math.max(shieldsLeft,2);
     if(reward.id==='phoenix') phoenixReady=true;
-    if(reward.dur>0&&!reward.instant) activeBuffs.push({id:reward.id,rarity:reward.rarity,emoji:reward.emoji,short:reward.short,endsAt:reward.dur===Infinity?Infinity:frame+reward.dur*60});
+    if(reward.id==='liferegen'){lives=Math.min(lives+1,maxLives()+2);updateHUD();}
+    if(reward.id==='ultralife'){lives=Math.min(lives+3,maxLives()+4);updateHUD();}
+    if(reward.id==='coins_xl'){coins+=60;P.coins+=60;P.coinsEarned+=60;
+      activeBuffs.push({id:'coinboost_boss',rarity:'rare',emoji:'💰',short:'Coins×2',endsAt:frame+10*60});}
+    if(reward.id==='rallyplus')
+      activeBuffs.push({id:'rallyplus',rarity:'rare',emoji:'💪',short:'Rally+',endsAt:frame+(reward.dur||12)*60});
+    if(reward.id==='coinboost')
+      activeBuffs.push({id:'coinboost_boss',rarity:'rare',emoji:'💰',short:'+Coins',endsAt:frame+(reward.dur||12)*60});
+    if(reward.dur>0&&!reward.instant&&reward.id!=='rallyplus'&&reward.id!=='coinboost'&&reward.id!=='coins_xl')
+      activeBuffs.push({id:reward.id,rarity:reward.rarity||'rare',emoji:reward.emoji,short:reward.short,endsAt:reward.dur===Infinity?Infinity:frame+reward.dur*60});
     overlay.classList.add('hidden');running=true;updateHUD();
     // Then show level-up buff pick
     showLevelUpScreen();
@@ -2846,22 +3348,35 @@ function endGame(){
   P.gamesPlayed++;
   if(currentChar==='bao') P.baogames++; else if(currentChar==='dudu') P.dudugames++; else if(currentChar==='bubu') P.bubugames++;
   P.bossesDefeated=(P.bossesDefeated||0)+bossDefeated;
+  const prevHighScore = P.highScore;
+  const isNewHighScore = score > prevHighScore && prevHighScore > 0;
   if(score>P.highScore) P.highScore=score;
   if(sessionXP>P.bestXP) P.bestXP=sessionXP;
   const bonusCoins=Math.floor(score/5);
   coins+=bonusCoins;P.coins+=bonusCoins;P.coinsEarned+=bonusCoins;
+  // Award diamonds for high scores (1 💎 per 20 points, hard to get!)
+  if(!P.diamonds) P.diamonds=0;
+  const bonusDiamonds=Math.floor(score/20);
+  if(bonusDiamonds>0) P.diamonds+=bonusDiamonds;
   saveP();updateStatsPanel();renderShop();
+  // Sound effects
+  if(isNewHighScore && P.highScore > 0){
+    setTimeout(()=>playHighScoreSound(), 200);
+  } else {
+    setTimeout(()=>playGameOverSound(), 100);
+  }
   const d=lvData(level);
   const medal=score>=60?'🏅':score>=35?'🥈':score>=18?'🥉':'💕';
   // Store for share card
   lastGameShare={score,level,levelTitle:d.title,levelColor:d.color,medal,streak,sessionHearts,bossDefeated,char:currentChar,highScore:P.highScore};
   overlay.classList.remove('hidden');
   overlay.innerHTML=`
-    <h2>${score>=40?'🌟 Incredible!':score>=20?'💕 Well done!':'🧡 Good try!'}</h2>
+    <h2>${isNewHighScore && P.highScore>0?'🌟 NEW RECORD!':score>=40?'🌟 Incredible!':score>=20?'💕 Well done!':'🧡 Good try!'}</h2>
+    ${isNewHighScore && P.highScore>0?`<div style="font-family:'Playfair Display',serif;font-size:.95rem;color:#FFD700;font-style:italic;margin-bottom:.3rem;animation:pulse 1s ease-in-out infinite;">✨ Personal Best: ${P.highScore} ✨</div>`:''}
     <p>Reached <strong style="color:${d.color}">Lv.${level} ${d.title}</strong><br>
     ${medal} Score: <strong>${score}</strong> · Best: ${P.highScore}<br>
-    Hearts: ${sessionHearts} · Streak: ${streak}${bossDefeated>0?`<br><span style="color:#FFD700">⚔️ Bosses defeated: ${bossDefeated}</span>`:''}
-    <br><span style="color:var(--gold)">+${bonusCoins} 💰 bonus coins!</span></p>
+    Hearts: ${sessionHearts} · Streak: ${streak}${bossDefeated>0?`<br><span style="color:#FFD700">⚔️ Bosses defeated: ${bossDefeated}</span>`:''}${(window._perfectCount||0)>0?`<br><span style="color:#FFD700">✨ Perfect catches: ${window._perfectCount}</span>`:''}
+    <br><span style="color:var(--gold)">+${bonusCoins} 💰 bonus coins!</span>${bonusDiamonds>0?`<br><span style="color:#a78bfa">+${bonusDiamonds} 💎 diamond${bonusDiamonds>1?'s':''}! (score ≥ ${bonusDiamonds*20})</span>`:''}</p>
     <p style="font-size:.72rem;opacity:.7;margin-bottom:.7rem">${score>=40?'Legendary as always, Bao 💛':score>=20?'Keep collecting nomnoms! 🍜':'Practice makes perfect, sweet Bao 🌸'}</p>
     <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:.4rem">
       <button class="game-btn" id="restart-btn" style="margin:0">Play Again 💕</button>
@@ -2876,6 +3391,8 @@ function endGame(){
 let armorUsed=false;
 function resetGame(){
   items=[];popups=[];activeBuffs=[];
+  window._bParticles=[];
+  window._perfectCount=0;
   score=0;lives=maxLives();xp=0;level=1;frame=0;
   streak=0;sessionHearts=0;coins=0;sessionXP=0;
   shieldsLeft=0;phoenixReady=false;starCache=null;
@@ -3225,7 +3742,7 @@ function c4UseSkill(sk){
     if(!c4.eShield){ c4.eHP=Math.max(0,c4.eHP-lDmg); } else { c4.eShield=false; }
     P.coins+=3; P.coinsEarned+=3; saveP();
     document.getElementById('coinsDisplay').textContent=P.coins;
-    document.getElementById('shop-wallet').textContent=P.coins;
+    updateWalletDisplays();
     c4.skillCDs[sk]=ch.skills[sk].maxCd;
     c4Msg('🛍️ Lucky Bag! -'+lDmg+' dmg and +3 coins!','');
     if(c4.eHP<=0){c4Win();return;}
@@ -3235,7 +3752,7 @@ function c4UseSkill(sk){
     if(P.coins<5){c4Msg('Need 5 coins to Splurge!','Need more coins 💸');return;}
     P.coins-=5; saveP();
     document.getElementById('coinsDisplay').textContent=P.coins;
-    document.getElementById('shop-wallet').textContent=P.coins;
+    updateWalletDisplays();
     const sDmg=20;
     if(!c4.eShield){ c4.eHP=Math.max(0,c4.eHP-sDmg); } else { c4.eShield=false; }
     c4Msg('💸 Splurge! Spent 5 coins → -'+sDmg+' massive damage!','');
@@ -3565,16 +4082,23 @@ function c4Win(){
   let reward=lv.reward;
   let bubuBonus=0;
   if(c4.char==='bubu'){ bubuBonus=3; reward+=bubuBonus; }
-  coins+=reward;P.coins+=reward;P.coinsEarned+=reward;saveP();
+  coins+=reward;P.coins+=reward;P.coinsEarned+=reward;
+  // Award a diamond for defeating a boss! 💎
+  if(!P.diamonds) P.diamonds=0;
+  P.diamonds+=1;
+  saveP();
   document.getElementById('coinsDisplay').textContent=P.coins;
-  document.getElementById('shop-wallet').textContent=P.coins;
+  updateWalletDisplays();
+  const dEl=document.getElementById('gacha-diamond-display');
+  if(dEl) dEl.textContent=P.diamonds;
   const nextLv=Math.min(c4.level+1, C4_LEVELS_COUNT-1);
   // Peek at what comes next (random from next tier)
   const nextPeek=isLast?null:c4PickBossChoices(nextLv);
   document.getElementById('c4-ov-title').textContent=isLast?'YOU WIN! 🎉':'Victory! 🏆';
   document.getElementById('c4-ov-body').innerHTML=
     'Defeated <strong>'+lv.emoji+' '+lv.name+'</strong>!<br>'+
-    '<span style="color:var(--gold)">+'+reward+' coins!'+(bubuBonus>0?' <span style="color:#FF6BA8">(+'+bubuBonus+' Bubu bonus!)</span>':'')+' </span>'+(isLast?'<br><span style="color:var(--peach)">You cleared all 12 levels! 💕</span>':
+    '<span style="color:var(--gold)">+'+reward+' coins!'+(bubuBonus>0?' <span style="color:#FF6BA8">(+'+bubuBonus+' Bubu bonus!)</span>':'')+' </span>'+
+    ' <span style="color:#a78bfa">+1 💎 diamond!</span>'+(isLast?'<br><span style="color:var(--peach)">You cleared all 12 levels! 💕</span>':
     '<br><span style="opacity:.6;font-size:.7rem">Next: pick from '+nextPeek.map(b=>b.emoji+' '+b.name).join(' · ')+'</span>');
   document.getElementById('c4-ov-streak').textContent='Level '+(c4.level+1)+' / '+C4_LEVELS_COUNT+' cleared! ⭐';
   document.getElementById('c4-next-btn').textContent=isLast?'Play Again 💕':'Next Level ▶️';
@@ -3901,24 +4425,136 @@ function refreshBubuCard(){
 }
 
 function updateGachaUI(){
+  if(!P.diamonds) P.diamonds=0;
   document.getElementById('gacha-pity-txt').textContent=`Pity: ${P.gachaPity} / 10 pulls until rare+`;
-  const hasSingle=P.coins>=15;
-  const hasTen=P.coins>=120;
+  const hasSingle=P.diamonds>=3;
+  const hasTen=P.diamonds>=25;
   document.getElementById('gpb1').disabled=!hasSingle;
   document.getElementById('gpb10').disabled=!hasTen;
+  const dEl=document.getElementById('gacha-diamond-display');
+  if(dEl) dEl.textContent=P.diamonds;
   renderGachaInv();
   // update wallet in shop too
-  document.getElementById('shop-wallet').textContent=P.coins;
+  updateWalletDisplays();
+}
+
+// ── GACHA SOUND ENGINE ────────────────────────────────────────────────────
+const _audioCtx = (()=>{
+  try { return new (window.AudioContext||window.webkitAudioContext)(); } catch(e){ return null; }
+})();
+
+function _playTone(freq, type='sine', startTime=0, duration=0.15, vol=0.18, endFreq=null){
+  if(!_audioCtx) return;
+  const osc = _audioCtx.createOscillator();
+  const gain = _audioCtx.createGain();
+  osc.connect(gain); gain.connect(_audioCtx.destination);
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, _audioCtx.currentTime + startTime);
+  if(endFreq) osc.frequency.exponentialRampToValueAtTime(endFreq, _audioCtx.currentTime + startTime + duration);
+  gain.gain.setValueAtTime(vol, _audioCtx.currentTime + startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, _audioCtx.currentTime + startTime + duration);
+  osc.start(_audioCtx.currentTime + startTime);
+  osc.stop(_audioCtx.currentTime + startTime + duration + 0.01);
+}
+
+function _playNoise(startTime=0, duration=0.08, vol=0.12){
+  if(!_audioCtx) return;
+  const buf = _audioCtx.createBuffer(1, _audioCtx.sampleRate * duration, _audioCtx.sampleRate);
+  const data = buf.getChannelData(0);
+  for(let i=0;i<data.length;i++) data[i]=(Math.random()*2-1);
+  const src = _audioCtx.createBufferSource();
+  const gain = _audioCtx.createGain();
+  const filter = _audioCtx.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.frequency.value = 800;
+  src.buffer = buf;
+  src.connect(filter); filter.connect(gain); gain.connect(_audioCtx.destination);
+  gain.gain.setValueAtTime(vol, _audioCtx.currentTime + startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, _audioCtx.currentTime + startTime + duration);
+  src.start(_audioCtx.currentTime + startTime);
+}
+
+function playGameOverSound(){
+  if(!_audioCtx) return;
+  if(_audioCtx.state==='suspended') _audioCtx.resume();
+  // Descending sad wah-wah
+  [[392,0],[330,0.18],[277,0.36],[220,0.55]].forEach(([f,d])=>
+    _playTone(f,'sawtooth',d,0.22,0.14));
+  _playTone(220,'sine',0.55,0.6,0.08,110);
+  _playNoise(0.55,0.12,0.18);
+}
+
+function playHighScoreSound(){
+  if(!_audioCtx) return;
+  if(_audioCtx.state==='suspended') _audioCtx.resume();
+  [[523,0],[659,0.1],[784,0.2],[1047,0.32],[1319,0.46],[1047,0.62],[1319,0.76],[1568,0.9]].forEach(([f,d])=>
+    _playTone(f,'triangle',d,0.16,0.2));
+  _playTone(523,'sine',0,1.1,0.06,1568);
+  for(let i=0;i<5;i++) setTimeout(()=>_playNoise(0,0.05,0.12), 400+i*130);
+}
+
+function playBuySound(){
+  if(!_audioCtx) return;
+  if(_audioCtx.state==='suspended') _audioCtx.resume();
+  _playTone(880,'triangle',0,0.1,0.18);
+  _playTone(1108,'triangle',0.08,0.12,0.16);
+  _playTone(1318,'triangle',0.18,0.18,0.14);
+  _playTone(1760,'sine',0.3,0.22,0.1);
+}
+
+function playGachaStartSound(){
+  if(!_audioCtx) return;
+  // Lever click
+  _playNoise(0, 0.06, 0.25);
+  _playTone(200, 'square', 0, 0.08, 0.12, 120);
+  // Reel spinning ticks
+  for(let i=0;i<12;i++){
+    const t = 0.08 + i * 0.07;
+    _playTone(300 + Math.random()*200, 'square', t, 0.04, 0.06);
+  }
+}
+
+function playGachaResultSound(rarity){
+  if(!_audioCtx) return;
+  const t = 0;
+  if(rarity === 'legendary'){
+    // Triumphant fanfare
+    [[523,0],[659,0.13],[784,0.26],[1047,0.4],[1319,0.55],[1047,0.72],[1319,0.88]].forEach(([f,d])=>
+      _playTone(f,'triangle',d,0.18,0.22));
+    _playTone(523,'sine',0,0.9,0.08,1319);
+    for(let i=0;i<6;i++) setTimeout(()=>_playNoise(0,0.05,0.15), 300+i*120);
+  } else if(rarity === 'epic'){
+    // Rising sparkle
+    [[392,0],[523,0.14],[659,0.28],[784,0.42],[1047,0.58]].forEach(([f,d])=>
+      _playTone(f,'triangle',d,0.16,0.2));
+    _playTone(392,'sine',0,0.65,0.07,1047);
+  } else if(rarity === 'rare'){
+    // Nice chime
+    [[523,0],[659,0.15],[784,0.3]].forEach(([f,d])=>
+      _playTone(f,'triangle',d,0.18,0.18));
+  } else if(rarity === 'uncommon'){
+    _playTone(440,'triangle',0,0.14,0.15);
+    _playTone(554,'triangle',0.15,0.14,0.15);
+  } else {
+    // Common: soft blip
+    _playTone(330,'sine',0,0.12,0.12,280);
+  }
 }
 
 function gachaPull(count){
-  const cost=count===1?15:120;
-  if(P.coins<cost){showToast(`Need ${cost} coins 💰`);return;}
-  P.coins-=cost;
+  if(!P.diamonds) P.diamonds=0;
+  const cost=count===1?3:25;
+  if(P.diamonds<cost){showToast(`Need ${cost} 💎 diamonds! Earn by defeating bosses & high scores.`);return;}
+  P.diamonds-=cost;
+  const dEl=document.getElementById('gacha-diamond-display');
+  if(dEl) dEl.textContent=P.diamonds;
+  saveP();
   const results=[];
   for(let i=0;i<count;i++) results.push(gachaRoll());
-  coins=P.coins;
   saveP();
+  // Sound!
+  if(_audioCtx && _audioCtx.state==='suspended') _audioCtx.resume();
+  playGachaStartSound();
   // Trigger full animation overlay
   const machineEl=document.getElementById('gacha-ball');
   machineEl.classList.remove('spinning');
@@ -4018,6 +4654,7 @@ function playGachaAnimation(results, count){
       resultEl.style.cssText=`display:block;background:${rarityBg[rarity]};border:2px solid ${rarityBorder[rarity]};color:${rarityColors[rarity]};`;
       resultEl.style.animation='resultCardPop .52s cubic-bezier(.34,1.56,.64,1) forwards';
       label.textContent=rarity==='legendary'?'🌟 LEGENDARY!!':rarity==='epic'?'★ EPIC!':rarity==='rare'?'✦ Rare!':'✨ Got it!';
+      playGachaResultSound(rarity);
 
       // Close after delay — tap to dismiss early
       const closeOverlay=()=>{
@@ -4090,9 +4727,9 @@ function checkDailyLogin(){
 }
 
 function dailyReward(streak){
-  if(streak>=30) return {coins:80,label:`+80 coins 💰 (30-day legend!)`};
-  if(streak>=14) return {coins:50,label:`+50 coins 💰 (2-week warrior!)`};
-  if(streak>=7)  return {coins:35,label:`+35 coins 💰 (week streak! 🌟)`};
+  if(streak>=30) return {coins:80,label:`+80 coins 💰 (30-day legend!) +5 💎`};
+  if(streak>=14) return {coins:50,label:`+50 coins 💰 (2-week warrior!) +3 💎`};
+  if(streak>=7)  return {coins:35,label:`+35 coins 💰 (week streak! 🌟) +1 💎`};
   if(streak>=3)  return {coins:20,label:`+20 coins 💰 (3-day streak!)`};
   return {coins:10,label:`+10 coins 💰`};
 }
@@ -4121,11 +4758,21 @@ function showDailyModal(){
 function claimDaily(){
   const r=dailyReward(P.dailyStreak||1);
   P.coins+=r.coins;P.coinsEarned+=r.coins;
+  // Bonus diamond for 7-day streak milestones
+  if(!P.diamonds) P.diamonds=0;
+  const streak7=P.dailyStreak||1;
+  let diamondBonus=0;
+  if(streak7>=30) diamondBonus=5;
+  else if(streak7>=14) diamondBonus=3;
+  else if(streak7>=7) diamondBonus=1;
+  if(diamondBonus>0){ P.diamonds+=diamondBonus; }
   P.lastDailyClaim=new Date().toDateString();
   saveP();
   document.getElementById('daily-modal').classList.remove('show');
-  showToast(`Daily reward: ${r.label}`);
-  document.getElementById('shop-wallet').textContent=P.coins;
+  const dEl=document.getElementById('gacha-diamond-display');
+  if(dEl) dEl.textContent=P.diamonds;
+  showToast(`Daily reward: ${r.label}${diamondBonus>0?` + ${diamondBonus} 💎 diamond${diamondBonus>1?'s':''}!`:''}`);
+  updateWalletDisplays();
 }
 
 // ===================== COMBO FLASH =====================
