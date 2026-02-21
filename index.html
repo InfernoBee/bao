@@ -306,15 +306,6 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
 @keyframes overlayPulse{0%,100%{background:rgba(8,2,0,0.97)}50%{background:rgba(35,15,2,0.98)}}
 #gacha-anim-overlay.pulsing{animation:overlayPulse 0.35s ease 4;}
 .gacha-anim-label{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--gold);letter-spacing:.1em;opacity:.8;min-height:1.4em;text-align:center;}
-/* ===== GACHA MODAL ===== */position:fixed;inset:0;background:rgba(20,8,4,.88);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
-#gacha-modal.show{opacity:1;pointer-events:all;}
-#gacha-modal .gm-inner{background:linear-gradient(160deg,#2a1200,#1a0800);border:2px solid var(--gold);border-radius:24px;padding:1.4rem 1.2rem;max-width:340px;width:92%;text-align:center;position:relative;}
-.gm-title{font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--gold);margin-bottom:.2rem;}
-.gm-sub{font-size:.72rem;color:rgba(244,195,130,.6);margin-bottom:.9rem;}
-.gacha-machine{font-size:3.4rem;margin:.4rem 0;display:block;cursor:pointer;transition:transform .12s;user-select:none;}
-.gacha-machine:active{transform:scale(.92);}
-@keyframes gachaSpin{0%{transform:scale(1) rotate(0deg)}30%{transform:scale(1.18) rotate(-15deg)}60%{transform:scale(1.12) rotate(12deg)}100%{transform:scale(1) rotate(0deg)}}
-.gacha-machine.spinning{animation:gachaSpin .55s ease;}
 .gacha-pull-btns{display:flex;gap:8px;margin:.7rem 0;}
 .gpb{flex:1;border:none;border-radius:14px;padding:.55rem .4rem;font-family:'Playfair Display',serif;font-size:.8rem;cursor:pointer;font-style:italic;transition:transform .1s,filter .1s;}
 .gpb:active{transform:scale(.96);}
@@ -336,7 +327,6 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
 .gacha-inv{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;}
 .ginv-chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:.22rem .5rem;font-size:.7rem;color:rgba(244,195,130,.8);cursor:pointer;}
 .ginv-chip.equipped{border-color:var(--gold);background:rgba(255,215,0,.15);color:var(--gold);}
-.gm-close{position:absolute;top:.7rem;right:.9rem;background:none;border:none;color:rgba(244,195,130,.55);font-size:1.1rem;cursor:pointer;line-height:1;}
 
 /* ===== DAILY LOGIN MODAL ===== */
 #daily-modal{position:fixed;inset:0;background:rgba(20,8,4,.85);z-index:201;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s;}
@@ -367,10 +357,6 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
 #achieve-toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 
 /* ===== GACHA SHOP BUTTON ===== */
-.gacha-shop-entry{grid-column:1/-1;background:linear-gradient(135deg,#3d1a6e,#6b2d9c,#9c4dca);border-radius:14px;padding:.9rem;text-align:center;cursor:pointer;transition:transform .12s,filter .12s;border:2px solid #CE93D8;}
-.gacha-shop-entry:active{transform:scale(.97);}
-.gacha-shop-entry h4{font-family:'Playfair Display',serif;color:#fff;margin:0 0 .2rem;font-size:1rem;}
-.gacha-shop-entry p{font-size:.68rem;color:rgba(255,255,255,.75);margin:0;}
 
 /* ================================================================
    DESKTOP RESPONSIVE  (≥ 700 px)
@@ -563,10 +549,61 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
       <h3>🛒 Bao's Shop</h3>
       <div class="wallet">💰 <span id="shop-wallet">0</span></div>
     </div>
-    <div class="gacha-shop-entry" onclick="openGacha()">
-      <h4>🎰 Capsule Machine</h4>
-      <p>Pull for pets &amp; bonuses · 15 coins / 120 for ×10</p>
+
+    <!-- ── INLINE CAPSULE MACHINE ─────────────────────────────── -->
+    <div id="inline-gacha" style="background:linear-gradient(160deg,#2a1200,#1a0800);border:2px solid var(--gold);border-radius:20px;padding:1.1rem 1rem 1rem;margin-bottom:1rem;text-align:center;">
+      <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold);margin-bottom:.15rem;">🎰 Capsule Machine</div>
+      <div style="font-size:.7rem;color:rgba(244,195,130,.55);margin-bottom:.7rem;">Collect pets &amp; bonuses!</div>
+      <div class="gacha-machine" id="gacha-ball" onclick="gachaPull(1)" title="Pull! (costs 15 🪙)" style="cursor:pointer;display:block;text-align:center;">
+        <svg id="slot-machine-svg" viewBox="0 0 120 110" xmlns="http://www.w3.org/2000/svg" style="width:110px;height:100px;display:block;margin:0 auto;filter:drop-shadow(0 4px 18px rgba(255,165,0,0.45))">
+          <rect x="8" y="18" width="104" height="72" rx="14" fill="url(#machineGrad)"/>
+          <rect x="8" y="18" width="104" height="72" rx="14" fill="none" stroke="#D4A853" stroke-width="2.5"/>
+          <rect x="14" y="22" width="40" height="14" rx="6" fill="rgba(255,255,255,0.08)"/>
+          <rect x="18" y="30" width="84" height="46" rx="8" fill="#0d0608" stroke="#b8860b" stroke-width="1.5"/>
+          <line x1="46" y1="30" x2="46" y2="76" stroke="#b8860b" stroke-width="1" opacity="0.6"/>
+          <line x1="74" y1="30" x2="74" y2="76" stroke="#b8860b" stroke-width="1" opacity="0.6"/>
+          <text id="reel1" x="32" y="59" text-anchor="middle" font-size="20">💕</text>
+          <text id="reel2" x="60" y="59" text-anchor="middle" font-size="20">⭐</text>
+          <text id="reel3" x="88" y="59" text-anchor="middle" font-size="20">💰</text>
+          <line x1="18" y1="53" x2="102" y2="53" stroke="rgba(255,215,0,0.3)" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <rect x="101" y="36" width="11" height="38" rx="5.5" fill="url(#leverGrad)" stroke="#D4A853" stroke-width="1.2"/>
+          <circle id="lever-knob" cx="106.5" cy="38" r="6.5" fill="url(#knobGrad)" stroke="#D4A853" stroke-width="1.5"/>
+          <rect x="22" y="6" width="76" height="15" rx="7.5" fill="url(#signGrad)" stroke="#D4A853" stroke-width="1.5"/>
+          <text x="60" y="17" text-anchor="middle" font-family="serif" font-size="7.5" fill="#3D2B1F" font-weight="bold" letter-spacing="0.8">CAPSULE MACHINE</text>
+          <rect x="46" y="92" width="28" height="5" rx="2.5" fill="#0d0608" stroke="#b8860b" stroke-width="1"/>
+          <text x="60" y="106" text-anchor="middle" font-size="6.5" fill="rgba(244,195,130,0.45)" font-family="serif">TAP TO PULL</text>
+          <circle class="machine-light" cx="20" cy="24" r="3" fill="#ff6b6b" opacity="0.9"/>
+          <circle class="machine-light" cx="100" cy="24" r="3" fill="#FFD700" opacity="0.9"/>
+          <circle class="machine-light" cx="60" cy="24" r="3" fill="#90caf9" opacity="0.9"/>
+          <defs>
+            <linearGradient id="machineGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#5a1f0f"/>
+              <stop offset="50%" stop-color="#3a1208"/>
+              <stop offset="100%" stop-color="#1e0804"/>
+            </linearGradient>
+            <linearGradient id="leverGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#888"/><stop offset="50%" stop-color="#ddd"/><stop offset="100%" stop-color="#888"/>
+            </linearGradient>
+            <radialGradient id="knobGrad" cx="0.35" cy="0.3">
+              <stop offset="0%" stop-color="#E8736A"/><stop offset="100%" stop-color="#8B1A1A"/>
+            </radialGradient>
+            <linearGradient id="signGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#C4940f"/><stop offset="50%" stop-color="#FFD700"/><stop offset="100%" stop-color="#C4940f"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="gacha-pull-btns" style="margin:.6rem 0 .4rem;">
+        <button class="gpb single" onclick="gachaPull(1)" id="gpb1">✨ ×1 Pull — 15 🪙</button>
+        <button class="gpb ten" onclick="gachaPull(10)" id="gpb10">💫 ×10 Pull — 120 🪙</button>
+      </div>
+      <div class="gacha-pity" id="gacha-pity-txt">Pity: 0 / 10 pulls until rare+</div>
+      <div class="gacha-result" id="gacha-result"></div>
+      <div class="gacha-inv-title" style="margin-top:.6rem;">Your collection (tap to equip as companion)</div>
+      <div class="gacha-inv" id="gacha-inv"></div>
     </div>
+    <!-- ── END CAPSULE MACHINE ────────────────────────────────── -->
+
     <div class="shop-grid" id="shop-grid"></div>
   </div>
 
@@ -588,52 +625,7 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
   </div>
 </div>
 
-<!-- GACHA MODAL -->
-<div id="gacha-modal">
-  <div class="gm-inner">
-    <button class="gm-close" onclick="closeGacha()">✕</button>
-    <div class="gm-title">🎰 Capsule Machine</div>
-    <div class="gm-sub">Collect pets &amp; bonuses!</div>
-    <div class="gacha-machine" id="gacha-ball" onclick="gachaPull(1)" title="Pull! (costs 15 🪙)" style="cursor:pointer;display:block;text-align:center;">
-  <svg id="slot-machine-svg" viewBox="0 0 120 110" xmlns="http://www.w3.org/2000/svg" style="width:110px;height:100px;display:block;margin:0 auto;filter:drop-shadow(0 4px 18px rgba(255,165,0,0.45))">
-    <rect x="8" y="18" width="104" height="72" rx="14" fill="url(#machineGrad)"/>
-    <rect x="8" y="18" width="104" height="72" rx="14" fill="none" stroke="#D4A853" stroke-width="2.5"/>
-    <rect x="14" y="22" width="40" height="14" rx="6" fill="rgba(255,255,255,0.08)"/>
-    <rect x="18" y="30" width="84" height="46" rx="8" fill="#0d0608" stroke="#b8860b" stroke-width="1.5"/>
-    <line x1="46" y1="30" x2="46" y2="76" stroke="#b8860b" stroke-width="1" opacity="0.6"/>
-    <line x1="74" y1="30" x2="74" y2="76" stroke="#b8860b" stroke-width="1" opacity="0.6"/>
-    <text id="reel1" x="32" y="59" text-anchor="middle" font-size="20">💕</text>
-    <text id="reel2" x="60" y="59" text-anchor="middle" font-size="20">⭐</text>
-    <text id="reel3" x="88" y="59" text-anchor="middle" font-size="20">💰</text>
-    <line x1="18" y1="53" x2="102" y2="53" stroke="rgba(255,215,0,0.3)" stroke-width="1.5" stroke-dasharray="4 3"/>
-    <rect x="101" y="36" width="11" height="38" rx="5.5" fill="url(#leverGrad)" stroke="#D4A853" stroke-width="1.2"/>
-    <circle id="lever-knob" cx="106.5" cy="38" r="6.5" fill="url(#knobGrad)" stroke="#D4A853" stroke-width="1.5"/>
-    <rect x="22" y="6" width="76" height="15" rx="7.5" fill="url(#signGrad)" stroke="#D4A853" stroke-width="1.5"/>
-    <text x="60" y="17" text-anchor="middle" font-family="serif" font-size="7.5" fill="#3D2B1F" font-weight="bold" letter-spacing="0.8">CAPSULE MACHINE</text>
-    <rect x="46" y="92" width="28" height="5" rx="2.5" fill="#0d0608" stroke="#b8860b" stroke-width="1"/>
-    <text x="60" y="106" text-anchor="middle" font-size="6.5" fill="rgba(244,195,130,0.45)" font-family="serif">TAP TO PULL</text>
-    <circle class="machine-light" cx="20" cy="24" r="3" fill="#ff6b6b" opacity="0.9"/>
-    <circle class="machine-light" cx="100" cy="24" r="3" fill="#FFD700" opacity="0.9"/>
-    <circle class="machine-light" cx="60" cy="24" r="3" fill="#90caf9" opacity="0.9"/>
-    <defs>
-      <linearGradient id="machineGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#5a1f0f"/>
-        <stop offset="50%" stop-color="#3a1208"/>
-        <stop offset="100%" stop-color="#1e0804"/>
-      </linearGradient>
-      <linearGradient id="leverGrad" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#888"/><stop offset="50%" stop-color="#ddd"/><stop offset="100%" stop-color="#888"/>
-      </linearGradient>
-      <radialGradient id="knobGrad" cx="0.35" cy="0.3">
-        <stop offset="0%" stop-color="#E8736A"/><stop offset="100%" stop-color="#8B1A1A"/>
-      </radialGradient>
-      <linearGradient id="signGrad" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#C4940f"/><stop offset="50%" stop-color="#FFD700"/><stop offset="100%" stop-color="#C4940f"/>
-      </linearGradient>
-    </defs>
-  </svg>
-</div>
-<!-- GACHA PULL ANIMATION OVERLAY -->
+<!-- GACHA PULL ANIMATION OVERLAY (full-screen, shown during pulls) -->
 <div id="gacha-anim-overlay">
   <div style="position:relative;display:flex;align-items:center;justify-content:center;">
     <svg id="gacha-rays" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
@@ -702,16 +694,6 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
   <div class="gacha-anim-label" id="gacha-anim-label">Pulling...</div>
   <div id="gacha-anim-result" style="display:none;"></div>
   <div id="gacha-anim-sparks" style="position:fixed;inset:0;pointer-events:none;overflow:hidden;"></div>
-</div>
-    <div class="gacha-pull-btns">
-      <button class="gpb single" onclick="gachaPull(1)" id="gpb1">✨ ×1 Pull — 15 🪙</button>
-      <button class="gpb ten" onclick="gachaPull(10)" id="gpb10">💫 ×10 Pull — 120 🪙</button>
-    </div>
-    <div class="gacha-pity" id="gacha-pity-txt">Pity: 0 / 10 pulls until rare+</div>
-    <div class="gacha-result" id="gacha-result"></div>
-    <div class="gacha-inv-title">Your collection (tap to equip as companion)</div>
-    <div class="gacha-inv" id="gacha-inv"></div>
-  </div>
 </div>
 
   <!-- ===== CONNECT 4 RPG ===== -->
@@ -2757,11 +2739,8 @@ function gachaRoll(){
   return chosen;
 }
 
-function openGacha(){
-  document.getElementById('gacha-modal').classList.add('show');
-  updateGachaUI();
-}
-function closeGacha(){document.getElementById('gacha-modal').classList.remove('show');}
+function openGacha(){showTab('shop');}
+function closeGacha(){}
 
 function refreshBubuCard(){
   // Update both catch-hearts and Connect Bao dropdowns
