@@ -478,6 +478,17 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
     <p class="signature">— Your Dudu 💛</p>
   </div>
 
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('game')">💕 Heart Catcher</button>
+    <button class="tab-btn" onclick="showTab('valorant')">🥔 Potato Shooter</button>
+    <button class="tab-btn" onclick="showTab('c4')">🔴 Bao Connector</button>
+    <button class="tab-btn" onclick="showTab('stats')">📊 Stats</button>
+    <button class="tab-btn" onclick="showTab('shop')">🛒 Shop</button>
+  </div>
+
+  <!-- GAME TAB -->
+  <div id="tab-game">
   <div class="section-label">
     Catch the Hearts 💕
     <small>pick your character · level up · unlock tiered buffs · shop!</small>
@@ -502,16 +513,6 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
       </div>
     </div>
   </div>
-
-  <!-- TABS -->
-  <div class="tabs">
-    <button class="tab-btn active" onclick="showTab('game')">🎮 Game</button>
-    <button class="tab-btn" onclick="showTab('stats')">📊 Stats</button>
-    <button class="tab-btn" onclick="showTab('shop')">🛒 Shop</button>
-  </div>
-
-  <!-- GAME TAB -->
-  <div id="tab-game">
     <div id="game-wrap">
       <div id="hud-top">
         <div class="hud-score">Score<span class="val" id="scoreDisplay">0</span></div>
@@ -546,6 +547,7 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
       <p id="game-msg">Catch hearts, avoid the ✖️ ones!</p>
     </div>
   </div>
+  </div><!-- end tab-game -->
 
   <!-- STATS TAB -->
   <div id="tab-stats" class="panel hidden" style="border-top:4px solid var(--gold);">
@@ -770,7 +772,77 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
   <div id="gacha-anim-sparks" style="position:fixed;inset:0;pointer-events:none;overflow:hidden;"></div>
 </div>
 
-  <!-- ===== CONNECT 4 RPG ===== -->
+  <!-- POTATO SHOOTER TAB -->
+  <div id="tab-valorant" class="hidden">
+    <div style="margin:0 1.2rem 1.2rem;">
+      <div style="text-align:center;padding:.7rem 0 .4rem;">
+        <div style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--deep);">🥔 Potato Shooter</div>
+        <small style="font-family:'Lora',serif;font-style:italic;font-size:.75rem;color:var(--gold);">Choose an agent · use their unique skills · survive the waves!</small>
+      </div>
+
+      <!-- Agent Select -->
+      <div id="ps-agent-select" style="display:block;">
+        <div style="font-family:'Playfair Display',serif;font-size:.9rem;color:var(--deep);margin-bottom:.5rem;text-align:center;">Choose Your Agent</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:.8rem;">
+          <button class="ps-agent-btn" onclick="psSelectAgent('sage')" style="flex:1;min-width:90px;border:2px solid #4cd9a0;border-radius:14px;padding:.5rem .3rem;background:rgba(76,217,160,.1);cursor:pointer;font-family:'Playfair Display',serif;">
+            <div style="font-size:1.2rem;">🌿</div>
+            <div style="font-size:.75rem;color:#4cd9a0;font-weight:bold;">Sage</div>
+            <div style="font-size:.6rem;color:rgba(61,43,31,.7);line-height:1.3;">Heal · Wall · Revive</div>
+          </button>
+          <button class="ps-agent-btn" onclick="psSelectAgent('phoenix')" style="flex:1;min-width:90px;border:2px solid #ff8c42;border-radius:14px;padding:.5rem .3rem;background:rgba(255,140,66,.1);cursor:pointer;font-family:'Playfair Display',serif;">
+            <div style="font-size:1.2rem;">🔥</div>
+            <div style="font-size:.75rem;color:#ff8c42;font-weight:bold;">Phoenix</div>
+            <div style="font-size:.6rem;color:rgba(61,43,31,.7);line-height:1.3;">Blaze · Curveball · Run It Back</div>
+          </button>
+          <button class="ps-agent-btn" onclick="psSelectAgent('jett')" style="flex:1;min-width:90px;border:2px solid #7ec8f0;border-radius:14px;padding:.5rem .3rem;background:rgba(126,200,240,.1);cursor:pointer;font-family:'Playfair Display',serif;">
+            <div style="font-size:1.2rem;">💨</div>
+            <div style="font-size:.75rem;color:#7ec8f0;font-weight:bold;">Jett</div>
+            <div style="font-size:.6rem;color:rgba(61,43,31,.7);line-height:1.3;">Drift · Updraft · Bladestorm</div>
+          </button>
+          <button class="ps-agent-btn" onclick="psSelectAgent('reyna')" style="flex:1;min-width:90px;border:2px solid #b97ef5;border-radius:14px;padding:.5rem .3rem;background:rgba(185,126,245,.1);cursor:pointer;font-family:'Playfair Display',serif;">
+            <div style="font-size:1.2rem;">👁️</div>
+            <div style="font-size:.75rem;color:#b97ef5;font-weight:bold;">Reyna</div>
+            <div style="font-size:.6rem;color:rgba(61,43,31,.7);line-height:1.3;">Devour · Dismiss · Empress</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Game Area -->
+      <div id="ps-wrap" style="background:var(--deep);border-radius:24px;padding:.8rem;box-shadow:0 10px 40px rgba(61,43,31,.25);display:none;">
+        <!-- HUD -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;">
+          <div style="color:var(--cream);font-size:.78rem;font-family:'Playfair Display',serif;">
+            <span id="ps-agent-badge" style="font-size:.9rem;"></span> <span style="color:var(--gold);" id="ps-score-el">0</span>
+          </div>
+          <div style="color:var(--peach);font-size:.78rem;font-family:'Playfair Display',serif;">Wave <span id="ps-wave-el">1</span></div>
+          <div style="color:#ff8e8e;font-size:.78rem;font-family:'Playfair Display',serif;">HP <span id="ps-hp-el">100</span></div>
+        </div>
+        <!-- Bars -->
+        <div style="display:flex;gap:5px;margin-bottom:.5rem;">
+          <div style="flex:2;"><div style="font-size:.55rem;color:rgba(253,246,236,.4);margin-bottom:2px;">HP</div><div style="background:rgba(255,255,255,.1);border-radius:4px;height:6px;overflow:hidden;"><div id="ps-hp-bar" style="height:100%;border-radius:4px;background:linear-gradient(90deg,#ff6b6b,#ff8e8e);width:100%;transition:width .3s;"></div></div></div>
+          <div style="flex:1;"><div style="font-size:.55rem;color:rgba(253,246,236,.4);margin-bottom:2px;" id="ps-q-label">Q</div><div style="background:rgba(255,255,255,.1);border-radius:4px;height:6px;overflow:hidden;"><div id="ps-q-bar" style="height:100%;border-radius:4px;background:linear-gradient(90deg,#4cd9a0,#fff);width:100%;transition:width .3s;"></div></div></div>
+          <div style="flex:1;"><div style="font-size:.55rem;color:rgba(253,246,236,.4);margin-bottom:2px;" id="ps-e-label">E</div><div style="background:rgba(255,255,255,.1);border-radius:4px;height:6px;overflow:hidden;"><div id="ps-e-bar" style="height:100%;border-radius:4px;background:linear-gradient(90deg,#7ec8f0,#fff);width:100%;transition:width .3s;"></div></div></div>
+          <div style="flex:1;"><div style="font-size:.55rem;color:rgba(253,246,236,.4);margin-bottom:2px;">ULT</div><div style="background:rgba(255,255,255,.1);border-radius:4px;height:6px;overflow:hidden;"><div id="ps-ult-bar" style="height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold),#fff);width:0%;transition:width .3s;"></div></div></div>
+        </div>
+        <canvas id="ps-canvas" style="display:block;width:100%;border-radius:14px;touch-action:none;cursor:crosshair;"></canvas>
+        <!-- Skill Buttons -->
+        <div style="display:flex;gap:5px;margin-top:.5rem;">
+          <button id="ps-q-btn" onclick="psUseSkill('q')" style="flex:1;border:none;border-radius:10px;padding:.45rem .2rem;font-family:'Playfair Display',serif;font-size:.7rem;cursor:pointer;transition:all .2s;"></button>
+          <button id="ps-e-btn" onclick="psUseSkill('e')" style="flex:1;border:none;border-radius:10px;padding:.45rem .2rem;font-family:'Playfair Display',serif;font-size:.7rem;cursor:pointer;transition:all .2s;"></button>
+          <button id="ps-ult-btn" onclick="psUseSkill('ult')" style="flex:1;border:none;border-radius:10px;padding:.45rem .2rem;font-family:'Playfair Display',serif;font-size:.7rem;cursor:pointer;transition:all .2s;"></button>
+          <button onclick="psRestart()" style="flex:1;border:none;border-radius:10px;padding:.45rem .2rem;font-family:'Playfair Display',serif;font-size:.7rem;background:var(--peach);color:var(--deep);cursor:pointer;">🔄</button>
+        </div>
+        <div id="ps-skill-tip" style="text-align:center;font-size:.6rem;color:rgba(253,246,236,.4);font-family:'Lora',serif;font-style:italic;margin-top:.3rem;min-height:1em;"></div>
+        <div id="ps-overlay" style="display:none;text-align:center;padding:1rem 0;color:var(--cream);">
+          <div id="ps-msg" style="font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:.5rem;"></div>
+          <button onclick="psShowAgentSelect()" class="game-btn" style="margin:0 auto;">Change Agent 🔫</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONNECT 4 TAB -->
+  <div id="tab-c4" class="hidden">
   <div class="c4-section">
     <div class="c4-label">
       Connect Bao 🔴
@@ -873,6 +945,8 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
     </div>
   </div>
 
+
+  </div><!-- end tab-c4 -->
 
   <footer>🧡 🌸 💛 🌷 💕</footer>
 </div>
@@ -1660,7 +1734,7 @@ function spawnItem(){
     vy:isBad&&st.freezeBad?0.3:isBad?badSpd:spd,
     emoji:isBad?BAD_EMO[Math.floor(Math.random()*BAD_EMO.length)]:HEART_EMO[Math.floor(Math.random()*HEART_EMO.length)],
     bad:isBad,size:itemSize,frozen:isBad&&st.freezeBad,
-    perfectWindow:isPerfect?{startY:80+Math.random()*120,duration:28}:null,
+    perfectWindow:isPerfect?{startY:H-150+Math.random()*50,duration:32}:null,
   }));
 }
 
@@ -3450,13 +3524,437 @@ canvas.addEventListener('touchstart',e=>{if(running)moveBasket(e.touches[0].clie
 
 // ===================== TABS =====================
 function showTab(tab){
-  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',['game','stats','shop'][i]===tab));
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',['game','valorant','c4','stats','shop'][i]===tab));
   document.getElementById('tab-game').style.display=tab==='game'?'block':'none';
+  document.getElementById('tab-valorant').classList.toggle('hidden',tab!=='valorant');
+  document.getElementById('tab-c4').classList.toggle('hidden',tab!=='c4');
   document.getElementById('tab-stats').classList.toggle('hidden',tab!=='stats');
   document.getElementById('tab-shop').classList.toggle('hidden',tab!=='shop');
   if(tab==='stats') updateStatsPanel();
   if(tab==='shop') renderShop();
 }
+
+// ===================== POTATO SHOOTER GAME =====================
+let psRunning=false, psRAF=null, psState={}, psAgent=null;
+
+const PS_AGENTS={
+  sage:{
+    name:'Sage',icon:'🌿',color:'#4cd9a0',
+    maxHp:150, // extra HP
+    q:{name:'Healing Orb',icon:'💚',desc:'Restore 40 HP',cost:3,max:3,charges:3,
+       action(s){s.hp=Math.min(s.maxHp,s.hp+40);psMsg('💚 Healed!',2000);}},
+    e:{name:'Slow Orb',icon:'🔵',desc:'Slow all enemies for 4s',cost:0,cooldown:10,cd:0,
+       action(s){s.enemies.forEach(e=>e.slow=180);psMsg('🔵 Enemies Slowed!',1500);}},
+    ult:{name:'Resurrection',icon:'✨',desc:'Full HP restore + invincible 3s',orbsNeeded:7,
+       action(s){s.hp=s.maxHp;s.invincible=180;psMsg('✨ Resurrection! Invincible!',2500);}}
+  },
+  phoenix:{
+    name:'Phoenix',icon:'🔥',color:'#ff8c42',
+    maxHp:100,
+    q:{name:'Blaze',icon:'🔥',desc:'Fire wall burns enemies',cost:3,max:3,charges:3,
+       action(s){s.walls.push({x:s.px-60,y:s.py-10,w:120,h:20,life:180,dmg:2,col:'rgba(255,100,20,.7)'});psMsg('🔥 Blaze!',1500);}},
+    e:{name:'Curveball',icon:'⭐',desc:'Flash — stuns all enemies 2s',cost:0,cooldown:12,cd:0,
+       action(s){s.enemies.forEach(e=>e.stun=120);s.flash=40;psMsg('⭐ Curveball! Stunned!',1500);}},
+    ult:{name:'Run It Back',icon:'♨️',desc:'Place marker — respawn here with 50 HP',orbsNeeded:8,
+       action(s){s.marker={x:s.px,y:s.py};psMsg('♨️ Marker Set! Die to respawn!',2500);}}
+  },
+  jett:{
+    name:'Jett',icon:'💨',color:'#7ec8f0',
+    maxHp:100,
+    q:{name:'Updraft',icon:'🌪️',desc:'Dash toward aim point',cost:2,max:2,charges:2,
+       action(s){const dx=s.aim.x-s.px,dy=s.aim.y-s.py,d=Math.sqrt(dx*dx+dy*dy)||1;
+                 s.px=Math.max(20,Math.min(s.W-20,s.px+dx/d*80));
+                 s.py=Math.max(20,Math.min(s.H-20,s.py+dy/d*80));
+                 psMsg('💨 Updraft!',1000);}},
+    e:{name:'Tailwind',icon:'💨',desc:'Speed boost 4s — move faster',cost:0,cooldown:8,cd:0,
+       action(s){s.speedBoost=240;psMsg('💨 Tailwind! Speed up!',1500);}},
+    ult:{name:'Bladestorm',icon:'🗡️',desc:'5 daggers that one-shot enemies',orbsNeeded:7,
+       action(s){s.daggers=5;psMsg('🗡️ Bladestorm! 5 daggers!',2500);}}
+  },
+  reyna:{
+    name:'Reyna',icon:'👁️',color:'#b97ef5',
+    maxHp:100,
+    q:{name:'Devour',icon:'💜',desc:'Consume soul orb — heal 40 HP',cost:0,charges:0,max:0,
+       action(s){if(s.souls>0){s.souls--;s.hp=Math.min(s.maxHp,s.hp+40);psMsg('💜 Devour! +40 HP!',1500);}else psMsg('💜 No souls to devour!',1000);}},
+    e:{name:'Dismiss',icon:'🔮',desc:'Become invincible for 1.5s',cost:0,cooldown:15,cd:0,
+       action(s){s.invincible=90;psMsg('🔮 Dismissed! Invincible!',1500);}},
+    ult:{name:'Empress',icon:'👑',desc:'Frenzy: 2× fire rate, auto-heal kills 10s',orbsNeeded:6,
+       action(s){s.empress=600;psMsg('👑 Empress Mode! FRENZY!',3000);}}
+  }
+};
+
+function psShowAgentSelect(){
+  document.getElementById('ps-agent-select').style.display='block';
+  document.getElementById('ps-wrap').style.display='none';
+  psRunning=false;
+  if(psRAF) cancelAnimationFrame(psRAF);
+}
+
+function psSelectAgent(agentId){
+  psAgent=agentId;
+  document.getElementById('ps-agent-select').style.display='none';
+  document.getElementById('ps-wrap').style.display='block';
+  psInit();
+}
+
+function psInit(){
+  if(!psAgent) return;
+  psRunning=false;
+  if(psRAF) cancelAnimationFrame(psRAF);
+
+  const canvas=document.getElementById('ps-canvas');
+  const agent=PS_AGENTS[psAgent];
+  const W=canvas.offsetWidth||300;
+  const H=Math.round(Math.min(320,window.innerHeight*0.42));
+  canvas.width=W; canvas.height=H;
+
+  // Deep copy agent abilities with fresh state
+  const q=Object.assign({},agent.q);
+  const e=Object.assign({},agent.e);
+  const ult=Object.assign({},agent.ult);
+  if(q.charges!==undefined) q.cur=q.charges;
+
+  psState={
+    W,H,
+    px:W/2,py:H*0.6,
+    aim:{x:W/2,y:H*0.3},
+    hp:agent.maxHp,maxHp:agent.maxHp,
+    score:0,wave:1,
+    bullets:[],enemies:[],orbs:[], walls:[],
+    fireTimer:0,fireRate:15,
+    waveTimer:0,waveCount:0,waveMax:5,
+    q,e,ult,
+    ultOrbs:0,
+    souls:0,      // Reyna
+    speedBoost:0, // Jett
+    daggers:0,    // Jett ult
+    invincible:0,
+    empress:0,    // Reyna ult
+    flash:0,
+    marker:null,  // Phoenix ult
+    dead:false,
+    gameOver:false,
+    walls:[]
+  };
+
+  document.getElementById('ps-overlay').style.display='none';
+  document.getElementById('ps-skill-tip').textContent='';
+  document.getElementById('ps-agent-badge').textContent=agent.icon+' '+agent.name;
+  psUpdateSkillButtons();
+  psSetupInput(canvas);
+  psRunning=true;
+  psLoop();
+}
+
+function psUpdateSkillButtons(){
+  if(!psAgent) return;
+  const s=psState, a=PS_AGENTS[psAgent];
+  // Q button
+  const qBtn=document.getElementById('ps-q-btn');
+  const eBtn=document.getElementById('ps-e-btn');
+  const ultBtn=document.getElementById('ps-ult-btn');
+  const qLabel=document.getElementById('ps-q-label');
+  const eLabel=document.getElementById('ps-e-label');
+
+  const qReady = psAgent==='reyna' ? s.souls>0 : s.q.cur>0;
+  const eReady = s.e.cd===0;
+  const ultReady = s.ultOrbs>=a.ult.orbsNeeded;
+
+  qBtn.textContent=s.q.icon+' '+s.q.name;
+  qBtn.style.background=qReady?`rgba(${hexToRgb(a.color)},.25)`:'rgba(255,255,255,.06)';
+  qBtn.style.color=qReady?a.color:'rgba(253,246,236,.3)';
+  qBtn.style.cursor=qReady?'pointer':'not-allowed';
+
+  eBtn.textContent=s.e.icon+' '+s.e.name+(s.e.cd>0?' ('+Math.ceil(s.e.cd/60)+'s)':'');
+  eBtn.style.background=eReady?'rgba(126,200,240,.2)':'rgba(255,255,255,.06)';
+  eBtn.style.color=eReady?'#7ec8f0':'rgba(253,246,236,.3)';
+  eBtn.style.cursor=eReady?'pointer':'not-allowed';
+
+  ultBtn.textContent=a.ult.icon+' ULT '+(ultReady?'READY!':'('+s.ultOrbs+'/'+a.ult.orbsNeeded+')');
+  ultBtn.style.background=ultReady?'rgba(212,168,83,.3)':'rgba(255,255,255,.06)';
+  ultBtn.style.color=ultReady?'var(--gold)':'rgba(253,246,236,.3)';
+  ultBtn.style.cursor=ultReady?'pointer':'not-allowed';
+
+  if(qLabel) qLabel.textContent='Q'+(s.q.cur!==undefined?'('+s.q.cur+')':'');
+}
+
+function hexToRgb(hex){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return r+','+g+','+b;
+}
+
+function psUseSkill(skill){
+  if(!psRunning||psState.dead) return;
+  const s=psState, a=PS_AGENTS[psAgent];
+  if(skill==='q'){
+    if(psAgent==='reyna'){a.q.action(s);}
+    else if(s.q.cur>0){s.q.cur--;a.q.action(s);}
+    else{psMsg(s.q.icon+' Out of charges!',1000);}
+  } else if(skill==='e'){
+    if(s.e.cd>0){psMsg(s.e.icon+' Cooldown: '+Math.ceil(s.e.cd/60)+'s',1000);return;}
+    a.e.action(s);s.e.cd=s.e.cooldown*60;
+  } else if(skill==='ult'){
+    if(s.ultOrbs>=a.ult.orbsNeeded){s.ultOrbs=0;a.ult.action(s);}
+    else psMsg('Need '+a.ult.orbsNeeded+' orbs for ULT!',1000);
+  }
+  psUpdateSkillButtons();
+}
+
+function psMsg(text,dur){
+  const el=document.getElementById('ps-skill-tip');
+  el.textContent=text;
+  clearTimeout(el._t);
+  el._t=setTimeout(()=>el.textContent='',dur);
+}
+
+function psSetupInput(canvas){
+  canvas._psMoveHandler=canvas._psMoveHandler||function(e){
+    const r=canvas.getBoundingClientRect();
+    const cx=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
+    const cy=(e.touches?e.touches[0].clientY:e.clientY)-r.top;
+    const sx=canvas.width/r.width, sy=canvas.height/r.height;
+    if(!psRunning||psState.dead) return;
+    psState.aim={x:cx*sx,y:cy*sy};
+    // Move player toward aim (not instant — Valorant feel)
+    const s=psState;
+    const dx=s.aim.x-s.px, dy=s.aim.y-s.py;
+    const d=Math.sqrt(dx*dx+dy*dy)||1;
+    const spd=s.speedBoost>0?4.5:2.8;
+    if(d>30){s.px+=dx/d*spd;s.py+=dy/d*spd;}
+    s.px=Math.max(18,Math.min(s.W-18,s.px));
+    s.py=Math.max(18,Math.min(s.H-18,s.py));
+  };
+  canvas.addEventListener('mousemove',canvas._psMoveHandler);
+  canvas.addEventListener('touchmove',canvas._psMoveHandler,{passive:true});
+  canvas.addEventListener('touchstart',canvas._psMoveHandler,{passive:true});
+}
+
+function psLoop(){
+  if(!psRunning) return;
+  const s=psState;
+  const canvas=document.getElementById('ps-canvas');
+  const ctx=canvas.getContext('2d');
+  const a=PS_AGENTS[psAgent];
+
+  // --- Update cooldowns & timers ---
+  if(s.e.cd>0) s.e.cd--;
+  if(s.invincible>0) s.invincible--;
+  if(s.speedBoost>0) s.speedBoost--;
+  if(s.flash>0) s.flash--;
+  if(s.empress>0) s.empress--;
+
+  // --- Spawn enemies ---
+  s.waveTimer++;
+  const spawnInterval=Math.max(40,120-s.wave*8);
+  if(s.waveTimer>=spawnInterval && s.waveCount<s.waveMax+s.wave*2){
+    const side=Math.floor(Math.random()*4);
+    let ex,ey;
+    if(side===0){ex=Math.random()*s.W;ey=-20;}
+    else if(side===1){ex=s.W+20;ey=Math.random()*s.H;}
+    else if(side===2){ex=Math.random()*s.W;ey=s.H+20;}
+    else{ex=-20;ey=Math.random()*s.H;}
+    const isElite=s.wave>3&&Math.random()<0.2;
+    s.enemies.push({x:ex,y:ey,hp:isElite?60:30,maxHp:isElite?60:30,
+                    spd:isElite?1.1:0.9+s.wave*0.05,
+                    r:isElite?14:10,
+                    slow:0,stun:0,col:isElite?'#ff4444':'#cc2222',elite:isElite});
+    s.waveCount++;
+    s.waveTimer=0;
+  }
+
+  // Check wave clear
+  if(s.waveCount>=(s.waveMax+s.wave*2) && s.enemies.length===0){
+    s.wave++;s.waveCount=0;s.waveMax=5;
+    psMsg('🔥 Wave '+(s.wave)+' incoming!',2000);
+    if(s.wave%3===0 && psAgent==='sage' && s.q.cur<s.q.max) s.q.cur++;
+    if(s.wave%3===0 && (psAgent==='jett'||psAgent==='phoenix') && s.q.cur<s.q.max) s.q.cur++;
+  }
+
+  // --- Move enemies ---
+  s.enemies.forEach(e=>{
+    if(e.stun>0){e.stun--;return;}
+    if(e.slow>0) e.slow--;
+    const spd=e.slow>0?e.spd*0.35:e.spd;
+    const dx=s.px-e.x,dy=s.py-e.y,d=Math.sqrt(dx*dx+dy*dy)||1;
+    e.x+=dx/d*spd;e.y+=dy/d*spd;
+    // Wall damage
+    s.walls.forEach(w=>{if(e.x>w.x&&e.x<w.x+w.w&&e.y>w.y&&e.y<w.y+w.h)e.hp-=w.dmg;});
+    // Dagger one-shot (Jett ult)
+    if(s.daggers>0&&d<(e.r+14)){e.hp=-999;s.daggers--;s.score+=20;}
+    // Player collision
+    if(d<(e.r+16)&&s.invincible===0){
+      const dmg=e.elite?2:1;
+      s.hp=Math.max(0,s.hp-dmg);
+      if(psAgent==='reyna'&&s.empress>0) s.hp=Math.min(s.maxHp,s.hp+5); // Empress auto-heal
+    }
+  });
+
+  // Remove dead enemies, spawn soul orbs for Reyna
+  s.enemies=s.enemies.filter(e=>{
+    if(e.hp<=0){
+      s.score+=10;
+      s.ultOrbs=Math.min(PS_AGENTS[psAgent].ult.orbsNeeded,s.ultOrbs+1);
+      if(psAgent==='reyna'){s.souls=Math.min(3,s.souls+1);}
+      // Drop orb pickup
+      s.orbs.push({x:e.x,y:e.y,life:200});
+      return false;
+    }
+    return true;
+  });
+
+  // Collect soul orbs (visual)
+  s.orbs=s.orbs.filter(o=>{o.life--;return o.life>0;});
+
+  // --- Auto-fire ---
+  const fr=s.empress>0?Math.floor(s.fireRate/2):s.fireRate;
+  s.fireTimer++;
+  if(s.fireTimer>=fr && s.enemies.length>0){
+    s.fireTimer=0;
+    // Find nearest enemy
+    let nearest=null,bestD=99999;
+    s.enemies.forEach(e=>{const dx=e.x-s.px,dy=e.y-s.py,d=dx*dx+dy*dy;if(d<bestD){bestD=d;nearest=e;}});
+    if(nearest){
+      const dx=nearest.x-s.px,dy=nearest.y-s.py,d=Math.sqrt(dx*dx+dy*dy)||1;
+      s.bullets.push({x:s.px,y:s.py,vx:dx/d*9,vy:dy/d*9,life:60});
+    }
+  }
+
+  // --- Move bullets ---
+  s.bullets.forEach(b=>{b.x+=b.vx;b.y+=b.vy;b.life--;});
+  s.bullets=s.bullets.filter(b=>b.life>0);
+
+  // Bullet-enemy collision
+  s.bullets.forEach(b=>{
+    s.enemies.forEach(e=>{
+      const dx=b.x-e.x,dy=b.y-e.y;
+      if(dx*dx+dy*dy<(e.r+5)*(e.r+5)){e.hp-=10;b.life=0;}
+    });
+  });
+
+  // Clean up walls
+  s.walls=s.walls.filter(w=>{w.life--;return w.life>0;});
+
+  // Phoenix ult respawn
+  if(s.hp<=0 && psAgent==='phoenix' && s.marker){
+    s.px=s.marker.x;s.py=s.marker.y;s.hp=50;s.marker=null;
+    psMsg('♨️ Run It Back! Respawned!',2000);
+  }
+
+  // --- Death ---
+  if(s.hp<=0 && !s.dead){
+    s.dead=true; psRunning=false;
+    document.getElementById('ps-msg').textContent='💀 Eliminated! Score: '+s.score;
+    document.getElementById('ps-overlay').style.display='block';
+  }
+
+  // --- Draw ---
+  // Background — map-like grid
+  ctx.fillStyle='#1a1a2e';
+  ctx.fillRect(0,0,s.W,s.H);
+  // Grid lines
+  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1;
+  for(let x=0;x<s.W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,s.H);ctx.stroke();}
+  for(let y=0;y<s.H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(s.W,y);ctx.stroke();}
+
+  // Spike bomb objective marker in center
+  ctx.save();
+  ctx.fillStyle='rgba(255,200,0,.12)';
+  ctx.beginPath();ctx.arc(s.W/2,s.H/2,22,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='rgba(255,200,0,.35)';ctx.font='16px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('💣',s.W/2,s.H/2);
+  ctx.restore();
+
+  // Walls (Phoenix Blaze)
+  s.walls.forEach(w=>{
+    ctx.fillStyle=w.col;ctx.fillRect(w.x,w.y,w.w,w.h);
+  });
+
+  // Flash effect
+  if(s.flash>0){ctx.fillStyle='rgba(255,255,200,'+(s.flash/40*0.7)+')';ctx.fillRect(0,0,s.W,s.H);}
+
+  // Soul orbs (Reyna)
+  s.orbs.forEach(o=>{
+    if(psAgent==='reyna'){
+      ctx.fillStyle='rgba(185,126,245,'+(o.life/200*0.8)+')';
+      ctx.beginPath();ctx.arc(o.x,o.y,5,0,Math.PI*2);ctx.fill();
+    }
+  });
+
+  // Marker (Phoenix ult)
+  if(s.marker){
+    ctx.save();ctx.fillStyle='rgba(255,140,66,.5)';ctx.strokeStyle='#ff8c42';ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(s.marker.x,s.marker.y,10,0,Math.PI*2);ctx.fill();ctx.stroke();
+    ctx.fillStyle='#ff8c42';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('♨️',s.marker.x,s.marker.y);ctx.restore();
+  }
+
+  // Enemies
+  s.enemies.forEach(e=>{
+    // Body
+    ctx.fillStyle=e.slow>0?'rgba(150,150,255,.9)':e.stun>0?'rgba(255,255,100,.9)':e.col;
+    ctx.beginPath();ctx.arc(e.x,e.y,e.r,0,Math.PI*2);ctx.fill();
+    // Red outline for elite
+    if(e.elite){ctx.strokeStyle='#ff0000';ctx.lineWidth=2;ctx.beginPath();ctx.arc(e.x,e.y,e.r,0,Math.PI*2);ctx.stroke();}
+    // HP bar
+    const bw=e.r*2+4;
+    ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(e.x-bw/2,e.y-e.r-8,bw,4);
+    ctx.fillStyle='#ff4444';ctx.fillRect(e.x-bw/2,e.y-e.r-8,bw*(e.hp/e.maxHp),4);
+    // Enemy emoji
+    ctx.fillStyle='#fff';ctx.font=(e.elite?'12':'9')+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(e.elite?'💀':'🥔',e.x,e.y);
+  });
+
+  // Bullets
+  ctx.fillStyle=a.color||'#fff';
+  s.bullets.forEach(b=>{ctx.beginPath();ctx.arc(b.x,b.y,4,0,Math.PI*2);ctx.fill();});
+
+  // Player
+  const invFrame=s.invincible>0&&Math.floor(Date.now()/100)%2;
+  if(!invFrame){
+    // Shadow
+    ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(s.px,s.py+16,14,5,0,0,Math.PI*2);ctx.fill();
+    // Agent circle
+    const grad=ctx.createRadialGradient(s.px,s.py,0,s.px,s.py,18);
+    grad.addColorStop(0,a.color||'#fff');grad.addColorStop(1,'rgba(0,0,0,.3)');
+    ctx.fillStyle=grad;ctx.beginPath();ctx.arc(s.px,s.py,18,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(s.px,s.py,18,0,Math.PI*2);ctx.stroke();
+    // Agent emoji
+    ctx.font='16px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(a.icon,s.px,s.py);
+    // Empress aura (Reyna)
+    if(s.empress>0){ctx.strokeStyle='rgba(185,126,245,.6)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(s.px,s.py,24,0,Math.PI*2);ctx.stroke();}
+    // Daggers indicator (Jett)
+    if(s.daggers>0){ctx.fillStyle='rgba(255,255,100,.8)';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('×'+s.daggers+'🗡️',s.px,s.py-28);}
+  }
+
+  // Crosshair at aim
+  ctx.strokeStyle='rgba(255,255,255,.5)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(s.aim.x-8,s.aim.y);ctx.lineTo(s.aim.x+8,s.aim.y);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(s.aim.x,s.aim.y-8);ctx.lineTo(s.aim.x,s.aim.y+8);ctx.stroke();
+
+  // HUD overlays
+  document.getElementById('ps-score-el').textContent=s.score;
+  document.getElementById('ps-wave-el').textContent=s.wave;
+  document.getElementById('ps-hp-el').textContent=s.hp;
+  document.getElementById('ps-hp-bar').style.width=(s.hp/s.maxHp*100)+'%';
+  document.getElementById('ps-q-bar').style.width=
+    psAgent==='reyna'?(s.souls/3*100)+'%':(s.q.cur||0)/(s.q.max||1)*100+'%';
+  document.getElementById('ps-e-bar').style.width=s.e.cd>0?(1-s.e.cd/(s.e.cooldown*60))*100+'%':'100%';
+  document.getElementById('ps-ult-bar').style.width=(s.ultOrbs/PS_AGENTS[psAgent].ult.orbsNeeded*100)+'%';
+  if(s.e.cd>0) document.getElementById('ps-e-label').textContent='E('+Math.ceil(s.e.cd/60)+'s)';
+  else document.getElementById('ps-e-label').textContent='E';
+  psUpdateSkillButtons();
+
+  if(psRunning) psRAF=requestAnimationFrame(psLoop);
+}
+
+function psRestart(){
+  if(psAgent) psInit();
+}
+function psInit_check(){if(document.getElementById('ps-agent-select').style.display==='none'&&psAgent)psInit();}
+
+
+
 
 // ===================== LANDING =====================
 document.getElementById('envBtn').addEventListener('click',()=>{
