@@ -269,8 +269,44 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
 .share-btn.dl-btn{background:var(--peach);color:var(--deep);}
 .share-btn.close-btn{background:var(--deep);color:var(--cream);}
 
-/* ===== GACHA MODAL ===== */
-#gacha-modal{position:fixed;inset:0;background:rgba(20,8,4,.88);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+/* ===== SLOT MACHINE ===== */
+.gacha-machine{display:block;text-align:center;margin:.4rem 0;user-select:none;transition:transform .12s;}
+.gacha-machine:active{transform:scale(.93);}
+@keyframes machinePulse{0%,100%{filter:drop-shadow(0 4px 18px rgba(255,165,0,0.45))}50%{filter:drop-shadow(0 4px 28px rgba(255,165,0,0.9)) drop-shadow(0 0 20px rgba(255,215,0,0.6))}}
+.gacha-machine.spinning #slot-machine-svg{animation:machinePulse .5s ease-in-out 2;}
+@keyframes leverPull{0%{transform:translateY(0)}35%{transform:translateY(20px)}65%{transform:translateY(20px)}100%{transform:translateY(0)}}
+@keyframes lightBlink{0%,100%{opacity:0.9}50%{opacity:0.15}}
+.machine-light{animation:lightBlink 0.8s ease-in-out infinite;}
+.machine-light:nth-child(1){animation-delay:0s;}
+.machine-light:nth-child(2){animation-delay:0.27s;}
+.machine-light:nth-child(3){animation-delay:0.54s;}
+.gacha-machine.spinning #lever-knob,.gacha-machine.spinning #big-lever-knob{animation:leverPull .55s ease-in-out;}
+/* ===== GACHA PULL OVERLAY ===== */
+#gacha-anim-overlay{position:fixed;inset:0;z-index:9999;background:rgba(8,2,0,0.97);display:none;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;}
+#gacha-anim-overlay.show{display:flex;}
+@keyframes bigReelBlur{0%,100%{filter:blur(0);opacity:1}40%{filter:blur(3px);opacity:0.3}60%{filter:blur(3px);opacity:0.3}}
+.big-reel-spinning{animation:bigReelBlur 0.15s linear infinite;}
+@keyframes reelReveal{0%{transform:scale(0.2) rotate(-15deg);opacity:0}65%{transform:scale(1.2) rotate(3deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
+.big-reel-reveal{animation:reelReveal 0.45s cubic-bezier(.34,1.56,.64,1) forwards;}
+@keyframes bigLightBlink{0%,100%{opacity:1}50%{opacity:0.1}}
+.big-light{animation:bigLightBlink 0.45s ease-in-out infinite;}
+.big-light:nth-child(1){animation-delay:0s;}
+.big-light:nth-child(2){animation-delay:0.09s;}
+.big-light:nth-child(3){animation-delay:0.18s;}
+.big-light:nth-child(4){animation-delay:0.27s;}
+.big-light:nth-child(5){animation-delay:0.36s;}
+@keyframes sparkFloat{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--sx),var(--sy)) scale(0);opacity:0}}
+.spark{position:absolute;width:7px;height:7px;border-radius:50%;pointer-events:none;animation:sparkFloat 0.85s ease-out forwards;}
+@keyframes resultCardPop{0%{transform:scale(0.15) rotate(-12deg);opacity:0}60%{transform:scale(1.18) rotate(2deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes reelReveal{0%{transform:scale(0.2) rotate(-15deg);opacity:0}65%{transform:scale(1.2) rotate(3deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
+#gacha-anim-result{animation:resultCardPop .52s cubic-bezier(.34,1.56,.64,1) forwards;padding:.65rem 1.3rem;border-radius:16px;font-family:'Playfair Display',serif;text-align:center;margin-top:.5rem;}
+@keyframes legendaryRays{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+#gacha-rays{position:absolute;width:280px;height:280px;pointer-events:none;animation:legendaryRays 5s linear infinite;opacity:0;transition:opacity .5s;z-index:-1;}
+#gacha-rays.show{opacity:0.2;}
+@keyframes overlayPulse{0%,100%{background:rgba(8,2,0,0.97)}50%{background:rgba(35,15,2,0.98)}}
+#gacha-anim-overlay.pulsing{animation:overlayPulse 0.35s ease 4;}
+.gacha-anim-label{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--gold);letter-spacing:.1em;opacity:.8;min-height:1.4em;text-align:center;}
+/* ===== GACHA MODAL ===== */position:fixed;inset:0;background:rgba(20,8,4,.88);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
 #gacha-modal.show{opacity:1;pointer-events:all;}
 #gacha-modal .gm-inner{background:linear-gradient(160deg,#2a1200,#1a0800);border:2px solid var(--gold);border-radius:24px;padding:1.4rem 1.2rem;max-width:340px;width:92%;text-align:center;position:relative;}
 .gm-title{font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--gold);margin-bottom:.2rem;}
@@ -558,7 +594,115 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
     <button class="gm-close" onclick="closeGacha()">✕</button>
     <div class="gm-title">🎰 Capsule Machine</div>
     <div class="gm-sub">Collect pets &amp; bonuses!</div>
-    <span class="gacha-machine" id="gacha-ball" onclick="gachaPull(1)">🎱</span>
+    <div class="gacha-machine" id="gacha-ball" onclick="gachaPull(1)" title="Pull! (costs 15 🪙)" style="cursor:pointer;display:block;text-align:center;">
+  <svg id="slot-machine-svg" viewBox="0 0 120 110" xmlns="http://www.w3.org/2000/svg" style="width:110px;height:100px;display:block;margin:0 auto;filter:drop-shadow(0 4px 18px rgba(255,165,0,0.45))">
+    <rect x="8" y="18" width="104" height="72" rx="14" fill="url(#machineGrad)"/>
+    <rect x="8" y="18" width="104" height="72" rx="14" fill="none" stroke="#D4A853" stroke-width="2.5"/>
+    <rect x="14" y="22" width="40" height="14" rx="6" fill="rgba(255,255,255,0.08)"/>
+    <rect x="18" y="30" width="84" height="46" rx="8" fill="#0d0608" stroke="#b8860b" stroke-width="1.5"/>
+    <line x1="46" y1="30" x2="46" y2="76" stroke="#b8860b" stroke-width="1" opacity="0.6"/>
+    <line x1="74" y1="30" x2="74" y2="76" stroke="#b8860b" stroke-width="1" opacity="0.6"/>
+    <text id="reel1" x="32" y="59" text-anchor="middle" font-size="20">💕</text>
+    <text id="reel2" x="60" y="59" text-anchor="middle" font-size="20">⭐</text>
+    <text id="reel3" x="88" y="59" text-anchor="middle" font-size="20">💰</text>
+    <line x1="18" y1="53" x2="102" y2="53" stroke="rgba(255,215,0,0.3)" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <rect x="101" y="36" width="11" height="38" rx="5.5" fill="url(#leverGrad)" stroke="#D4A853" stroke-width="1.2"/>
+    <circle id="lever-knob" cx="106.5" cy="38" r="6.5" fill="url(#knobGrad)" stroke="#D4A853" stroke-width="1.5"/>
+    <rect x="22" y="6" width="76" height="15" rx="7.5" fill="url(#signGrad)" stroke="#D4A853" stroke-width="1.5"/>
+    <text x="60" y="17" text-anchor="middle" font-family="serif" font-size="7.5" fill="#3D2B1F" font-weight="bold" letter-spacing="0.8">CAPSULE MACHINE</text>
+    <rect x="46" y="92" width="28" height="5" rx="2.5" fill="#0d0608" stroke="#b8860b" stroke-width="1"/>
+    <text x="60" y="106" text-anchor="middle" font-size="6.5" fill="rgba(244,195,130,0.45)" font-family="serif">TAP TO PULL</text>
+    <circle class="machine-light" cx="20" cy="24" r="3" fill="#ff6b6b" opacity="0.9"/>
+    <circle class="machine-light" cx="100" cy="24" r="3" fill="#FFD700" opacity="0.9"/>
+    <circle class="machine-light" cx="60" cy="24" r="3" fill="#90caf9" opacity="0.9"/>
+    <defs>
+      <linearGradient id="machineGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#5a1f0f"/>
+        <stop offset="50%" stop-color="#3a1208"/>
+        <stop offset="100%" stop-color="#1e0804"/>
+      </linearGradient>
+      <linearGradient id="leverGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#888"/><stop offset="50%" stop-color="#ddd"/><stop offset="100%" stop-color="#888"/>
+      </linearGradient>
+      <radialGradient id="knobGrad" cx="0.35" cy="0.3">
+        <stop offset="0%" stop-color="#E8736A"/><stop offset="100%" stop-color="#8B1A1A"/>
+      </radialGradient>
+      <linearGradient id="signGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#C4940f"/><stop offset="50%" stop-color="#FFD700"/><stop offset="100%" stop-color="#C4940f"/>
+      </linearGradient>
+    </defs>
+  </svg>
+</div>
+<!-- GACHA PULL ANIMATION OVERLAY -->
+<div id="gacha-anim-overlay">
+  <div style="position:relative;display:flex;align-items:center;justify-content:center;">
+    <svg id="gacha-rays" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+      <!-- Rotating rays for legendary -->
+      <g fill="#D4A853">
+        <polygon points="140,10 145,135 135,135" opacity="0.6"/>
+        <polygon points="270,140 145,145 145,135" opacity="0.6"/>
+        <polygon points="140,270 135,145 145,145" opacity="0.6"/>
+        <polygon points="10,140 135,135 135,145" opacity="0.6"/>
+        <polygon points="210,30 148,138 138,130" opacity="0.4"/>
+        <polygon points="250,210 142,142 150,132" opacity="0.4"/>
+        <polygon points="70,250 132,142 142,150" opacity="0.4"/>
+        <polygon points="30,70 138,130 130,140" opacity="0.4"/>
+      </g>
+    </svg>
+    <svg id="gacha-big-machine" viewBox="0 0 220 185" xmlns="http://www.w3.org/2000/svg" style="width:220px;height:185px;filter:drop-shadow(0 6px 36px rgba(255,165,0,0.55))">
+      <!-- Body -->
+      <rect x="10" y="30" width="185" height="118" rx="18" fill="url(#bMG)"/>
+      <rect x="10" y="30" width="185" height="118" rx="18" fill="none" stroke="#D4A853" stroke-width="3"/>
+      <!-- Shine -->
+      <rect x="18" y="36" width="65" height="18" rx="9" fill="rgba(255,255,255,0.09)"/>
+      <!-- Screen -->
+      <rect x="22" y="46" width="158" height="76" rx="10" fill="#060203" stroke="#b8860b" stroke-width="2"/>
+      <!-- Dividers -->
+      <line x1="74.5" y1="46" x2="74.5" y2="122" stroke="#b8860b" stroke-width="1.5" opacity="0.5"/>
+      <line x1="130.5" y1="46" x2="130.5" y2="122" stroke="#b8860b" stroke-width="1.5" opacity="0.5"/>
+      <!-- Reels -->
+      <text id="ov-reel1" x="48.5" y="96" text-anchor="middle" font-size="38">💕</text>
+      <text id="ov-reel2" x="102.5" y="96" text-anchor="middle" font-size="38">⭐</text>
+      <text id="ov-reel3" x="156.5" y="96" text-anchor="middle" font-size="38">💰</text>
+      <!-- Scanline -->
+      <line x1="22" y1="84" x2="180" y2="84" stroke="rgba(255,215,0,0.35)" stroke-width="2" stroke-dasharray="6 4"/>
+      <!-- Lever -->
+      <rect x="182" y="54" width="18" height="62" rx="9" fill="url(#bLG)" stroke="#D4A853" stroke-width="1.5"/>
+      <circle id="ov-lever-knob" cx="191" cy="56" r="11" fill="url(#bKG)" stroke="#D4A853" stroke-width="2"/>
+      <!-- Coin slot -->
+      <rect x="82" y="150" width="40" height="8" rx="4" fill="#060203" stroke="#b8860b" stroke-width="1.5"/>
+      <text x="102" y="168" text-anchor="middle" font-size="9" fill="rgba(244,195,130,0.4)" font-family="serif">INSERT COIN</text>
+      <!-- Sign -->
+      <rect x="30" y="12" width="145" height="22" rx="11" fill="url(#bSG)" stroke="#D4A853" stroke-width="2"/>
+      <text x="102.5" y="26.5" text-anchor="middle" font-family="serif" font-size="10.5" fill="#3D2B1F" font-weight="bold" letter-spacing="1.5">✨ CAPSULE MACHINE ✨</text>
+      <!-- Lights row -->
+      <circle class="big-light" cx="30" cy="40" r="5" fill="#ff6b6b"/>
+      <circle class="big-light" cx="175" cy="40" r="5" fill="#FFD700"/>
+      <circle class="big-light" cx="102" cy="40" r="5" fill="#90caf9"/>
+      <circle class="big-light" cx="66" cy="40" r="4.5" fill="#CE93D8"/>
+      <circle class="big-light" cx="139" cy="40" r="4.5" fill="#4CAF50"/>
+      <defs>
+        <linearGradient id="bMG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#6a240e"/>
+          <stop offset="50%" stop-color="#3a1208"/>
+          <stop offset="100%" stop-color="#1a0603"/>
+        </linearGradient>
+        <linearGradient id="bLG" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#777"/><stop offset="50%" stop-color="#eee"/><stop offset="100%" stop-color="#777"/>
+        </linearGradient>
+        <radialGradient id="bKG" cx="0.35" cy="0.3">
+          <stop offset="0%" stop-color="#F4A56A"/><stop offset="100%" stop-color="#a03010"/>
+        </radialGradient>
+        <linearGradient id="bSG" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#b8800a"/><stop offset="50%" stop-color="#FFD700"/><stop offset="100%" stop-color="#b8800a"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+  <div class="gacha-anim-label" id="gacha-anim-label">Pulling...</div>
+  <div id="gacha-anim-result" style="display:none;"></div>
+  <div id="gacha-anim-sparks" style="position:fixed;inset:0;pointer-events:none;overflow:hidden;"></div>
+</div>
     <div class="gacha-pull-btns">
       <button class="gpb single" onclick="gachaPull(1)" id="gpb1">✨ ×1 Pull — 15 🪙</button>
       <button class="gpb ten" onclick="gachaPull(10)" id="gpb10">💫 ×10 Pull — 120 🪙</button>
@@ -862,7 +1006,7 @@ const ALL_BUFFS=[
   {id:'slow_s',    rarity:'common',   name:'🐌 Slow Drizzle',   emoji:'🐌',short:'Slow',    desc:'Hearts 20% slower for 10s',            dur:10,w:28},
   {id:'coins_s',   rarity:'common',   name:'💰 Coin Shower',    emoji:'💰',short:'Coins',   desc:'+5 bonus coins now',                   dur:0, w:22,instant:true,fn:(g)=>{g.coins+=5;g.P.coins+=5;g.P.coinsEarned+=5;}},
   {id:'xp_s',      rarity:'common',   name:'⚡ XP Trickle',     emoji:'⚡',short:'XP+',     desc:'+20% XP for 8s',                       dur:8, w:22},
-  {id:'lucky_s',   rarity:'common',   name:'🍀 Lucky Break',    emoji:'🍀',short:'Lucky',   desc:'Next bad heart is harmless (1 block)',  dur:Infinity,w:18},
+  {id:'lucky_s',   rarity:'common',   name:'🍀 Lucky Break',    emoji:'🍀',short:'Lucky',   desc:'Blocks next bad heart OR saves 1 missed good heart — whichever comes first',  dur:Infinity,w:18},
   {id:'rally',     rarity:'common',   name:'💪 Rally',          emoji:'💪',short:'Rally',   desc:'+1 pt bonus per heart for 8s',         dur:8, w:16},
   {id:'heartstorm',rarity:'common',   name:'🌧️ Heart Rain',     emoji:'🌧️',short:'Rain',    desc:'Extra hearts fall for 6s',             dur:6, w:14},
   // UNCOMMON (tier unlocks at lv2)
@@ -896,21 +1040,34 @@ const ALL_BUFFS=[
   {id:'heartboost',rarity:'common',   name:'💞 Heart Boost',   emoji:'💞',short:'Boost',   desc:'Hearts worth +2 pts each for 7s',      dur:7, w:16},
   {id:'miniwall',  rarity:'common',   name:'🪨 Mini Wall',     emoji:'🪨',short:'Wall',    desc:'Shrinks bad items 30% for 10s',        dur:10,w:14},
   {id:'snack',     rarity:'common',   name:'🍡 Snack Time',    emoji:'🍡',short:'Snack',   desc:'Instantly earn +8 coins',              dur:0, w:14,instant:true,fn:(g)=>{g.coins+=8;g.P.coins+=8;g.P.coinsEarned+=8;}},
+  {id:'tailwind',  rarity:'common',   name:'💨 Tailwind',      emoji:'💨',short:'Wind',    desc:'Basket 25% wider & +1pt for 6s',      dur:6, w:13},
+  {id:'warmup',    rarity:'common',   name:'🔆 Warm-Up',       emoji:'🔆',short:'Warm',    desc:'+10% XP and +10% coins for 8s',        dur:8, w:13},
+  {id:'pocketful', rarity:'common',   name:'🪙 Pocketful',     emoji:'🪙',short:'Pocket',  desc:'+7 coins now',                         dur:0, w:13,instant:true,fn:(g)=>{g.coins+=7;g.P.coins+=7;g.P.coinsEarned+=7;}},
   // UNCOMMON ADDITIONS
   {id:'xp_streak', rarity:'uncommon', name:'🔗 XP Chain',      emoji:'🔗',short:'Chain',   desc:'Streak 3+ gives 2× XP for 10s',       dur:10,w:13},
   {id:'bounty',    rarity:'uncommon', name:'🤑 Bounty Hearts',  emoji:'🤑',short:'Bounty',  desc:'+2 coins per heart caught for 10s',    dur:10,w:11},
   {id:'doubleshot',rarity:'uncommon', name:'🎯 Double Shot',   emoji:'🎯',short:'DblShot', desc:'Every other heart caught scores 2× for 12s', dur:12,w:10},
+  {id:'shieldplus', rarity:'uncommon',name:'🛡️ Iron Shield',   emoji:'🛡️',short:'Iron',    desc:'Blocks next 2 bad hearts',             dur:Infinity,w:9},
+  {id:'breezy',    rarity:'uncommon', name:'🌬️ Breezy',        emoji:'🌬️',short:'Breeze',  desc:'All items 25% slower + basket 20% wider for 8s', dur:8,w:9},
+  {id:'caffeinate',rarity:'uncommon', name:'☕ Caffeinate',    emoji:'☕',short:'Caff',    desc:'+1 life regen + 15% XP boost for 10s',  dur:10,w:8},
   // RARE ADDITIONS
   {id:'scatter',   rarity:'rare',     name:'🌸 Blossom Burst', emoji:'🌸',short:'Blossom', desc:'Instantly spawns 6 bonus hearts',      dur:0, w:7,instant:true,fn:(g)=>{g._scatter=true;}},
   {id:'nullfield', rarity:'rare',     name:'🚫 Null Field',    emoji:'🚫',short:'Null',    desc:'Removes all bad items from screen',    dur:0, w:6,instant:true,fn:(g)=>{g._nullfield=true;}},
   {id:'overclock', rarity:'rare',     name:'⚙️ Overclock',     emoji:'⚙️',short:'Clock',   desc:'Hearts fall 50% faster but score 2× for 10s', dur:10,w:6},
+  {id:'goldrain',  rarity:'rare',     name:'🌧️ Gold Rain',     emoji:'🌧️',short:'Gold✦',  desc:'+5 coins per heart for 8s',            dur:8, w:6},
+  {id:'foresight', rarity:'rare',     name:'🔮 Foresight',     emoji:'🔮',short:'Sight',   desc:'Bad items glow red 2s before hitting for 12s', dur:12,w:5},
+  {id:'avalanche', rarity:'rare',     name:'❄️ Avalanche',     emoji:'❄️',short:'Avalan',  desc:'All bad items frozen + 6 bonus hearts spawned now', dur:0,w:5,instant:true,fn:(g)=>{g.freezeBad=true;g._scatter=true;}},
   // EPIC ADDITIONS
   {id:'overcharge',rarity:'epic',     name:'⚡ Overcharge',    emoji:'⚡',short:'5×',      desc:'Hearts worth 5× pts for 5s',           dur:5, w:2},
   {id:'lifesteal', rarity:'epic',     name:'🧛 Life Steal',    emoji:'🧛',short:'Steal',   desc:'Each heart heals 0.25 life for 10s',   dur:10,w:2},
   {id:'vortex',    rarity:'epic',     name:'🌀 Vortex',        emoji:'🌀',short:'Vortex',  desc:'Magnet + 3× pts + freeze bad for 8s',  dur:8, w:1},
+  {id:'timegod',   rarity:'epic',     name:'⏳ Time God',      emoji:'⏳',short:'TGod',    desc:'Freeze all items for 6s + score 3× for 6s', dur:6,w:1},
+  {id:'supernova', rarity:'epic',     name:'🌠 Supernova',     emoji:'🌠',short:'Nova',    desc:'Clear all bad items + 4× pts for 8s',  dur:8, w:1,instant:true,fn:(g)=>{g._nullfield=true;}},
   // LEGENDARY ADDITIONS
   {id:'soulbound', rarity:'legendary',name:'💜 Soulbound',     emoji:'💜',short:'SOUL',    desc:'Each heart heals 1 life for 8s',       dur:8, w:1},
   {id:'apotheosis',rarity:'legendary',name:'🌌 Apotheosis',    emoji:'🌌',short:'APEX',    desc:'5× pts + clear all bad items + magnet for 10s', dur:10,w:1,instant:true,fn:(g)=>{g._nullfield=true;}},
+  {id:'heartquake',rarity:'legendary',name:'💥 Heartquake',    emoji:'💥',short:'QUAKE',   desc:'5× pts + scatter 6 hearts + freeze bad for 12s', dur:12,w:1,instant:true,fn:(g)=>{g._nullfield=true;g._scatter=true;}},
+  {id:'eclipse',   rarity:'legendary',name:'🌑 Eclipse',        emoji:'🌑',short:'ECLI',    desc:'All bad items vanish + 5× pts + magnet for 15s', dur:15,w:1,instant:true,fn:(g)=>{g._nullfield=true;}},
   // LEGENDARY (tier unlocks at lv7)
   {id:'godmode',   rarity:'legendary',name:'👑 Queen Mode',     emoji:'👑',short:'QUEEN',   desc:'2× pts + magnet + slow for 15s',       dur:15,w:1},
   {id:'xp_l',      rarity:'legendary',name:'📚 XP OVERDRIVE',   emoji:'📚',short:'OVER',    desc:'+100% XP for 20s',                     dur:20,w:1},
@@ -1075,7 +1232,20 @@ function computeState(){
     if(b.id==='vortex')     {st.x3=true;st.magnet=true;st.freezeBad=true;}
     if(b.id==='soulbound')  st.soulbound=true;
     if(b.id==='apotheosis') {st.x5=true;st.magnet=true;st.freezeBad=true;}
+    // new buffs
+    if(b.id==='tailwind')   {st.bw=Math.max(st.bw,1.25);st.rallyBonus=Math.max(st.rallyBonus,1);}
+    if(b.id==='warmup')     {st.xpM=Math.max(st.xpM,1.1);st.coinM=Math.max(st.coinM,1.1);}
+    if(b.id==='shieldplus') {if(shieldsLeft<2) shieldsLeft=2;} // handled once below
+    if(b.id==='breezy')     {st.sm=Math.min(st.sm,.75);st.bw=Math.max(st.bw,1.2);}
+    if(b.id==='caffeinate') st.xpM=Math.max(st.xpM,1.15);
+    if(b.id==='goldrain')   st.coinPerHeart=Math.max(st.coinPerHeart,5);
+    if(b.id==='timegod')    {st.timeFrozen=true;st.x3=true;}
+    if(b.id==='supernova')  {st.x4=true;st.freezeBad=true;}
+    if(b.id==='heartquake') {st.x5=true;st.magnet=true;st.freezeBad=true;}
+    if(b.id==='eclipse')    {st.x5=true;st.magnet=true;st.freezeBad=true;}
   }
+  // Apply equipped pet passive bonuses
+  petApplyState(st);
 }
 
 // ===================== HUD =====================
@@ -1213,12 +1383,12 @@ function spawnItem(){
   const base=0.8+(t/180)*1.7+level*0.06;
   let spd=Math.min(3.0,base*(0.88+Math.random()*0.24))*st.sm;
   if(shopHas('slow_start')&&frame<30*60) spd*=0.6;
-  items.push({
+  items.push(petDeerlingFilter({
     x:22+Math.random()*(W-44),y:-24,
     vy:isBad&&st.freezeBad?0.3:spd,
     emoji:isBad?BAD_EMO[Math.floor(Math.random()*BAD_EMO.length)]:HEART_EMO[Math.floor(Math.random()*HEART_EMO.length)],
     bad:isBad,size:22,frozen:isBad&&st.freezeBad
-  });
+  }));
 }
 
 // ===================== GAME LOOP =====================
@@ -1226,6 +1396,7 @@ function gameLoop(){
   if(!running) return;
   frame++;
   computeState();
+  petTickFrame();
 
   // Vacuum: snap all hearts to basket immediately
   if(st._vacuum){
@@ -1351,6 +1522,7 @@ function gameLoop(){
           // streak_save: don't reset streak on first miss
           const hadStreak=streak>0;
           if(st.streakSave&&hadStreak){streak=Math.max(1,streak-1);showPopup('🔥 Saved!',it.x,it.y,'#FF9800');}
+          else if(window._petStreakGuard&&streak>0){streak=Math.max(3,Math.floor(streak/2));showPopup('🐘 Guarded!',it.x,it.y,'#90caf9');}
           else streak=0;
           // Armor: first hit is free
           if(st.armor&&!armorUsed){armorUsed=true;showPopup('🪖 Armored!',it.x,it.y,'#90caf9');items.splice(i,1);continue;}
@@ -1407,6 +1579,7 @@ function gameLoop(){
           if(bossHP<=0){defeatBoss();score+=total;streak++;sessionHearts++;P.totalHearts++;updateHUD();items.splice(i,1);continue;}
         }
         score+=total;streak++;sessionHearts++;P.totalHearts++;
+        petOnHeartCaught(it.x,it.y);
         if(streak>P.bestStreak) P.bestStreak=streak;
         // Lifesteal: 0.25 life per heart (tracked with debt system)
         if(st.lifesteal){if(!window._lifeDebt)window._lifeDebt=0;window._lifeDebt+=0.25;if(window._lifeDebt>=1){window._lifeDebt-=1;lives=Math.min(lives+1,maxLives()+2);showPopup('🧛 +1 Life!',basket.x,by-22,'#CE93D8');updateHUD();}}
@@ -1423,7 +1596,7 @@ function gameLoop(){
         if(!bossActive){
           const xpGain=Math.round((pts+(streak>=5?1:0))*st.xpM);
           xp+=xpGain;sessionXP+=xpGain;
-          const cBase=Math.random()<0.35?1:0;
+          const cBase=Math.random()<(0.35+(st._petCoinBonus?0.05:0))?1:0;
           const cExtra=st.coinPerHeart||0;
           const cGain=Math.round((cBase+cExtra)*(st.coinX2?2:1)*st.coinM);
           if(cGain>0){coins+=cGain;P.coins+=cGain;P.coinsEarned+=cGain;}
@@ -1435,7 +1608,13 @@ function gameLoop(){
     }
     if(it.y>H+30){
       // Only plain hearts (not potatoes or bags) cost a life when missed
-      if(!it.bad&&!it.isPotato&&!it.isShopbag){lives--;streak=0;if(currentChar==='dudu')duduAuraReady=false;if(lives<=0){endGame();return;}updateHUD();}
+      if(!it.bad&&!it.isPotato&&!it.isShopbag){
+        // Lucky Break: also saves 1 missed good heart!
+        const luckyMiss=activeBuffs.find(b=>b.id==='lucky_s');
+        if(luckyMiss){activeBuffs=activeBuffs.filter(b=>b.id!=='lucky_s');showPopup('🍀 Lucky Save!',it.x,H-40,'#4CAF50');}
+        else{lives--;streak=0;if(currentChar==='dudu')duduAuraReady=false;if(lives<=0){endGame();return;}updateHUD();}
+      }
+      if(it.bad) petOnBadDodged(it);
       items.splice(i,1);
     }
   }
@@ -1647,6 +1826,7 @@ function showLevelUpScreen(){
       if(cat.instant&&cat.fn){const g={coins,P,lives};cat.fn(g);coins=g.coins;lives=g.lives;}
       if(cat.id==='shield') shieldsLeft=1;
       if(cat.id==='shield2') shieldsLeft=3;
+      if(cat.id==='shieldplus') shieldsLeft=Math.max(shieldsLeft,2);
       if(cat.id==='phoenix') phoenixReady=true;
       if(cat.id==='vacuum') st._vacuum=true; // handled in game loop
       if(cat.id==='starburst'){streak=Math.min(streak+2,99);score+=2;}
@@ -1707,6 +1887,8 @@ function resetGame(){
   passiveCharge=0;duduAuraReady=false;potatoCount=0;window._lifeDebt=0;window._dsToggle=false;
   bossActive=false;bossShot=[];bossDefeated=0;bossPhase=0;
   armorUsed=false;
+  window._petHeartCount=0;window._petBadDodged=0;window._petMagnetTimer=0;
+  window._petX2Timer=0;window._petDuduX2Timer=0;window._petDodgeDebt=0;window._petStreakGuard=false;
   basket.x=W/2;
   if(shopHas('shield_start'))  shieldsLeft=1;
   if(shopHas('phoenix_start')) phoenixReady=true;
@@ -2483,32 +2665,48 @@ function downloadShareCard(){
 
 // ===================== GACHA SYSTEM =====================
 const GACHA_POOL = [
-  // Common pets
-  {id:'pet_cat',    type:'pet', rarity:'common',    name:'🐱 Whiskers',  emoji:'🐱', desc:'A curious kitty'},
-  {id:'pet_chick',  type:'pet', rarity:'common',    name:'🐥 Peepster',  emoji:'🐥', desc:'Tiny fluffy buddy'},
-  {id:'pet_frog',   type:'pet', rarity:'common',    name:'🐸 Hopkins',   emoji:'🐸', desc:'Ribbit ribbit'},
-  {id:'pet_bunny',  type:'pet', rarity:'common',    name:'🐰 Cottontail',emoji:'🐰', desc:'Hoppy companion'},
-  // Uncommon pets
-  {id:'pet_star',   type:'pet', rarity:'uncommon',  name:'⭐ Starling',  emoji:'⭐', desc:'Glittery friend'},
-  {id:'pet_fox',    type:'pet', rarity:'uncommon',  name:'🦊 Foxy',      emoji:'🦊', desc:'Clever companion'},
-  {id:'pet_penguin',type:'pet', rarity:'uncommon',  name:'🐧 Waddles',   emoji:'🐧', desc:'Cool as ice'},
-  // Uncommon bonuses
-  {id:'bon_coins20',type:'bonus',rarity:'uncommon', name:'💰 Coin Bag',  emoji:'💰', desc:'+20 coins now',  instant:true, fn:(p)=>{p.coins+=20;p.coinsEarned+=20;}},
-  {id:'bon_coins30',type:'bonus',rarity:'uncommon', name:'💰 Coin Pouch',emoji:'💰', desc:'+30 coins now',  instant:true, fn:(p)=>{p.coins+=30;p.coinsEarned+=30;}},
-  // Rare pets
-  {id:'pet_dragon', type:'pet', rarity:'rare',      name:'🐲 Longlong',  emoji:'🐲', desc:'Ancient lucky dragon'},
-  {id:'pet_panda',  type:'pet', rarity:'rare',      name:'🐼 Mochi',     emoji:'🐼', desc:'Squishy panda pal'},
-  {id:'pet_uni',    type:'pet', rarity:'rare',      name:'🦄 Sparkle',   emoji:'🦄', desc:'Pure magic'},
-  // Rare bonuses
-  {id:'bon_coins50',type:'bonus',rarity:'rare',     name:'💎 Gem Chest', emoji:'💎', desc:'+50 coins now',  instant:true, fn:(p)=>{p.coins+=50;p.coinsEarned+=50;}},
-  // Epic pets
-  {id:'pet_dino',   type:'pet', rarity:'epic',      name:'🦕 Nomnom Jr.',emoji:'🦕', desc:'Baby brachiosaurus'},
-  {id:'pet_phoenix',type:'pet', rarity:'epic',      name:'🦅 Blaze',     emoji:'🦅', desc:'Reborn every catch'},
-  {id:'bon_coins80',type:'bonus',rarity:'epic',     name:'💰 JACKPOT',   emoji:'💰', desc:'+80 coins now',  instant:true, fn:(p)=>{p.coins+=80;p.coinsEarned+=80;}},
-  // Legendary
-  {id:'pet_baobao', type:'pet', rarity:'legendary', name:'🥟 Mini Bao',  emoji:'🥟', desc:'A tiny Bao just for you ✨'},
-  {id:'pet_dudu2',  type:'pet', rarity:'legendary', name:'🐻 Lil Dudu',  emoji:'🐻', desc:'The fluffiest boy'},
-  {id:'char_bubu',  type:'char',rarity:'legendary', name:'🐼 BUBU',       emoji:'🐼', desc:'Unlock Bubu as a playable character! 🎉 (Shopaholic passive)'},
+  // ── COMMON PETS ──────────────────────────────────────────────────────────────
+  {id:'pet_cat',    type:'pet', rarity:'common',    name:'🐱 Whiskers',   emoji:'🐱', desc:'Purrs softly. Tiny chance to catch nearby hearts.',          petSkill:'heartsnag'},
+  {id:'pet_chick',  type:'pet', rarity:'common',    name:'🐥 Peepster',   emoji:'🐥', desc:'Tiny fluffy buddy. Cheers you on for a small luck boost.',    petSkill:'luck'},
+  {id:'pet_frog',   type:'pet', rarity:'common',    name:'🐸 Hopkins',    emoji:'🐸', desc:'Ribbit! Occasionally slows a falling bad item.',             petSkill:'frogluck'},
+  {id:'pet_bunny',  type:'pet', rarity:'common',    name:'🐰 Cottontail', emoji:'🐰', desc:'Hoppy pal. Boosts coin chance by +5%.',                      petSkill:'coinchance'},
+  {id:'pet_hamster',type:'pet', rarity:'common',    name:'🐹 Cheekums',   emoji:'🐹', desc:'Stores luck in cheeks. Small streak protection.',            petSkill:'luck'},
+  {id:'pet_turtle', type:'pet', rarity:'common',    name:'🐢 Shellbert',  emoji:'🐢', desc:'Slow and steady. Slightly extends buff timers.',             petSkill:'luck'},
+  {id:'pet_duck',   type:'pet', rarity:'common',    name:'🦆 Quackers',   emoji:'🦆', desc:'Quack! Gently nudges hearts toward basket.',                 petSkill:'heartsnag'},
+  {id:'pet_ladybug',type:'pet', rarity:'common',    name:'🐞 Dotty',      emoji:'🐞', desc:'Lucky bug. +1% coin drop chance per heart.',                 petSkill:'coinchance'},
+  // ── UNCOMMON PETS ────────────────────────────────────────────────────────────
+  {id:'pet_star',   type:'pet', rarity:'uncommon',  name:'⭐ Starling',   emoji:'⭐', desc:'Glittery friend. Restores 1 life every 40 hearts.',           petSkill:'regen40'},
+  {id:'pet_fox',    type:'pet', rarity:'uncommon',  name:'🦊 Foxy',       emoji:'🦊', desc:'Clever companion. Spots incoming bad items — shrinks them.',  petSkill:'shrink'},
+  {id:'pet_penguin',type:'pet', rarity:'uncommon',  name:'🐧 Waddles',    emoji:'🐧', desc:'Cool as ice. Bad items fall 8% slower.',                     petSkill:'slowbad'},
+  {id:'pet_bee',    type:'pet', rarity:'uncommon',  name:'🐝 Buzzy',      emoji:'🐝', desc:'Busy bee. +1 coin every 10 hearts caught.',                  petSkill:'beecoin'},
+  {id:'pet_owl',    type:'pet', rarity:'uncommon',  name:'🦉 Hootsworth', emoji:'🦉', desc:'Wise owl. XP gains increased by +10%.',                      petSkill:'xpowl'},
+  {id:'pet_crab',   type:'pet', rarity:'uncommon',  name:'🦀 Snappy',     emoji:'🦀', desc:'Sidestep master. Bad items 12% smaller.',                    petSkill:'shrink'},
+  {id:'pet_otter',  type:'pet', rarity:'uncommon',  name:'🦦 Bubbles',    emoji:'🦦', desc:'Playful otter. Every 15 hearts, a free coin appears.',        petSkill:'beecoin'},
+  // ── RARE PETS ────────────────────────────────────────────────────────────────
+  {id:'pet_dragon', type:'pet', rarity:'rare',      name:'🐲 Longlong',   emoji:'🐲', desc:'Lucky dragon. Spawns 1 bonus heart every 15 seconds.',       petSkill:'heartspawn'},
+  {id:'pet_panda',  type:'pet', rarity:'rare',      name:'🐼 Mochi',      emoji:'🐼', desc:'Squishy panda. Gives a mini magnet for 3s every 20 hearts.', petSkill:'minimagnet'},
+  {id:'pet_uni',    type:'pet', rarity:'rare',      name:'🦄 Sparkle',    emoji:'🦄', desc:'Pure magic. Doubles score once every 30 seconds.',           petSkill:'scoredouble'},
+  {id:'pet_wolf',   type:'pet', rarity:'rare',      name:'🐺 Howler',     emoji:'🐺', desc:'Fierce. Boosts streak by +1 every 25 consecutive hearts.',   petSkill:'streakboost'},
+  {id:'pet_deer',   type:'pet', rarity:'rare',      name:'🦌 Deerling',   emoji:'🦌', desc:'Graceful. +5% chance to turn a bad item into a heart.',      petSkill:'baddtonluck'},
+  {id:'pet_catt',   type:'pet', rarity:'rare',      name:'🐯 Tigeroo',    emoji:'🐯', desc:'Fierce cub. Doubles coin gain for 5s every 25 hearts.',      petSkill:'scoredouble'},
+  {id:'pet_mushroom',type:'pet',rarity:'rare',      name:'🍄 Shroomie',   emoji:'🍄', desc:'Magical. Every 20 catches clears all baddies instantly.',    petSkill:'clearbad'},
+  // ── EPIC PETS ────────────────────────────────────────────────────────────────
+  {id:'pet_dino',   type:'pet', rarity:'epic',      name:'🦕 Nomnom Jr.', emoji:'🦕', desc:'Baby brachiosaurus. Every 20 hearts, all bad items vanish!', petSkill:'clearbad'},
+  {id:'pet_phoenix',type:'pet', rarity:'epic',      name:'🦅 Blaze',      emoji:'🦅', desc:'Reborn each catch. Bad items glow faintly (easier to see).', petSkill:'badglow'},
+  {id:'pet_lion',   type:'pet', rarity:'epic',      name:'🦁 Simba',      emoji:'🦁', desc:'Roar! Every bad item you dodge restores 0.5 life.',          petSkill:'dodgerheal'},
+  {id:'pet_dolphin',type:'pet', rarity:'epic',      name:'🐬 Flipper',    emoji:'🐬', desc:'Playful! Grants a Lucky Break shield every 30 hearts.',      petSkill:'luckyregen'},
+  {id:'pet_narwhal',type:'pet', rarity:'epic',      name:'🦑 Narwhal',    emoji:'🦑', desc:'Mystic horn. Every 15 hearts, a free XP surge (5s).',        petSkill:'xpburst'},
+  {id:'pet_elepha', type:'pet', rarity:'epic',      name:'🐘 Dumpling',   emoji:'🐘', desc:'Never forgets. Streak resets to 3 (not 0) when hit.',        petSkill:'streakguard'},
+  // ── UNCOMMON / RARE BONUSES ──────────────────────────────────────────────────
+  {id:'bon_coins20',type:'bonus',rarity:'uncommon', name:'💰 Coin Bag',   emoji:'💰', desc:'+20 coins now',  instant:true, fn:(p)=>{p.coins+=20;p.coinsEarned+=20;}},
+  {id:'bon_coins30',type:'bonus',rarity:'uncommon', name:'💰 Coin Pouch', emoji:'💰', desc:'+30 coins now',  instant:true, fn:(p)=>{p.coins+=30;p.coinsEarned+=30;}},
+  {id:'bon_coins50',type:'bonus',rarity:'rare',     name:'💎 Gem Chest',  emoji:'💎', desc:'+50 coins now',  instant:true, fn:(p)=>{p.coins+=50;p.coinsEarned+=50;}},
+  {id:'bon_coins80',type:'bonus',rarity:'epic',     name:'💰 JACKPOT',    emoji:'💰', desc:'+80 coins now',  instant:true, fn:(p)=>{p.coins+=80;p.coinsEarned+=80;}},
+  // ── LEGENDARY PETS ───────────────────────────────────────────────────────────
+  {id:'pet_baobao', type:'pet', rarity:'legendary', name:'🥟 Mini Bao',   emoji:'🥟', desc:'A tiny Bao ✨ Grants a full Lucky Break + magnet every 25 hearts!', petSkill:'minibao'},
+  {id:'pet_dudu2',  type:'pet', rarity:'legendary', name:'🐻 Lil Dudu',   emoji:'🐻', desc:'Fluffiest boy. Doubles score for 5s every 35 hearts caught.', petSkill:'dudubuff'},
+  {id:'pet_dragon2',type:'pet', rarity:'legendary', name:'🔱 Royal Dragon',emoji:'🔱',desc:'Majestic. Bad items shrink AND fall slower. Always on.',        petSkill:'royalguard'},
+  {id:'char_bubu',  type:'char',rarity:'legendary', name:'🐼 BUBU',        emoji:'🐼', desc:'Unlock Bubu as a playable character! 🎉 (Shopaholic passive)'},
 ];
 const GACHA_WEIGHTS = {common:55,uncommon:28,rare:12,epic:4,legendary:1};
 const GACHA_RARITIES = ['common','uncommon','rare','epic','legendary'];
@@ -2593,21 +2791,126 @@ function gachaPull(count){
   const cost=count===1?15:120;
   if(P.coins<cost){showToast(`Need ${cost} coins 💰`);return;}
   P.coins-=cost;
-  // Spin animation
-  const ball=document.getElementById('gacha-ball');
-  ball.classList.remove('spinning');
-  void ball.offsetWidth;
-  ball.classList.add('spinning');
-  setTimeout(()=>ball.classList.remove('spinning'),600);
   const results=[];
   for(let i=0;i<count;i++) results.push(gachaRoll());
-  // Update coins in session if game not running
   coins=P.coins;
   saveP();
-  renderGachaResult(results,count);
-  updateGachaUI();
-  if(results.some(r=>r.rarity==='legendary')) showAchievement(`✨ LEGENDARY PULL! ${results.find(r=>r.rarity==='legendary').name}`);
-  else if(results.some(r=>r.rarity==='epic')) showAchievement(`★ Epic pull! ${results.find(r=>r.rarity==='epic').name}`);
+  // Trigger full animation overlay
+  const machineEl=document.getElementById('gacha-ball');
+  machineEl.classList.remove('spinning');
+  void machineEl.offsetWidth;
+  machineEl.classList.add('spinning');
+  setTimeout(()=>machineEl.classList.remove('spinning'),1100);
+  playGachaAnimation(results, count);
+}
+
+// ── REEL SYMBOLS (for animation display) ──────────────────────────────────
+const REEL_SYMS=['💕','💖','⭐','✨','💰','🌸','🎀','🎊','💎','🌟','🔥','💫'];
+function randReelSym(){return REEL_SYMS[Math.floor(Math.random()*REEL_SYMS.length)];}
+
+function playGachaAnimation(results, count){
+  const overlay=document.getElementById('gacha-anim-overlay');
+  const label=document.getElementById('gacha-anim-label');
+  const resultEl=document.getElementById('gacha-anim-result');
+  const sparks=document.getElementById('gacha-anim-sparks');
+  const rays=document.getElementById('gacha-rays');
+  const r1=document.getElementById('ov-reel1');
+  const r2=document.getElementById('ov-reel2');
+  const r3=document.getElementById('ov-reel3');
+  const knob=document.getElementById('ov-lever-knob');
+
+  // Reset
+  resultEl.style.display='none';
+  resultEl.innerHTML='';
+  sparks.innerHTML='';
+  rays.classList.remove('show');
+  overlay.classList.remove('pulsing');
+  label.textContent='🎰 Pulling...';
+  overlay.classList.add('show');
+
+  // Lever pull animation via attribute
+  const leverAnim=knob.animate([{cy:56},{cy:100},{cy:100},{cy:56}],{duration:600,easing:'ease-in-out'});
+
+  // Spin reels
+  let spinInterval=setInterval(()=>{
+    r1.textContent=randReelSym();
+    r2.textContent=randReelSym();
+    r3.textContent=randReelSym();
+  },90);
+
+  // Pick top result for display
+  const topResult=results.reduce((best,r)=>{
+    const order=['common','uncommon','rare','epic','legendary'];
+    return order.indexOf(r.rarity)>order.indexOf(best.rarity)?r:best;
+  },results[0]);
+  const rarity=topResult.rarity;
+  const rarityColors={common:'#ccc',uncommon:'#8de38d',rare:'#88bbff',epic:'#ce93ff',legendary:'#FFD700'};
+  const rarityBg={common:'rgba(255,255,255,0.09)',uncommon:'rgba(100,220,100,0.14)',rare:'rgba(80,160,255,0.16)',epic:'rgba(200,100,255,0.2)',legendary:'rgba(255,215,0,0.2)'};
+  const rarityBorder={common:'rgba(200,200,200,0.3)',uncommon:'#5cb85c',rare:'#5599ff',epic:'#b44fff',legendary:'#D4A853'};
+  const spinDuration=rarity==='legendary'?2200:rarity==='epic'?1700:rarity==='rare'?1300:900;
+
+  setTimeout(()=>{
+    clearInterval(spinInterval);
+    // Reveal reels one by one
+    const finalSyms=[topResult.emoji, count>1?results[Math.min(1,results.length-1)].emoji:randReelSym(), count>2?results[Math.min(2,results.length-1)].emoji:randReelSym()];
+    label.textContent='🎲 Revealing...';
+
+    setTimeout(()=>{ r1.textContent=finalSyms[0]; r1.style.animation='reelReveal 0.4s cubic-bezier(.34,1.56,.64,1) forwards'; setTimeout(()=>r1.style.animation='',500); },0);
+    setTimeout(()=>{ r2.textContent=finalSyms[1]; r2.style.animation='reelReveal 0.4s cubic-bezier(.34,1.56,.64,1) forwards'; setTimeout(()=>r2.style.animation='',500); },200);
+    setTimeout(()=>{ r3.textContent=finalSyms[2]; r3.style.animation='reelReveal 0.4s cubic-bezier(.34,1.56,.64,1) forwards'; setTimeout(()=>r3.style.animation='',500); },400);
+
+    // Show result card
+    setTimeout(()=>{
+      // Sparks
+      const sparkColors=[rarityColors[rarity],'#fff','#FFD700',rarityColors[rarity]];
+      const numSparks=rarity==='legendary'?28:rarity==='epic'?18:rarity==='rare'?12:7;
+      for(let s=0;s<numSparks;s++){
+        const el=document.createElement('div');
+        el.className='spark';
+        const angle=Math.random()*Math.PI*2;
+        const dist=80+Math.random()*160;
+        el.style.cssText=`left:50%;top:45%;--sx:${Math.cos(angle)*dist}px;--sy:${Math.sin(angle)*dist}px;background:${sparkColors[s%sparkColors.length]};animation-delay:${Math.random()*0.3}s;animation-duration:${0.6+Math.random()*0.5}s;`;
+        sparks.appendChild(el);
+      }
+      // Rays for legendary
+      if(rarity==='legendary'){rays.classList.add('show');overlay.classList.add('pulsing');}
+      if(rarity==='epic'||rarity==='legendary'){overlay.classList.add('pulsing');}
+
+      // Build result card
+      const cardLabel=rarity==='legendary'?'✦✦ LEGENDARY ✦✦':rarity==='epic'?'★ EPIC ★':rarity==='rare'?'✦ Rare':rarity==='uncommon'?'Uncommon':'Common';
+      let cardHtml='';
+      if(count===1){
+        cardHtml=`<div style="font-size:.65rem;letter-spacing:.15em;color:${rarityColors[rarity]};margin-bottom:.3rem;">${cardLabel}</div>
+          <div style="font-size:2.2rem;margin:.2rem 0;">${topResult.emoji}</div>
+          <div style="font-size:.95rem;color:${rarityColors[rarity]};font-weight:700;">${topResult.name}</div>
+          <div style="font-size:.68rem;color:rgba(244,195,130,.65);margin-top:.2rem;">${topResult.desc}</div>`;
+      } else {
+        const icons=results.map(r=>`<span title="${r.name}" style="font-size:1.5rem;">${r.emoji}</span>`).join('');
+        const best=results.filter(r=>r.rarity==='legendary').length>0?`🌟 ${results.filter(r=>r.rarity==='legendary').length}× Legendary!`:results.filter(r=>r.rarity==='epic').length>0?`★ ${results.filter(r=>r.rarity==='epic').length}× Epic!`:`${cardLabel} best`;
+        cardHtml=`<div style="font-size:.65rem;letter-spacing:.12em;color:${rarityColors[rarity]};margin-bottom:.4rem;">${best}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-bottom:.3rem;">${icons}</div>`;
+      }
+      resultEl.innerHTML=cardHtml;
+      resultEl.style.cssText=`display:block;background:${rarityBg[rarity]};border:2px solid ${rarityBorder[rarity]};color:${rarityColors[rarity]};`;
+      resultEl.style.animation='resultCardPop .52s cubic-bezier(.34,1.56,.64,1) forwards';
+      label.textContent=rarity==='legendary'?'🌟 LEGENDARY!!':rarity==='epic'?'★ EPIC!':rarity==='rare'?'✦ Rare!':'✨ Got it!';
+
+      // Close after delay — tap to dismiss early
+      const closeOverlay=()=>{
+        overlay.classList.remove('show','pulsing');
+        rays.classList.remove('show');
+        sparks.innerHTML='';
+        overlay.removeEventListener('click',closeOverlay);
+        // Now update the gacha modal result
+        renderGachaResult(results,count);
+        updateGachaUI();
+        if(results.some(r=>r.rarity==='legendary')) showAchievement(`✨ LEGENDARY PULL! ${results.find(r=>r.rarity==='legendary').name}`);
+        else if(results.some(r=>r.rarity==='epic')) showAchievement(`★ Epic pull! ${results.find(r=>r.rarity==='epic').name}`);
+      };
+      setTimeout(closeOverlay, rarity==='legendary'?3200:rarity==='epic'?2500:1800);
+      setTimeout(()=>overlay.addEventListener('click',closeOverlay),300);
+    }, 680);
+  }, spinDuration);
 }
 
 function renderGachaResult(results,count){
@@ -2628,7 +2931,7 @@ function renderGachaInv(){
   let html='';
   if(charUnlocked) html+=`<div class="ginv-chip" style="border-color:#FF6BA8;background:rgba(233,30,140,.12);color:#FF6BA8;" title="Bubu unlocked as playable character!">🐼 Bubu Unlocked!</div>`;
   if(!pets.length&&!charUnlocked){el.innerHTML=`<span style="font-size:.68rem;color:rgba(244,195,130,.35)">No companions yet — pull to collect!</span>`;return;}
-  html+=pets.map(p=>`<div class="ginv-chip ${P.equippedPet===p.id?'equipped':''}" onclick="equipPet('${p.id}')" title="${p.desc}">${p.emoji} ${p.name.split(' ').slice(1).join(' ')}</div>`).join('');
+  html+=pets.map(p=>`<div class="ginv-chip ${P.equippedPet===p.id?'equipped':''}" onclick="equipPet('${p.id}')" title="${p.desc}">${p.emoji} ${p.name.split(' ').slice(1).join(' ')} <span style="font-size:.5rem;opacity:.6">${p.rarity==='common'?'':p.rarity==='uncommon'?'✦':'★'.repeat({'rare':1,'epic':2,'legendary':3}[p.rarity]||0)}</span></div>`).join('');
   el.innerHTML=html;
 }
 
@@ -2643,7 +2946,11 @@ function equipPet(id){
   P.equippedPet=(P.equippedPet===id)?null:id;
   saveP();renderGachaInv();
   const p=GACHA_POOL.find(x=>x.id===id);
-  showToast(P.equippedPet?`${p.emoji} ${p.name} equipped!`:`Pet unequipped`);
+  if(P.equippedPet){
+    showToast(`${p.emoji} ${p.name} equipped! ${p.desc}`);
+  } else {
+    showToast(`Pet unequipped`);
+  }
 }
 
 // ===================== DAILY LOGIN =====================
@@ -2751,6 +3058,132 @@ function drawEquippedPet(){
   ctx.textAlign='center';
   ctx.fillText(p.emoji,px,py);
   ctx.restore();
+}
+
+// ===================== PET SKILL SYSTEM =====================
+// Counters for pet skills (reset on game start)
+window._petHeartCount=0;   // hearts caught this game (for pet triggers)
+window._petBadDodged=0;    // bad items that passed through without hitting player
+window._petMagnetTimer=0;  // frames left for mini-magnet (Mochi)
+window._petX2Timer=0;      // frames left for score double (Sparkle)
+window._petDuduX2Timer=0;  // frames left for Lil Dudu score double
+
+// Called each time a good heart is caught — for pet triggers
+function petOnHeartCaught(heartX, heartY){
+  if(!P.equippedPet||!running) return;
+  const p=GACHA_POOL.find(x=>x.id===P.equippedPet);
+  if(!p||p.type!=='pet'||!p.petSkill) return;
+  window._petHeartCount=(window._petHeartCount||0)+1;
+  const hc=window._petHeartCount;
+  const sk=p.petSkill;
+
+  // UNCOMMON: Starling — 1 life every 40 hearts
+  if(sk==='regen40'&&hc%40===0){lives=Math.min(lives+1,maxLives()+2);showPopup('⭐ Pet Heal!',heartX,heartY-14,'#FFD700');updateHUD();}
+  // UNCOMMON: Buzzy bee — +1 coin every 10 hearts
+  if(sk==='beecoin'&&hc%10===0){coins+=1;P.coins+=1;P.coinsEarned+=1;showPopup('🐝 +1🪙',heartX,heartY-10,'#FFD700');}
+  // RARE: Mini Mochi magnet trigger
+  if(sk==='minimagnet'&&hc%20===0){window._petMagnetTimer=180;showPopup('🐼 Magnet!',heartX,heartY-14,'#90caf9');}
+  // RARE: Sparkle — score double for 3s every 30 hearts
+  if(sk==='scoredouble'&&hc%30===0){window._petX2Timer=180;showPopup('🦄 2× Score!',heartX,heartY-14,'#CE93D8');}
+  // RARE: Howler — streak +1 every 25 hearts
+  if(sk==='streakboost'&&hc%25===0){streak=Math.min(streak+1,999);showPopup('🐺 +1 Streak!',heartX,heartY-14,'#aaa');}
+  // EPIC: Dino/Mushroom — clear all bads every 20 hearts
+  if(sk==='clearbad'&&hc%20===0){items=items.filter(it=>!it.bad);bossShot=[];showPopup('🦕 Cleared!',W/2,H/2,'#4CAF50');}
+  // EPIC: Lion — dodge heal (handled in bad-miss path below)
+  // EPIC: Dolphin — Lucky Break regen every 30 hearts
+  if(sk==='luckyregen'&&hc%30===0){
+    if(!activeBuffs.find(b=>b.id==='lucky_s')) activeBuffs.push({id:'lucky_s',rarity:'common',emoji:'🍀',short:'Lucky',endsAt:Infinity});
+    showPopup('🐬 Lucky!',heartX,heartY-14,'#4CAF50');
+  }
+  // EPIC: Narwhal — XP surge every 15 hearts
+  if(sk==='xpburst'&&hc%15===0){
+    activeBuffs.push({id:'xp_m',rarity:'rare',emoji:'⚡',short:'XP++',endsAt:frame+5*60});
+    showPopup('🦑 XP Surge!',heartX,heartY-14,'#FFD700');
+  }
+  // LEGENDARY: Mini Bao — Lucky Break + magnet every 25 hearts
+  if(sk==='minibao'&&hc%25===0){
+    if(!activeBuffs.find(b=>b.id==='lucky_s')) activeBuffs.push({id:'lucky_s',rarity:'common',emoji:'🍀',short:'Lucky',endsAt:Infinity});
+    if(!activeBuffs.find(b=>b.id==='magnet_s')) activeBuffs.push({id:'magnet_s',rarity:'uncommon',emoji:'🧲',short:'Magnet',endsAt:frame+5*60});
+    showPopup('🥟 Pet Power!',heartX,heartY-18,'#FFD700');
+  }
+  // LEGENDARY: Lil Dudu — 2× score for 5s every 35 hearts
+  if(sk==='dudubuff'&&hc%35===0){window._petDuduX2Timer=300;showPopup('🐻 DUDU BUFF!',W/2,H/3,'#CE93D8');}
+  // EPIC: streakguard — handled in bad-hit path, set flag
+  if(sk==='streakguard') window._petStreakGuard=true;
+}
+
+// Called each frame in the game loop for always-on effects
+function petTickFrame(){
+  if(!P.equippedPet||!running) return;
+  const p=GACHA_POOL.find(x=>x.id===P.equippedPet);
+  if(!p||p.type!=='pet'||!p.petSkill) return;
+  const sk=p.petSkill;
+
+  // UNCOMMON: Fox — shrinks bad items (handled in computeState via petBadShrink)
+  // UNCOMMON: Penguin — bad items slower (handled via petSlowBad)
+  // UNCOMMON: Owl — XP bonus (handled in XP calc)
+  // RARE: Mini magnet active?
+  if(sk==='minimagnet'&&window._petMagnetTimer>0){
+    window._petMagnetTimer--;
+    items.forEach(it=>{if(!it.bad) it.x+=(basket.x-it.x)*0.025;});
+  }
+  // LEGENDARY: Royal Dragon — ongoing bad-shrink + slow (via petState)
+  // COMMON: Heartsnag — 0.4% chance per frame to auto-snap nearest heart
+  if(sk==='heartsnag'){
+    if(Math.random()<0.004){
+      const nearest=items.filter(it=>!it.bad&&!it.isPotato&&!it.isShopbag).sort((a,b)=>Math.abs(a.x-basket.x)-Math.abs(b.x-basket.x))[0];
+      if(nearest){nearest.x+=(basket.x-nearest.x)*0.15;}
+    }
+  }
+  // Score multiplier timers for Sparkle & Lil Dudu
+  if(window._petX2Timer>0) window._petX2Timer--;
+  if(window._petDuduX2Timer>0) window._petDuduX2Timer--;
+}
+
+// Pet-applied state (called inside computeState)
+function petApplyState(st){
+  if(!P.equippedPet) return;
+  const p=GACHA_POOL.find(x=>x.id===P.equippedPet);
+  if(!p||p.type!=='pet'||!p.petSkill) return;
+  const sk=p.petSkill;
+  // UNCOMMON: Fox — bad items 20% smaller
+  if(sk==='shrink') st.badShrink=true;
+  // UNCOMMON: Penguin — 8% slower bad items
+  if(sk==='slowbad') st.sm=Math.min(st.sm||1, (st.sm||1)*0.92);
+  // UNCOMMON: Owl — +10% XP
+  if(sk==='xpowl') st.xpM=Math.max(st.xpM||1, (st.xpM||1)*1.1);
+  // UNCOMMON: Bunny — coin chance +5% (handled as flag)
+  if(sk==='coinchance') st._petCoinBonus=true;
+  // RARE: bad→good 5% chance (Deerling) — flag for item loop
+  if(sk==='baddtonluck') st._petDeerling=true;
+  // EPIC: Bad glow is visual-only for Blaze — no stat change needed
+  // LEGENDARY: Royal Dragon — shrink + slow bad always
+  if(sk==='royalguard'){st.badShrink=true;st.sm=Math.min(st.sm||1, (st.sm||1)*0.88);}
+  // Score double for Sparkle/Dudu2
+  if((sk==='scoredouble'&&window._petX2Timer>0)||(sk==='dudubuff'&&window._petDuduX2Timer>0)) st.x2=true;
+}
+
+// Pet on bad-item-dodge (bad item falls below basket without being caught)
+function petOnBadDodged(it){
+  if(!P.equippedPet||!running) return;
+  const p=GACHA_POOL.find(x=>x.id===P.equippedPet);
+  if(!p||p.type!=='pet'||!p.petSkill) return;
+  if(p.petSkill==='dodgerheal'){
+    if(!window._petDodgeDebt) window._petDodgeDebt=0;
+    window._petDodgeDebt+=0.5;
+    if(window._petDodgeDebt>=1){window._petDodgeDebt-=1;lives=Math.min(lives+1,maxLives()+2);showPopup('🦁 Dodge Heal!',it.x,H-40,'#FF9800');updateHUD();}
+  }
+}
+
+// RARE: Deerling — 5% chance to turn a bad item into a heart when spawned
+function petDeerlingFilter(it){
+  if(!P.equippedPet||!it.bad) return it;
+  const p=GACHA_POOL.find(x=>x.id===P.equippedPet);
+  if(!p||p.petSkill!=='baddtonluck') return it;
+  if(Math.random()<0.05){
+    it.bad=false;it.emoji=HEART_EMO[Math.floor(Math.random()*HEART_EMO.length)];
+  }
+  return it;
 }
 
 // Hook into existing gameLoop — patch the end of loop to draw pet
