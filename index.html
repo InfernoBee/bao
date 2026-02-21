@@ -1362,8 +1362,13 @@ function gameSecs(){return Math.min(frame/60,180);}
 function spawnItem(){
   const isBad=Math.random()<(0.09+level*0.01);
   const t=gameSecs();
-  const base=0.8+(t/180)*1.7+level*0.06;
-  let spd=Math.min(3.0,base*(0.88+Math.random()*0.24))*st.sm;
+  // Smoother speed curve: starts a bit livelier, ramps more gradually
+  // Old: base = 0.8 + (t/180)*1.7 + level*0.06  — level bump was too sharp
+  // New: level contributes less (0.035 per level), time ramp is gentler early using sqrt
+  const timeRamp=(t/180)*1.4;          // max +1.4 over full game (was 1.7)
+  const lvRamp=level*0.035;            // +0.035 per level (was 0.06)
+  const base=0.85+timeRamp+lvRamp;
+  let spd=Math.min(2.8,base*(0.88+Math.random()*0.24))*st.sm;  // cap lowered 3.0→2.8
   if(shopHas('slow_start')&&frame<30*60) spd*=0.6;
   items.push(petDeerlingFilter({
     x:22+Math.random()*(W-44),y:-24,
@@ -1405,11 +1410,14 @@ function gameLoop(){
   }
 
   const _t=gameSecs();
-  const rate=Math.max(32,Math.round(150-(_t/180)*110-level*1.5));
+  // Spawn rate: starts at 160 frames (~2.7s gap), ramps to ~38 at the end
+  // Old: 150 - (t/180)*110 - level*1.5  — got dense too quickly
+  // New: higher start, gentler time ramp, level contributes less
+  const rate=Math.max(38,Math.round(165-(_t/180)*105-level*1.2));
   if(frame%rate===0&&!st.timeFrozen){
     spawnItem();
-    if(_t>75&&level>=3&&Math.random()<Math.min(0.6,(_t-75)/150)) spawnItem();
-    if(_t>135&&level>=6&&Math.random()<Math.min(0.45,(_t-135)/150)) spawnItem();
+    if(_t>90&&level>=3&&Math.random()<Math.min(0.55,(_t-90)/160)) spawnItem();
+    if(_t>150&&level>=6&&Math.random()<Math.min(0.4,(_t-150)/120)) spawnItem();
     if(st.heartstorm&&Math.random()<.65){
       const _hs=Math.min(2.6,(0.8+(_t/180)*1.4)*st.sm);
       items.push({x:22+Math.random()*(W-44),y:-24,vy:_hs,emoji:HEART_EMO[Math.floor(Math.random()*HEART_EMO.length)],bad:false,size:22,frozen:false});
@@ -1952,14 +1960,14 @@ const C4_LEVELS=[
   {name:'Steam Bun',    emoji:'♨️', maxHP:34, atk:7,  aiDepth:3, rand:0.25, special:'shield',  reward:7,  flavor:'Sometimes blocks your hits with steam.'},
   // Lv 6
   {name:'Rice Demon',   emoji:'🍚', maxHP:36, atk:8,  aiDepth:3, rand:0.2,  special:'none',    reward:8,  flavor:'Getting serious now. Prefers the center.'},
-  // Lv 7
-  {name:'Chili Pepper', emoji:'🌶️', maxHP:38, atk:8,  aiDepth:4, rand:0.15, special:'burn',    reward:10, flavor:'Burns you for 3 HP/turn after being hit.'},
-  // Lv 8
-  {name:'Dumpling Lord',emoji:'🥟', maxHP:42, atk:9,  aiDepth:4, rand:0.1,  special:'counter', reward:12, flavor:'Hits 30% harder when you are on a streak.'},
+  // Lv 7  — was too hard: aiDepth 4 + burn + low rand = impossible. Toned down.
+  {name:'Chili Pepper', emoji:'🌶️', maxHP:34, atk:7,  aiDepth:3, rand:0.25, special:'burn',    reward:10, flavor:'Spicy! Burns for 2 HP/turn. But a bit scatterbrained.'},
+  // Lv 8  — eased slightly since lv7 already filters casual players
+  {name:'Dumpling Lord',emoji:'🥟', maxHP:40, atk:8,  aiDepth:4, rand:0.12,  special:'counter', reward:12, flavor:'Hits 30% harder when you are on a streak.'},
   // Lv 9
   {name:'Iron Wok',     emoji:'🫕', maxHP:46, atk:9,  aiDepth:5, rand:0.08, special:'regen',   reward:14, flavor:'Regenerates AND defends. A real chef.'},
   // Lv 10
-  {name:'Lord Chili Burn',emoji:'🔥',maxHP:50,atk:10, aiDepth:5, rand:0.05, special:'burn',    reward:16, flavor:'Inferno mode. You will feel the heat.'},
+  {name:'Lord Chili Burn',emoji:'🔥',maxHP:50,atk:10, aiDepth:5, rand:0.05, special:'burn',    reward:16, flavor:'Inferno mode. Burns 2 HP/turn. You will feel the heat.'},
   // Lv 11
   {name:'Shadow Bao',   emoji:'🌑', maxHP:52, atk:10, aiDepth:6, rand:0.04, special:'shield',  reward:18, flavor:'Dark mirror of Bao. Blocks and counters.'},
   // Lv 12  — boss
@@ -2245,10 +2253,10 @@ function c4EnemyTurn(){
 
   // Burn tick on player (only after 2+ turns so player has time to react)
   if(lv.special==='burn'&&c4.burnActive&&c4.turn>=2){
-    c4.pHP=Math.max(0,c4.pHP-3);
+    c4.pHP=Math.max(0,c4.pHP-2);
     c4.burnCounter=Math.max(0,c4.burnCounter-1);
     if(c4.burnCounter<=0) c4.burnActive=false;
-    c4Msg('🔥 Burn! -3 HP','');
+    c4Msg('🔥 Burn! -2 HP','');
   }
 
   setTimeout(()=>{
