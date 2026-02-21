@@ -336,6 +336,57 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
 .gacha-shop-entry h4{font-family:'Playfair Display',serif;color:#fff;margin:0 0 .2rem;font-size:1rem;}
 .gacha-shop-entry p{font-size:.68rem;color:rgba(255,255,255,.75);margin:0;}
 
+/* =================================================================
+   DESKTOP RESPONSIVE  (≥ 700 px)
+   ================================================================= */
+@media(min-width:700px){
+  body{display:flex;flex-direction:column;align-items:center;
+    background:radial-gradient(ellipse at 55% 0%,#f8e4cc 0%,var(--cream) 60%);}
+  #landing{border-radius:0;}
+  #main{width:100%;max-width:660px;}
+
+  /* Strip mobile side margins — column controls width now */
+  .header{padding:4rem 2rem 2.5rem;}
+  .note-card{margin:0 0 2rem;padding:2rem 2.2rem;}
+  .char-select{margin:0 0 1rem;}
+  .tabs{margin:0 0 .8rem;}
+  #game-wrap{margin:0 0 2rem;padding:1.4rem 1.6rem 1.8rem;}
+  .panel{margin:0 0 2rem;padding:1.5rem 1.7rem;}
+  .c4-section{margin:0 0 2rem;}
+  footer{padding:0 0 3.5rem;}
+
+  /* Catch Hearts HUD */
+  .hud-score .val,.hud-coins .val{font-size:1.3rem;}
+  #hud-level-badge{font-size:.78rem;padding:.2rem .75rem;}
+  .shop-grid{grid-template-columns:repeat(3,1fr);}
+
+  /* Connect Bao */
+  #c4-wrap{padding:1.4rem 1.6rem;}
+  .c4-fighter{padding:.6rem .9rem;}
+  .c4-fighter-name{font-size:.8rem;}
+  .c4-hp-wrap{height:8px;}
+  .c4-vs{font-size:1rem;}
+  #c4-round-bar{font-size:.7rem;}
+  #c4-board{gap:6px;padding:8px;border-radius:16px;}
+  #c4-col-btns{gap:6px;}
+  .c4-col-btn{font-size:.88rem;padding:3px 0;}
+  #c4-skills{gap:8px;}
+  .c4-skill-btn{padding:.5rem .35rem;font-size:.72rem;}
+  .c4-skill-btn .sk-name{font-size:.76rem;}
+  .c4-skill-btn .sk-desc{font-size:.58rem;}
+  #c4-status-main{font-size:.92rem;}
+  #c4-status-sub{font-size:.7rem;}
+  .c4-intent{font-size:.72rem;}
+  #c4-level-label,#c4-level-label-r{font-size:.8rem;}
+  #c4-overlay h3{font-size:1.4rem;}
+  #c4-overlay p{font-size:.85rem;}
+}
+@media(min-width:960px){
+  #main{max-width:760px;}
+  #c4-board{gap:8px;}
+  #c4-col-btns{gap:8px;}
+}
+
 </style>
 </head>
 <body>
@@ -370,7 +421,7 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
       <select id="char-dropdown" onchange="selectChar(this.value)" style="width:100%;padding:.65rem 1rem;border-radius:14px;border:2px solid var(--peach);background:white;font-family:'Playfair Display',serif;font-size:.95rem;color:var(--deep);cursor:pointer;appearance:none;-webkit-appearance:none;box-shadow:0 3px 12px rgba(61,43,31,.07);">
         <option value="bao">Bao — Nomnom (catch 5 🥔 potatoes → +1 life!)</option>
         <option value="dudu">Dudu — Angry Aura (streak 5+ → 2× next catch)</option>
-        <option value="bubu" id="bubu-option" disabled>🔒 Bubu — Shopaholic (locked · pull Capsule Machine)</option>
+        <option value="bubu" id="bubu-option" disabled>🔒 ??? — Mystery Character (unlock via Capsule Machine)</option>
       </select>
       <div style="pointer-events:none;position:absolute;right:1rem;top:50%;transform:translateY(-50%);font-size:.8rem;opacity:.5;">▼</div>
     </div>
@@ -539,7 +590,7 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
         <select id="c4-char-dropdown" onchange="c4SelectChar(this.value)" style="width:100%;padding:.65rem 1rem;border-radius:14px;border:2px solid var(--peach);background:white;font-family:'Playfair Display',serif;font-size:.9rem;color:var(--deep);cursor:pointer;appearance:none;-webkit-appearance:none;box-shadow:0 3px 12px rgba(61,43,31,.07);">
           <option value="bao">Bao — Nomnom Healer (heal 6 HP/4 turns)</option>
           <option value="dudu">Dudu — Angry Aura (streak deals 2× damage)</option>
-          <option value="bubu" id="c4-bubu-option" disabled>🔒 Bubu — Lucky Shopper (locked · pull Capsule Machine)</option>
+          <option value="bubu" id="c4-bubu-option" disabled>🔒 ??? — Mystery Character (unlock via Capsule Machine)</option>
         </select>
         <div style="pointer-events:none;position:absolute;right:1rem;top:50%;transform:translateY(-50%);font-size:.8rem;opacity:.5;">▼</div>
       </div>
@@ -709,7 +760,8 @@ const CHARS={
 };
 
 let currentChar='bao';
-let duduAuraReady=false; // dudu passive: next catch doubled when streak>=5
+let duduAuraReady=false;
+let running=false; // early — selectChar references this before canvas block
 
 function selectChar(id){
   if(running){
@@ -719,7 +771,7 @@ function selectChar(id){
     return;
   }
   if(id==='bubu'&&!P.bubuUnlocked){
-    showToast(`🔒 Bubu is locked! Pull the Capsule Machine to unlock her!`);
+    showToast('🔒 Mystery character locked! Try the Capsule Machine to discover them!');
     const dd=document.getElementById('char-dropdown');
     if(dd) dd.value=currentChar;
     return;
@@ -946,7 +998,10 @@ const overlay=document.getElementById('overlay');
 let W,H;
 function resize(){
   W=canvas.width=document.getElementById('canvas-wrap').clientWidth;
-  H=canvas.height=Math.min(320,window.innerHeight*0.4);
+  // Taller on desktop so items have real room to fall
+  H=canvas.height=window.innerWidth<700
+    ? Math.round(Math.min(360,window.innerHeight*0.44))
+    : Math.round(Math.min(540,window.innerHeight*0.60));
 }
 resize();
 window.addEventListener('resize',resize);
@@ -957,7 +1012,7 @@ const BAD_EMO=['💀','🔥','🖤','🦠','😈'];
 
 let basket={x:0};
 let items=[],popups=[];
-let score=0,lives=3,xp=0,level=1,frame=0,running=false;
+let score=0,lives=3,xp=0,level=1,frame=0; // running declared above
 let streak=0,sessionHearts=0,coins=0,sessionXP=0;
 let activeBuffs=[];
 let shieldsLeft=0,phoenixReady=false;
@@ -1157,10 +1212,16 @@ function showToast(msg){
 }
 
 // ===================== SPAWN =====================
+// Seconds of gameplay elapsed, capped at 180 (the full ramp window)
+function gameSecs(){return Math.min(frame/60,180);}
+
 function spawnItem(){
-  const isBad=Math.random()<(0.12+level*0.015);
-  let spd=(1.6+Math.random()*1.7+level*0.16)*st.sm;
-  if(shopHas('slow_start')&&frame<30*60) spd*=0.7;
+  const isBad=Math.random()<(0.09+level*0.01);
+  const t=gameSecs();
+  // 0.8 px/frame at start → ~2.5 at 3 min; hard cap 3.0
+  const base=0.8+(t/180)*1.7+level*0.06;
+  let spd=Math.min(3.0,base*(0.88+Math.random()*0.24))*st.sm;
+  if(shopHas('slow_start')&&frame<30*60) spd*=0.6;
   items.push({
     x:22+Math.random()*(W-44),y:-24,
     vy:isBad&&st.freezeBad?0.3:spd,
@@ -1183,9 +1244,10 @@ function gameLoop(){
   // Scatter: spawn 6 bonus hearts instantly
   if(st._scatter){
     st._scatter=false;
+    const _sv=Math.min(2.7,(0.8+(gameSecs()/180)*1.5)*st.sm);
     for(let _i=0;_i<6;_i++){
       items.push({x:28+Math.random()*(W-56),y:-28-(Math.random()*80),
-        vy:(1.4+Math.random()*1.0)*st.sm,
+        vy:_sv*(0.85+Math.random()*0.3),
         emoji:HEART_EMO[Math.floor(Math.random()*HEART_EMO.length)],
         bad:false,size:22,frozen:false,warn:0,spawnFrame:frame});
     }
@@ -1198,21 +1260,30 @@ function gameLoop(){
     showPopup('🚫 Bad items cleared!',W/2,H/2,'#aaa');
   }
 
-  const rate=Math.max(20,65-level*4);
-  if(frame%rate===0){
-    if(!st.timeFrozen) spawnItem();
-    if(level>=4&&Math.random()<.4&&!st.timeFrozen) spawnItem();
-    if(level>=7&&Math.random()<.3&&!st.timeFrozen) spawnItem();
-    // Heartstorm: extra hearts
-    if(st.heartstorm&&Math.random()<.7) items.push({x:22+Math.random()*(W-44),y:-24,vy:(1.4+Math.random()*1.0)*st.sm,emoji:HEART_EMO[Math.floor(Math.random()*HEART_EMO.length)],bad:false,size:22,frozen:false});
+  // Spawn interval: 150 frames (~2.5s) at start → 32 frames (~0.5s) at 3 min
+  const _t=gameSecs();
+  const rate=Math.max(32,Math.round(150-(_t/180)*110-level*1.5));
+  if(frame%rate===0&&!st.timeFrozen){
+    spawnItem(); // always one heart
+    // 2nd heart: only after 75s AND level>=3, probability grows slowly
+    if(_t>75&&level>=3&&Math.random()<Math.min(0.6,(_t-75)/150)) spawnItem();
+    // 3rd heart: only after 135s AND level>=6
+    if(_t>135&&level>=6&&Math.random()<Math.min(0.45,(_t-135)/150)) spawnItem();
+    // Heartstorm buff: one extra, speed capped to ramp
+    if(st.heartstorm&&Math.random()<.65){
+      const _hs=Math.min(2.6,(0.8+(_t/180)*1.4)*st.sm);
+      items.push({x:22+Math.random()*(W-44),y:-24,vy:_hs,emoji:HEART_EMO[Math.floor(Math.random()*HEART_EMO.length)],bad:false,size:22,frozen:false});
+    }
   }
-  // Bao passive: occasionally spawn potatoes
-  if(currentChar==='bao'&&frame%180===0&&Math.random()<0.55){
-    items.push({x:22+Math.random()*(W-44),y:-24,vy:(1.2+Math.random()*0.8)*st.sm,emoji:'🥔',bad:false,isPotato:true,size:20,frozen:false});
+  // Bao passive potatoes — every 220 frames, chance grows with time
+  if(currentChar==='bao'&&frame%220===0&&Math.random()<(0.28+(_t/180)*0.38)){
+    const _ps=Math.min(2.4,(0.75+(_t/180)*1.1)*st.sm);
+    items.push({x:22+Math.random()*(W-44),y:-24,vy:_ps,emoji:'🥔',bad:false,isPotato:true,size:20,frozen:false});
   }
-  // Bubu passive: occasionally spawn shopping bags
-  if(currentChar==='bubu'&&frame%175===0&&Math.random()<0.55){
-    items.push({x:22+Math.random()*(W-44),y:-24,vy:(1.2+Math.random()*0.8)*st.sm,emoji:'🛍️',bad:false,isShopbag:true,size:20,frozen:false});
+  // Bubu passive bags — every 220 frames
+  if(currentChar==='bubu'&&frame%220===0&&Math.random()<(0.28+(_t/180)*0.38)){
+    const _bs=Math.min(2.4,(0.75+(_t/180)*1.1)*st.sm);
+    items.push({x:22+Math.random()*(W-44),y:-24,vy:_bs,emoji:'🛍️',bad:false,isShopbag:true,size:20,frozen:false});
   }
   ctx.clearRect(0,0,W,H);
   if(level>=5) drawStars();
@@ -1798,7 +1869,7 @@ function c4MakeBoard(){
 
 function c4SelectChar(ch){
   if(!P.bubuUnlocked&&ch==='bubu'){
-    showToast('🔒 Bubu is locked! Pull the Capsule Machine to unlock her!');
+    showToast('🔒 Mystery character locked! Try the Capsule Machine to discover them!');
     const dd=document.getElementById('c4-char-dropdown');
     if(dd) dd.value=c4Char;
     return;
@@ -2516,8 +2587,8 @@ function refreshBubuCard(){
     if(opt1){ opt1.disabled=false; opt1.textContent='🐼 Bubu — Shopaholic (catch 5 🛍️ bags → +5 coins!)'; }
     if(opt2){ opt2.disabled=false; opt2.textContent='🐼 Bubu — Lucky Shopper (earn bonus coins from disc drops!)'; }
   } else {
-    if(opt1){ opt1.disabled=true; opt1.textContent='🔒 Bubu — Shopaholic (locked · pull Capsule Machine)'; }
-    if(opt2){ opt2.disabled=true; opt2.textContent='🔒 Bubu — Lucky Shopper (locked · pull Capsule Machine)'; }
+    if(opt1){ opt1.disabled=true; opt1.textContent='🔒 ??? — Mystery Character (unlock via Capsule Machine)'; }
+    if(opt2){ opt2.disabled=true; opt2.textContent='🔒 ??? — Mystery Character (unlock via Capsule Machine)'; }
   }
 }
 
