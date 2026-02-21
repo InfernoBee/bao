@@ -403,6 +403,59 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
   #c4-col-btns{gap:8px;}
 }
 
+/* ── SHOP CATEGORY / RARITY TABS ─── */
+.shop-cat-btn,.shop-rar-btn{
+  border:none;border-radius:20px;padding:.28rem .7rem;font-family:'Playfair Display',serif;
+  font-size:.72rem;cursor:pointer;background:rgba(61,43,31,.09);color:var(--deep);
+  transition:background .18s,color .18s;
+}
+.shop-cat-btn.active{background:var(--deep);color:var(--cream);}
+.shop-rar-btn.active{background:var(--deep);color:var(--cream);}
+
+/* ── SHOP PAGINATION ─── */
+.shop-page-btn{
+  border:1.5px solid rgba(61,43,31,.18);border-radius:50%;width:28px;height:28px;
+  font-family:'Playfair Display',serif;font-size:.78rem;cursor:pointer;
+  background:white;color:var(--deep);transition:background .15s;
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.shop-page-btn:disabled{opacity:.3;cursor:default;}
+.shop-page-btn.active{background:var(--deep);color:var(--cream);border-color:var(--deep);}
+.shop-page-btn:not(.active):not(:disabled):hover{background:var(--soft);}
+
+/* ── EASTER EGG MODAL ─── */
+#egg-modal{
+  position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+  background:rgba(20,8,4,.88);backdrop-filter:blur(6px);
+  opacity:0;pointer-events:none;transition:opacity .4s;
+}
+#egg-modal.show{opacity:1;pointer-events:all;}
+#egg-inner{
+  background:linear-gradient(160deg,#3a0a1a,#1a0508);
+  border:2px solid #800020;border-radius:24px;
+  padding:1.8rem 1.5rem;max-width:320px;width:90%;
+  text-align:center;box-shadow:0 24px 80px rgba(128,0,32,.6);
+  transform:scale(.85);transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+}
+#egg-modal.show #egg-inner{transform:scale(1);}
+#egg-emoji{font-size:3rem;margin-bottom:.5rem;}
+#egg-title{font-family:'Playfair Display',serif;font-size:1.25rem;color:#CE93D8;margin-bottom:.4rem;}
+#egg-msg{font-size:.83rem;color:rgba(253,246,236,.85);line-height:1.7;font-style:italic;margin-bottom:.9rem;}
+#egg-close{
+  background:linear-gradient(135deg,#800020,#CE93D8);border:none;border-radius:14px;
+  padding:.55rem 1.4rem;font-family:'Playfair Display',serif;font-size:.9rem;
+  color:#fff;cursor:pointer;font-style:italic;
+}
+#egg-close:active{transform:scale(.96);}
+.egg-found-badge{
+  position:fixed;top:1rem;right:1rem;z-index:301;
+  background:linear-gradient(135deg,#800020,#CE93D8);
+  border-radius:20px;padding:.3rem .8rem;font-size:.68rem;
+  color:white;font-family:'Playfair Display',serif;
+  opacity:0;transition:opacity .4s;pointer-events:none;
+}
+.egg-found-badge.show{opacity:1;}
+
 </style>
 </head>
 <body>
@@ -604,7 +657,24 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
     </div>
     <!-- ── END CAPSULE MACHINE ────────────────────────────────── -->
 
+    <!-- shop category tabs -->
+    <div id="shop-cat-tabs" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.7rem;">
+      <button class="shop-cat-btn active" data-cat="all" onclick="setShopCat('all')">All</button>
+      <button class="shop-cat-btn" data-cat="Starter" onclick="setShopCat('Starter')">🚀 Starter</button>
+      <button class="shop-cat-btn" data-cat="Passive" onclick="setShopCat('Passive')">💡 Passive</button>
+      <button class="shop-cat-btn" data-cat="Combat" onclick="setShopCat('Combat')">⚔️ Combat</button>
+    </div>
+    <div id="shop-rarity-tabs" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.85rem;">
+      <button class="shop-rar-btn active" data-rar="all" onclick="setShopRar('all')">All Rarities</button>
+      <button class="shop-rar-btn" data-rar="common" onclick="setShopRar('common')" style="color:#9E9E9E">Common</button>
+      <button class="shop-rar-btn" data-rar="uncommon" onclick="setShopRar('uncommon')" style="color:#4CAF50">Uncommon</button>
+      <button class="shop-rar-btn" data-rar="rare" onclick="setShopRar('rare')" style="color:#2196F3">Rare</button>
+      <button class="shop-rar-btn" data-rar="epic" onclick="setShopRar('epic')" style="color:#9C27B0">Epic</button>
+      <button class="shop-rar-btn" data-rar="legendary" onclick="setShopRar('legendary')" style="color:#FF9800">Legendary</button>
+    </div>
     <div class="shop-grid" id="shop-grid"></div>
+    <!-- pagination -->
+    <div id="shop-pages" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:.8rem;flex-wrap:wrap;"></div>
   </div>
 
 <!-- COMBO FLASH -->
@@ -843,6 +913,86 @@ const LOVE_NOTES=[
     l1:`Bao! 🥟 A quick note from your Dudu: you are loved, cherished, and also — your cheeks are extremely nommable and I will not apologise for that.`,
     l2:`I hope today surprises you with something good. Maybe a snack you didn't expect, a smile out of nowhere, or just a quiet moment that feels really nice. 🍜`,
     l3:`I lub you lots and lots. Now stop reading and go play the game I made for you 🎮✨`
+  },
+  {
+    l1:`Good morning (or afternoon, or evening — I don't know when you're reading this, but I know I'm glad you are) 🌸`,
+    l2:`I think about you constantly, in the most embarrassing way. Like, fully mid-task, brain just goes: "Bao." And then I smile like an idiot. It happens a lot.`,
+    l3:`I lub you more than I can put into words, but I made you a game so that's close enough. Go play 🎮💕`
+  },
+  {
+    l1:`Bao, did you eat today? Have some water too. I'm watching from this message and I will know. 👀`,
+    l2:`But genuinely — I hope you're taking care of yourself, eating something warm and yummy, and feeling at least a little bit cosy wherever you are right now. 🍜`,
+    l3:`I lub you a ridiculous amount. Now go catch some hearts for me 💕🎮`
+  },
+  {
+    l1:`Hey Bao. I just wanted to say: the way you laugh at things, the way you get particular about food textures, the way you remember tiny details — all of it is my favourite. 🧡`,
+    l2:`You are genuinely one of a kind and I feel very lucky that I get to be the person who knows that. I hope today is as good to you as you are to me.`,
+    l3:`I lub you heaps. Go show those hearts who's boss 🎮✨`
+  },
+  {
+    l1:`Dear Bao 🥟 A reminder that someone out there thinks you are the most nommable, most wonderful, most loveable person in the entire world.`,
+    l2:`That someone is me, by the way. Just so we're clear. I lub you a lot and I think about you all the time and your cheeks are extremely nommable and I stand by all of this.`,
+    l3:`Okay. Go play the game. I made it for you. I hope it makes you smile 🎮💕`
+  },
+  {
+    l1:`Bao! 🌸 You know what's a good thing? You. You are a very good thing. The world is genuinely better with you in it.`,
+    l2:`I hope today has at least one moment where something makes you really happy — a bite of something delicious, a warm feeling, a little laugh. You deserve a lot of those. 🍡`,
+    l3:`I lub you so much. Now go play and beat your high score 🎮🏆`
+  },
+  {
+    l1:`Hi love 💛 I was just sitting here thinking about you and I figured I'd write it down so you'd know.`,
+    l2:`You're my favourite person to eat with, to talk with, to just be around. Even on the quiet days, being near you feels like the warmest, nicest place to be. 🍜`,
+    l3:`I lub you lots. Go catch some hearts, my nommable little dumpling 🥟🎮`
+  },
+  {
+    l1:`Bao, today I am sending you: one very warm hug, one bowl of your favourite noodles (imaginary but full of love), and this message. 🍜🤗`,
+    l2:`I hope something small and lovely happens to you today. You deserve kindness in every corner of your day — and also very soft broccoli, obviously.`,
+    l3:`I lub you. Thank you for existing. Now go play 🎮✨`
+  },
+  {
+    l1:`Quick appreciation message from your Dudu 🧡 You are: smart, funny, kind, extremely particular about food textures (very valid), and absolutely nommable.`,
+    l2:`I could go on. Actually, I will — you're also the person I most want to share good food with, and the one I think about when something funny happens, and the best Bao there is.`,
+    l3:`I lub you a whole lot. Go play the game I made for you 🎮💕`
+  },
+  {
+    l1:`Bao 🥟 Remember that time we went to Ding Te Le in Kovan and it was our first date and everything felt a little electric and a little warm?`,
+    l2:`I think about that evening a lot. You had your navy blue top on and brown pants and you were just — really lovely. You still are. Even more now, actually.`,
+    l3:`I lub you. A lot. Now go play this silly game I made because I love you 🎮💕`
+  },
+  {
+    l1:`Hey Bao 🌙 It's giving late-night-cozy-music-in-the-background vibes right now and I just wanted to reach through this screen and tell you you're my person.`,
+    l2:`Like genuinely. My favourite person. The one I want to call when something good happens, and the one I want next to me when something doesn't. That's you. That's Bao.`,
+    l3:`I lub you so much it's honestly a little embarrassing. Now go play 🎮✨`
+  },
+  {
+    l1:`Dear Bao 💕 Soft broccoli, baked potatoes, sheng jian bao, penne pasta, grandma's si ji dou — you have very good taste and I respect every single one of those choices.`,
+    l2:`Also: the way you know what you like and stay true to it (including firmly avoiding udon, raw onions, and bean sprouts — all completely justified) is one of my favourite things about you.`,
+    l3:`I lub you very much, my wonderful, particular, nommable Bao. Go play 🎮🥟`
+  },
+  {
+    l1:`Bao! 🌸 Today's message is short and sweet, just like a certain someone I know: I love you and I'm really glad you're mine.`,
+    l2:`I hope your day has good food, cozy moments, and zero unwanted onions in it. You deserve all the good things and none of the garnishes you didn't ask for. 🧅🚫`,
+    l3:`I lub you lots and lots. Now go catch those hearts 🎮💕`
+  },
+  {
+    l1:`Hey Bao 🧡 I know I say this a lot but — you make things better just by being around. That's a real talent and not everyone has it. You do.`,
+    l2:`I hope today is gentle with you. I hope something makes you laugh and something makes you full and something reminds you that you are very, very loved. Because you are.`,
+    l3:`I lub you. Okay. Game time. Go go go 🎮✨`
+  },
+  {
+    l1:`Bao 🥟 Fun fact: I think about you constantly. Like an embarrassing amount. Like "oh that's a funny cloud" and then immediately "Bao would have a take on this cloud."`,
+    l2:`That's just how it is now. My brain has a Bao folder and it is extremely full. I wouldn't have it any other way, honestly. You're my favourite thought.`,
+    l3:`I lub you so much. Now go play and catch all the hearts 💕🎮`
+  },
+  {
+    l1:`Good day, Bao 🌤️ I hope wherever you are right now, you're warm and comfortable and at least a little bit happy.`,
+    l2:`If you're not — I hope this helps a little. You are loved deeply, thought about constantly, and considered nommable by at least one very important person. That person is me. 🧡`,
+    l3:`I lub you. Go play the game I made for you because you are my favourite person 🎮💕`
+  },
+  {
+    l1:`Bao! Steamboat night energy right now 🫕 Chicken in the pot, crabsticks going in, maggie noodles because obviously, and you across the table from me — perfect evening.`,
+    l2:`I just love being with you. In the big moments and the small ones. Especially the small ones, actually. The ones where we're just eating something warm and everything feels right.`,
+    l3:`I lub you a whole lot, my nommable little dumpling. Now go play 🎮✨`
   },
 ];
 
@@ -1093,29 +1243,58 @@ function pick3Buffs(lv,legendLuck){
 
 // ===================== SHOP ITEMS =====================
 const SHOP_ITEMS=[
-  // COMMON (small quality-of-life, 20-35 coins)
-  {id:'start_wide',      rarity:'common',   price:25,  name:'🧺 Wider Start',       desc:'Begin each game with a wider basket',         icon:'🧺'},
-  {id:'start_life',      rarity:'common',   price:30,  name:'❤️ Bonus Life',        desc:'Start with 4 lives instead of 3',             icon:'❤️'},
-  {id:'lucky_start',     rarity:'common',   price:28,  name:'🍀 Lucky Start',       desc:'Begin each game with Lucky Break active',     icon:'🍀'},
-  {id:'potato_boost',    rarity:'common',   price:30,  name:'🥔 Potato Lover',      desc:'Bao needs 1 fewer potato to trigger Nomnom',  icon:'🥔'},
-  // UNCOMMON (moderate boosts, 50-75 coins)
-  {id:'coin_mult',       rarity:'uncommon', price:55,  name:'💰 Coin Saver',        desc:'+25% coins earned per game',                  icon:'💰'},
-  {id:'xp_passive',      rarity:'uncommon', price:60,  name:'⚡ XP Booster',        desc:'+15% XP gain always',                         icon:'⚡'},
-  {id:'slow_start',      rarity:'uncommon', price:50,  name:'🕰️ Easy Start',        desc:'Slower hearts for the first 30s',             icon:'🕰️'},
-  {id:'heart_storm_start',rarity:'uncommon',price:55,  name:'🌧️ Storm Ready',       desc:'Always active: extra hearts spawn each wave', icon:'🌧️'},
-  // RARE (strong upgrades, 90-120 coins)
-  {id:'shield_start',    rarity:'rare',     price:90,  name:'🛡️ Starter Shield',    desc:'Begin each game with a shield',               icon:'🛡️'},
-  {id:'streak_bonus',    rarity:'rare',     price:100, name:'🔥 Streak Master',     desc:'Streaks 5+ give +2 pts each',                 icon:'🔥'},
-  {id:'xp_master',       rarity:'rare',     price:105, name:'📚 XP Master',         desc:'+35% XP gain always (stacks with Booster)',   icon:'📚'},
-  {id:'bad_shrink',      rarity:'rare',     price:95,  name:'💀 Bad Shrink',        desc:'Bad items are 35% smaller — easier to dodge', icon:'💀'},
-  // EPIC (game-changers, 170-220 coins)
-  {id:'magnet_start',    rarity:'epic',     price:170, name:'🧲 Born Magnetic',     desc:'Always have a mini magnet active',            icon:'🧲'},
-  {id:'double_coins',    rarity:'epic',     price:200, name:'💎 Double Coins',      desc:'2× coins earned every game',                  icon:'💎'},
-  {id:'phoenix_start',   rarity:'epic',     price:210, name:'🔥 Born Phoenix',      desc:'Always start with Phoenix revive ready',      icon:'🔥'},
-  {id:'armor',           rarity:'epic',     price:185, name:'🪖 Armor Plating',     desc:'First hit each game does 0 damage',           icon:'🪖'},
-  // LEGENDARY (prestige purchases, 320-400 coins)
-  {id:'legend_luck',     rarity:'legendary',price:320, name:'👑 Queen\'s Luck',     desc:'Legendary buff odds tripled',                 icon:'👑'},
-  {id:'omni_start',      rarity:'legendary',price:400, name:'✨ Omni Aura',         desc:'Start every game with Omnipower buff (8s)',   icon:'✨'},
+  // ── COMMON (20–38 coins) ─────────────────────────────────────────
+  {id:'start_wide',       rarity:'common',   price:25,  icon:'🧺', name:'Wider Start',       desc:'Begin each game with a wider basket',             cat:'Starter'},
+  {id:'start_life',       rarity:'common',   price:30,  icon:'❤️', name:'Bonus Life',         desc:'Start with 4 lives instead of 3',                 cat:'Starter'},
+  {id:'lucky_start',      rarity:'common',   price:28,  icon:'🍀', name:'Lucky Start',        desc:'Begin each game with Lucky Break active',         cat:'Starter'},
+  {id:'potato_boost',     rarity:'common',   price:30,  icon:'🥔', name:'Potato Lover',       desc:'Bao needs 1 fewer potato to trigger Nomnom',      cat:'Passive'},
+  {id:'soft_landing',     rarity:'common',   price:22,  icon:'🛬', name:'Soft Landing',       desc:'First bad item each game does no damage',         cat:'Starter'},
+  {id:'head_start',       rarity:'common',   price:35,  icon:'🌱', name:'Head Start',         desc:'Begin with +5 XP already banked',                 cat:'Starter'},
+  {id:'pocket_change',    rarity:'common',   price:20,  icon:'🪙', name:'Pocket Change',      desc:'Start each game with +3 bonus coins',             cat:'Passive'},
+  {id:'cozy_basket',      rarity:'common',   price:32,  icon:'🛋️', name:'Cozy Basket',        desc:'Basket moves 15% faster to your finger',          cat:'Passive'},
+  {id:'nomnom_buff',      rarity:'common',   price:28,  icon:'🍜', name:'Nomnom Buff',        desc:'Earn 1 bonus XP per 5 hearts caught',             cat:'Passive'},
+  {id:'first_aid',        rarity:'common',   price:35,  icon:'💊', name:'First Aid Kit',      desc:'Auto-recover 1 life when you hit 1 HP (once per game)', cat:'Combat'},
+  // ── UNCOMMON (50–80 coins) ───────────────────────────────────────
+  {id:'coin_mult',        rarity:'uncommon', price:55,  icon:'💰', name:'Coin Saver',         desc:'+25% coins earned per game',                      cat:'Passive'},
+  {id:'xp_passive',       rarity:'uncommon', price:60,  icon:'⚡', name:'XP Booster',         desc:'+15% XP gain always',                             cat:'Passive'},
+  {id:'slow_start',       rarity:'uncommon', price:50,  icon:'🕰️', name:'Easy Start',         desc:'Slower hearts for the first 30s',                 cat:'Starter'},
+  {id:'heart_storm_start',rarity:'uncommon', price:55,  icon:'🌧️', name:'Storm Ready',        desc:'Always active: extra hearts spawn each wave',     cat:'Passive'},
+  {id:'streak_shield',    rarity:'uncommon', price:65,  icon:'🔗', name:'Streak Guard',       desc:'Losing a life keeps your streak at half',         cat:'Passive'},
+  {id:'second_wind',      rarity:'uncommon', price:70,  icon:'💨', name:'Second Wind',        desc:'Once per game: auto-revive with 1 HP at 0',       cat:'Combat'},
+  {id:'coin_hoarder',     rarity:'uncommon', price:72,  icon:'🤑', name:'Coin Hoarder',       desc:'End-game bonus coins doubled',                    cat:'Passive'},
+  {id:'buff_extender',    rarity:'uncommon', price:68,  icon:'⏱️', name:'Buff Extender',      desc:'All timed buffs last 20% longer',                 cat:'Passive'},
+  {id:'snack_break',      rarity:'uncommon', price:55,  icon:'🍡', name:'Snack Break',        desc:'After catching 20 hearts, earn +5 bonus coins',   cat:'Passive'},
+  {id:'dudu_blessing',    rarity:'uncommon', price:75,  icon:'🧡', name:"Dudu's Blessing",    desc:'Start each game with streak beginning at 2',      cat:'Starter'},
+  {id:'magnet_pulse',     rarity:'uncommon', price:58,  icon:'🧲', name:'Magnet Pulse',       desc:'Every 30 hearts, auto-fire a 3s mini-magnet',     cat:'Passive'},
+  // ── RARE (90–130 coins) ──────────────────────────────────────────
+  {id:'shield_start',     rarity:'rare',     price:90,  icon:'🛡️', name:'Starter Shield',     desc:'Begin each game with a shield active',            cat:'Starter'},
+  {id:'streak_bonus',     rarity:'rare',     price:100, icon:'🔥', name:'Streak Master',      desc:'Streaks 5+ give +2 pts each',                     cat:'Passive'},
+  {id:'xp_master',        rarity:'rare',     price:105, icon:'📚', name:'XP Master',          desc:'+35% XP gain always (stacks with Booster)',       cat:'Passive'},
+  {id:'bad_shrink',       rarity:'rare',     price:95,  icon:'💀', name:'Bad Shrink',         desc:'Bad items are 35% smaller — easier to dodge',     cat:'Combat'},
+  {id:'triple_start',     rarity:'rare',     price:110, icon:'🌟', name:'Triple Ready',       desc:'Begin with 5s of Triple Points active',           cat:'Starter'},
+  {id:'boss_bane',        rarity:'rare',     price:120, icon:'⚔️', name:'Boss Bane',          desc:'Boss HP is 20% lower at the start of fights',     cat:'Combat'},
+  {id:'xp_overflow',      rarity:'rare',     price:115, icon:'🌊', name:'XP Overflow',        desc:'Excess XP after level-up carries over fully',     cat:'Passive'},
+  {id:'golden_basket',    rarity:'rare',     price:125, icon:'✨', name:'Golden Basket',      desc:'Catching 10+ streak gives +5 bonus coins',        cat:'Passive'},
+  {id:'nomnom_king',      rarity:'rare',     price:108, icon:'👑', name:'Nomnom King',        desc:'Bao potato passive gives +1 life AND +3 coins',   cat:'Passive'},
+  {id:'coin_insurance',   rarity:'rare',     price:95,  icon:'🏦', name:'Coin Insurance',     desc:'If you score 0 in a game, refund 10 coins',       cat:'Passive'},
+  {id:'maroon_cloak',     rarity:'rare',     price:118, icon:'🟥', name:'Maroon Cloak',       desc:'Take 2 hits before losing a life (once per game)', cat:'Combat'},
+  // ── EPIC (160–230 coins) ─────────────────────────────────────────
+  {id:'magnet_start',     rarity:'epic',     price:170, icon:'🧲', name:'Born Magnetic',      desc:'Always have a mini magnet active',                 cat:'Passive'},
+  {id:'double_coins',     rarity:'epic',     price:200, icon:'💎', name:'Double Coins',       desc:'2× coins earned every game',                      cat:'Passive'},
+  {id:'phoenix_start',    rarity:'epic',     price:210, icon:'🔥', name:'Born Phoenix',       desc:'Always start with Phoenix revive ready',           cat:'Starter'},
+  {id:'armor',            rarity:'epic',     price:185, icon:'🪖', name:'Armor Plating',      desc:'First hit each game does 0 damage',                cat:'Combat'},
+  {id:'double_xp_start',  rarity:'epic',     price:190, icon:'⚡', name:'Hyper Study',        desc:'First 60s of every game: double XP gain',         cat:'Starter'},
+  {id:'eternal_streak',   rarity:'epic',     price:220, icon:'♾️', name:'Eternal Streak',     desc:'Streaks never reset below 3 (ever)',               cat:'Passive'},
+  {id:'boss_slayer',      rarity:'epic',     price:205, icon:'🗡️', name:'Boss Slayer',        desc:'Defeating a boss gives a guaranteed Epic buff',    cat:'Combat'},
+  {id:'coin_magnet',      rarity:'epic',     price:215, icon:'💰', name:'Coin Magnet',        desc:'+50% coins always AND +1 coin per heart caught',   cat:'Passive'},
+  {id:'amber_heart',      rarity:'epic',     price:195, icon:'🫀', name:"Amber's Heart",      desc:'Start with +1 life AND a shield AND Lucky Break',  cat:'Starter'},
+  // ── LEGENDARY (300–450 coins) ────────────────────────────────────
+  {id:'legend_luck',      rarity:'legendary',price:320, icon:'👑', name:"Queen's Luck",       desc:'Legendary buff odds tripled in all picks',         cat:'Passive'},
+  {id:'omni_start',       rarity:'legendary',price:400, icon:'✨', name:'Omni Aura',          desc:'Start every game with Omnipower buff (8s)',        cat:'Starter'},
+  {id:'bao_legend',       rarity:'legendary',price:380, icon:'🥟', name:'Legendary Bao',      desc:'Start as level 2 with 5 lives and Lucky Break',   cat:'Starter'},
+  {id:'weeknd_mode',      rarity:'legendary',price:450, icon:'🌙', name:'Weeknd Mode',        desc:'Night theme: heart scores +1 and coins +50% always', cat:'Passive'},
+  {id:'dudu_ultimate',    rarity:'legendary',price:420, icon:'🧡', name:"Dudu's Ultimate",    desc:'All buffs last 40% longer AND XP doubled always',  cat:'Passive'},
+  {id:'kovan_memory_shop',rarity:'legendary',price:350, icon:'💌', name:'Kovan Memory',       desc:'Game start: +3 lives, shield, and 8 bonus hearts', cat:'Starter'},
 ];
 
 // ===================== PERSISTENT STORAGE =====================
@@ -1231,6 +1410,13 @@ function computeState(){
   }
   // Apply equipped pet passive bonuses
   petApplyState(st);
+  // New shop items passive effects
+  if(shopHas('cozy_basket'))    st.bw=Math.max(st.bw,1.15);
+  if(shopHas('coin_magnet'))   {st.coinM=Math.max(st.coinM,1.5);st.coinPerHeart=Math.max(st.coinPerHeart||0,1);}
+  if(shopHas('weeknd_mode'))   {st.rallyBonus=Math.max(st.rallyBonus||0,1);st.coinM=Math.max(st.coinM,1.5);}
+  if(shopHas('dudu_ultimate')) {st.xpM=Math.max(st.xpM||1,2);} // buff extend handled in buff loop
+  if(shopHas('eternal_streak')) window._petStreakGuard=true;
+  if(shopHas('streak_shield'))  window._petStreakGuard=true;
 }
 
 // ===================== HUD =====================
@@ -1323,28 +1509,104 @@ function renderUnlocks(){
   });
 }
 
+// ── Shop state ──────────────────────────────────────────────
+let shopCurrentCat = 'all';
+let shopCurrentRar = 'all';
+let shopCurrentPage = 1;
+const SHOP_PAGE_SIZE = 8;
+
+function setShopCat(cat){
+  shopCurrentCat = cat;
+  shopCurrentPage = 1;
+  document.querySelectorAll('.shop-cat-btn').forEach(b=>b.classList.toggle('active',b.dataset.cat===cat));
+  renderShop();
+}
+function setShopRar(rar){
+  shopCurrentRar = rar;
+  shopCurrentPage = 1;
+  document.querySelectorAll('.shop-rar-btn').forEach(b=>b.classList.toggle('active',b.dataset.rar===rar));
+  renderShop();
+}
+function setShopPage(p){
+  shopCurrentPage = p;
+  renderShop();
+}
+
 function renderShop(){
-  const grid=document.getElementById('shop-grid');
-  grid.innerHTML='';
-  document.getElementById('shop-wallet').textContent=P.coins;
-  for(const item of SHOP_ITEMS){
-    const owned=P.owned.includes(item.id);
-    const afford=P.coins>=item.price;
-    const div=document.createElement('div');
-    div.className=`shop-item si-${item.rarity}${owned?' owned':!afford?' cant-afford':''}`;
-    div.innerHTML=`<div class="shop-item-icon">${item.icon}</div>
+  document.getElementById('shop-wallet').textContent = P.coins;
+  // Filter
+  let items = SHOP_ITEMS.filter(it=>{
+    if(shopCurrentCat !== 'all' && it.cat !== shopCurrentCat) return false;
+    if(shopCurrentRar !== 'all' && it.rarity !== shopCurrentRar) return false;
+    return true;
+  });
+  const totalPages = Math.max(1, Math.ceil(items.length / SHOP_PAGE_SIZE));
+  if(shopCurrentPage > totalPages) shopCurrentPage = 1;
+  const pageItems = items.slice((shopCurrentPage-1)*SHOP_PAGE_SIZE, shopCurrentPage*SHOP_PAGE_SIZE);
+
+  const grid = document.getElementById('shop-grid');
+  grid.innerHTML = '';
+  if(pageItems.length === 0){
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:1.5rem;font-style:italic;opacity:.5;font-size:.85rem;">Nothing here yet!</div>';
+  }
+  for(const item of pageItems){
+    const owned = P.owned.includes(item.id);
+    const afford = P.coins >= item.price;
+    const div = document.createElement('div');
+    div.className = `shop-item si-${item.rarity}${owned?' owned':!afford?' cant-afford':''}`;
+    div.innerHTML = `<div class="shop-item-icon">${item.icon}</div>
       <div class="shop-item-name">${item.name}</div>
       <div class="shop-item-desc">${item.desc}</div>
-      ${owned?'<div class="shop-item-owned">✓ Owned</div>':`<div class="shop-item-price">💰 ${item.price}</div>`}`;
-    if(!owned&&afford) div.addEventListener('click',()=>buyItem(item));
+      ${owned ? '<div class="shop-item-owned">✓ Owned</div>' : `<div class="shop-item-price">💰 ${item.price}</div>`}`;
+    if(!owned && afford) div.addEventListener('click', ()=>buyItem(item));
     grid.appendChild(div);
+  }
+
+  // Pagination dots/buttons
+  const pages = document.getElementById('shop-pages');
+  pages.innerHTML = '';
+  if(totalPages > 1){
+    // Prev button
+    const prev = document.createElement('button');
+    prev.textContent = '‹';
+    prev.className = 'shop-page-btn';
+    prev.disabled = shopCurrentPage === 1;
+    prev.onclick = ()=>setShopPage(shopCurrentPage-1);
+    pages.appendChild(prev);
+    // Page dots
+    for(let i=1;i<=totalPages;i++){
+      const btn = document.createElement('button');
+      btn.textContent = i;
+      btn.className = 'shop-page-btn' + (i===shopCurrentPage?' active':'');
+      btn.onclick = (()=>{const p=i;return()=>setShopPage(p);})();
+      pages.appendChild(btn);
+    }
+    // Next button
+    const next = document.createElement('button');
+    next.textContent = '›';
+    next.className = 'shop-page-btn';
+    next.disabled = shopCurrentPage === totalPages;
+    next.onclick = ()=>setShopPage(shopCurrentPage+1);
+    pages.appendChild(next);
+    // Page info
+    const info = document.createElement('div');
+    info.style.cssText='font-size:.65rem;color:var(--deep);opacity:.55;width:100%;text-align:center;margin-top:3px;';
+    info.textContent = `${(shopCurrentPage-1)*SHOP_PAGE_SIZE+1}–${Math.min(shopCurrentPage*SHOP_PAGE_SIZE,items.length)} of ${items.length} items`;
+    pages.appendChild(info);
   }
 }
 
 function buyItem(item){
   if(P.coins<item.price||P.owned.includes(item.id)) return;
-  P.coins-=item.price;P.owned.push(item.id);P.itemsBought++;saveP();
-  renderShop();updateStatsPanel();showToast(`${item.icon} ${item.name} purchased!`);
+  P.coins-=item.price; P.owned.push(item.id); P.itemsBought++; saveP();
+  // Apply immediate effects for new items
+  applyNewShopItem(item.id);
+  renderShop(); updateStatsPanel(); showToast(`${item.icon} ${item.name} purchased!`);
+}
+
+function applyNewShopItem(id){
+  // Items that give immediate game-start bonuses don't need runtime application
+  // Items with runtime effects are handled in computeState / game loop
 }
 
 function showToast(msg){
@@ -1472,6 +1734,7 @@ function gameLoop(){
   }
 
   drawBoss();
+  drawBossParticles();
   // items
   for(let i=items.length-1;i>=0;i--){
     const it=items[i];
@@ -2019,9 +2282,13 @@ const ALL_BOSSES = [
 function getBossChoices(lv) {
   const tier = lv===3?1:lv===6?2:3;
   const pool = ALL_BOSSES.filter(b=>b.tier===tier);
-  // Shuffle and pick 3
   const shuffled = pool.slice().sort(()=>Math.random()-0.5);
-  return shuffled.slice(0,3);
+  // Reduce HP by 30% for more achievable fights; reduce rageMult for easier rage
+  return shuffled.slice(0,3).map(b=>({
+    ...b,
+    hp: Math.max(5, Math.round(b.hp * 0.7)),
+    rageMult: Math.max(1.0, b.rageMult * 0.85),
+  }));
 }
 
 let selectedBoss = null;
@@ -2087,59 +2354,345 @@ function showBossWarning(cb){
 function spawnBoss(lv){
   bossActive=true;
   // Use selectedBoss HP if available, else fallback
-  bossMaxHP = selectedBoss ? selectedBoss.hp : (lv===3?20:lv===6?35:55);
+  let _bossHPBase = selectedBoss ? selectedBoss.hp : (lv===3?20:lv===6?35:55);
+  if(window._bossBane) _bossHPBase = Math.max(5, Math.round(_bossHPBase * 0.8));
+  bossMaxHP = _bossHPBase;
   bossHP=bossMaxHP;
   bossX=W/2;bossDir=1;bossFrame=0;bossPhase=0;
-  bossShot=[];bossNextSpawn=frame+90;
+  bossShot=[];bossNextSpawn=frame+90;bossParticles=[];
   const bname = selectedBoss ? selectedBoss.name : 'The Boss';
   showToast(`⚔️ BOSS FIGHT: ${bname}! Catch hearts to deal damage!`);
 }
 
-function updateBoss(){
-  if(!bossActive) return;
-  bossFrame++;
-  const boss = selectedBoss;
-  const rageMult = boss ? boss.rageMult : 1.3;
-  const spd = bossPhase===2 ? (2.2*rageMult) : 2.2;
-  bossX+=bossDir*spd;
-  if(bossX>W-30||bossX<30) bossDir*=-1;
-  // Enter rage at half HP
-  if(bossHP<=bossMaxHP/2&&bossPhase<2){
-    bossPhase=2;
-    showPopup('💢 RAGE MODE!',W/2,H/2,'#FF4444');
-  }
-  // Boss fires projectiles — vary count and pattern by boss type
-  if(frame>=bossNextSpawn){
-    const shotEmoji = boss ? boss.shotEmoji : '💀';
-    let count = bossPhase===2 ? 3 : 1;
-    // Specific boss behaviors
-    if(boss){
-      if(boss.id==='udon_titan') count = bossPhase===2 ? 4 : 2; // extra worm shots
-      if(boss.id==='bean_sprout_hydra') count = bossPhase===2 ? 5 : 2; // hydra splits
-      if(boss.id==='duck_rice_overlord' && bossPhase===2){count=4;} // rice spray
-      if(boss.id==='midnight_weeknd'){
-        // Musical pattern - alternating
-        count = bossPhase===2 ? 3 : 1;
-      }
-    }
-    for(let k=0;k<count;k++){
-      const spread=(k-Math.floor(count/2))*(bossPhase===2?35:40);
-      const vy = bossPhase===2 ? (2.5+bossPhase*0.7) : (1.8+bossPhase*0.5);
-      bossShot.push({x:bossX+spread,y:55,vy,emoji:shotEmoji,bad:true,size:18,isBossShot:true});
-    }
-    // Steamboat guardian heals slightly
-    if(boss&&boss.id==='steamboat_guardian'&&Math.random()<0.1&&bossHP<bossMaxHP){
-      bossHP=Math.min(bossMaxHP,bossHP+1);
-      showPopup('🫕 +1 Heal!',bossX,55,'#4CAF50');
-    }
-    bossNextSpawn=frame+(bossPhase===2?50:80);
-  }
-  // Move boss shots
-  for(let i=bossShot.length-1;i>=0;i--){
-    bossShot[i].y+=bossShot[i].vy;
-    if(bossShot[i].y>H+30) bossShot.splice(i,1);
+
+// ── Boss visual effects particles ──────────────────────────────
+let bossParticles = [];
+
+function spawnBossParticle(x, y, emoji, color, vx, vy) {
+  bossParticles.push({x, y, emoji, color, vx, vy, life: 35, maxLife: 35, size: 14});
+}
+
+function updateBossParticles() {
+  for (let i = bossParticles.length - 1; i >= 0; i--) {
+    const p = bossParticles[i];
+    p.x += p.vx; p.y += p.vy; p.vy += 0.08; p.life--;
+    if (p.life <= 0) bossParticles.splice(i, 1);
   }
 }
+
+function drawBossParticles() {
+  for (const p of bossParticles) {
+    const alpha = p.life / p.maxLife;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.font = p.size + 'px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(p.emoji, p.x, p.y);
+    ctx.restore();
+  }
+}
+
+// ── Boss shot factory — thematic per boss ──────────────────────
+function makeBossShot(x, vy, vx, boss, overrideEmoji) {
+  const e = overrideEmoji || (boss ? boss.shotEmoji : '💀');
+  return {x, y: 60, vy, vx: vx || 0, emoji: e, bad: true, size: 16, isBossShot: true, drift: false, driftPhase: 0};
+}
+
+function fireBossPattern() {
+  const boss = selectedBoss;
+  const rage = bossPhase === 2;
+  // MUCH easier difficulty: slow projectile speed, long intervals
+  const baseVy = rage ? 1.6 : 1.1;
+  const id = boss ? boss.id : 'generic';
+
+  // Clamp shots to arena width with padding
+  function cx(x) { return Math.max(22, Math.min(W - 22, x)); }
+
+  // ── Thematic pattern functions (no nested function declarations in switch) ─
+  const patterns = {
+
+    // Single slow drop — Love boss default
+    gentle: () => {
+      bossShot.push(makeBossShot(cx(bossX), baseVy, 0, boss));
+    },
+
+    // Two flanking soft shots
+    flank: () => {
+      bossShot.push(makeBossShot(cx(bossX - 35), baseVy, 0, boss));
+      bossShot.push(makeBossShot(cx(bossX + 35), baseVy, 0, boss));
+    },
+
+    // Sinusoidal wriggling worm shot
+    worm: (n) => {
+      for (let k = 0; k < n; k++) {
+        const s = makeBossShot(cx(bossX + (k - Math.floor(n/2)) * 22), baseVy, 0, boss);
+        s.drift = true; s.driftPhase = k * 1.1; s.driftAmp = 1.2;
+        bossShot.push(s);
+      }
+    },
+
+    // Teardrop rain from random x — onion crying
+    tearRain: (n) => {
+      for (let k = 0; k < n; k++) {
+        const rx = cx(30 + Math.random() * (W - 60));
+        bossShot.push(makeBossShot(rx, baseVy * 1.1, 0, boss));
+      }
+    },
+
+    // Sniper: aims at basket, telegraphed (slower than before)
+    sniper: () => {
+      const tx = basket.x;
+      const dx = tx - bossX;
+      const dist = Math.sqrt(dx * dx + 180 * 180);
+      const spd = baseVy * 1.3;
+      bossShot.push(makeBossShot(cx(bossX), spd * (180 / dist), spd * (dx / dist) * 0.7, boss));
+    },
+
+    // Steam puffs in staggered cascade
+    cascade: (n) => {
+      for (let k = 0; k < n; k++) {
+        const x = cx(bossX + (-Math.floor(n/2) + k) * 30);
+        const s = makeBossShot(x, baseVy, 0, boss);
+        s.y = 60 + k * 8;
+        bossShot.push(s);
+      }
+    },
+
+    // Boomerangs: drift outward, telegraphed slowly
+    boomerang: () => {
+      bossShot.push(makeBossShot(cx(bossX - 15), baseVy * 0.9, 1.4, boss));
+      bossShot.push(makeBossShot(cx(bossX + 15), baseVy * 0.9, -1.4, boss));
+    },
+
+    // Wide arc fan
+    fan: (n) => {
+      const count = n || 4;
+      for (let k = 0; k < count; k++) {
+        const x = cx(28 + (W - 56) * k / (count - 1));
+        bossShot.push(makeBossShot(x, baseVy + k * 0.1, 0, boss));
+      }
+    },
+
+    // Musical note wave (Weeknd) — slow oscillating
+    musicWave: (n) => {
+      for (let k = 0; k < n; k++) {
+        const s = makeBossShot(cx(bossX + (k - Math.floor(n/2)) * 28), baseVy, 0, boss);
+        s.drift = true; s.driftPhase = k * 0.9; s.driftAmp = 0.9;
+        bossShot.push(s);
+      }
+    },
+
+    // Rice scatter: many tiny fast shots spread wide
+    riceScatter: (n) => {
+      for (let k = 0; k < n; k++) {
+        const x = cx(24 + (W - 48) * k / (n - 1));
+        const s = makeBossShot(x, baseVy * 1.2, 0, boss);
+        s.size = 12;
+        bossShot.push(s);
+      }
+    },
+
+    // Pulse: tight cluster that expands sideways gently
+    pulse: () => {
+      for (let k = -2; k <= 2; k++) {
+        const s = makeBossShot(cx(bossX + k * 10), baseVy, k * 0.5, boss);
+        bossShot.push(s);
+      }
+    },
+
+    // Thick dark arc (Lor Mee) — slow heavy shots
+    darkArc: () => {
+      bossShot.push(makeBossShot(cx(bossX - 40), baseVy * 0.85, 0.8, boss));
+      bossShot.push(makeBossShot(cx(bossX), baseVy, 0, boss));
+      bossShot.push(makeBossShot(cx(bossX + 40), baseVy * 0.85, -0.8, boss));
+    },
+
+    // Spiral: shots fan evenly across arena width
+    spiral: () => {
+      const positions = [0.15, 0.38, 0.62, 0.85];
+      positions.forEach(pct => {
+        bossShot.push(makeBossShot(cx(W * pct), baseVy + Math.random() * 0.2, 0, boss));
+      });
+    },
+  };
+
+  // ── PER-BOSS DISPATCH ──────────────────────────────────────
+  // Each boss fires thematically appropriate, visually distinct pattern.
+  // Rage mode adds ONE extra element, not double the shots.
+
+  if (id === 'udon_worm_titan' || id === 'udon_warlord' || id === 'udon_demon_king') {
+    // Wriggling sine wave — like worms
+    patterns.worm(rage ? 3 : 2);
+    if (rage) spawnBossParticle(bossX, 65, '🪱', '#8B6914', (Math.random()-0.5)*2, -1);
+
+  } else if (id === 'onion_overlord' || id === 'raw_onion_specter' || id === 'onion_colossus' || id === 'onion_god') {
+    // Teardrops raining down — like crying
+    patterns.tearRain(rage ? 4 : 2);
+    if (rage) spawnBossParticle(bossX, 65, '😭', '#9C7B2F', 0, -1.5);
+
+  } else if (id === 'maroon_queen' || id === 'maroon_empress_eternal' || id === 'cozy_maroon_sentinel') {
+    // Elegant aimed sniper + particle flourish
+    patterns.sniper();
+    spawnBossParticle(bossX, 65, '♟️', '#800020', (Math.random()-0.5)*1.5, -1.2);
+    if (rage) patterns.flank();
+
+  } else if (id === 'broccoli_sprite') {
+    // Cheerful bouncing cascade
+    patterns.cascade(rage ? 3 : 2);
+    spawnBossParticle(bossX, 65, '🌿', '#2d6a2d', (Math.random()-0.5)*2, -1);
+
+  } else if (id === 'grapefruit_witch') {
+    // Zappy fan
+    patterns.fan(rage ? 4 : 3);
+    spawnBossParticle(bossX, 65, '⚡', '#CC5500', (Math.random()-0.5)*3, -2);
+
+  } else if (id === 'bean_sprout_imp' || id === 'bean_sprout_hydra' || id === 'raw_bean_tyrant' || id === 'bean_sprout_apocalypse') {
+    // Boomerang strings — like string-like sprouts
+    patterns.boomerang();
+    if (rage) patterns.flank();
+    spawnBossParticle(bossX, 65, '🌿', '#4a7c3f', (Math.random()-0.5)*2, -1);
+
+  } else if (id === 'potato_sentinel') {
+    // Steam puffs cascade
+    patterns.cascade(rage ? 4 : 2);
+    spawnBossParticle(bossX, 65, '💨', '#8B6347', 0, -1.5);
+
+  } else if (id === 'mashed_egg_duchess') {
+    // Creamy pulse cluster
+    patterns.pulse();
+    spawnBossParticle(bossX, 65, '🫧', '#D4A800', (Math.random()-0.5)*2, -1);
+
+  } else if (id === 'maggie_noodle_fiend') {
+    // Triple chilli spice shots
+    bossShot.push(makeBossShot(cx(bossX - 25), baseVy, 0, boss));
+    bossShot.push(makeBossShot(cx(bossX), baseVy * 1.1, 0, boss));
+    if (rage) bossShot.push(makeBossShot(cx(bossX + 25), baseVy, 0, boss));
+    spawnBossParticle(bossX, 65, '🌶️', '#CC2200', (Math.random()-0.5)*2, -1.5);
+
+  } else if (id === 'penne_phantom' || id === 'penne_sorcerer') {
+    // Gentle curving wave (penne curves, unlike worm udon)
+    patterns.musicWave(rage ? 3 : 2);
+    spawnBossParticle(bossX, 65, '✨', '#C8A040', (Math.random()-0.5)*2, -1);
+
+  } else if (id === 'kovan_memory' || id === 'nostalgia_eclipse') {
+    // Love letter cross pattern — nostalgic and elegant
+    patterns.sniper();
+    if (rage) {
+      bossShot.push(makeBossShot(cx(bossX - 50), baseVy * 0.5, 1.0, boss));
+      bossShot.push(makeBossShot(cx(bossX + 50), baseVy * 0.5, -1.0, boss));
+    }
+    spawnBossParticle(bossX, 65, '💌', '#A0307A', 0, -1.5);
+
+  } else if (id === 'navyblue_knight') {
+    // Charge sniper
+    patterns.sniper();
+    spawnBossParticle(bossX, 65, '⚔️', '#003080', 0, -2);
+
+  } else if (id === 'brown_pant_phantom') {
+    // Leaf cascade spiral
+    patterns.cascade(rage ? 3 : 2);
+    spawnBossParticle(bossX, 65, '🍂', '#7B4F2A', (Math.random()-0.5)*1.5, -1);
+
+  } else if (id === 'steamboat_guardian' || id === 'steamboat_supreme') {
+    // Warm staggered steam bubbles
+    patterns.cascade(rage ? 3 : 2);
+    if (Math.random() < 0.12 && bossHP < bossMaxHP) {
+      bossHP = Math.min(bossMaxHP, bossHP + 1);
+      showPopup('🫕 +1 Heal!', bossX, 55, '#4CAF50');
+    }
+    spawnBossParticle(bossX, 65, '♨️', '#D4570A', 0, -1.5);
+
+  } else if (id === 'sheng_jian_empress' || id === 'great_sheng_jian') {
+    // Crispy bottom fire ring — pulse with fire particles
+    patterns.pulse();
+    spawnBossParticle(bossX - 20, 65, '🔥', '#C0392B', -1, -1.5);
+    spawnBossParticle(bossX + 20, 65, '🔥', '#C0392B', 1, -1.5);
+    if (rage) patterns.flank();
+
+  } else if (id === 'crabstick_commander') {
+    // Ocean wave fan
+    patterns.fan(rage ? 4 : 3);
+    spawnBossParticle(bossX, 65, '🌊', '#CC4400', 0, -1.5);
+
+  } else if (id === 'enoki_empress') {
+    // Delicate spiral
+    patterns.spiral();
+    spawnBossParticle(bossX, 65, '🌾', '#C8B060', (Math.random()-0.5)*1.5, -1);
+
+  } else if (id === 'lor_mee_specter' || id === 'lor_mee_demon') {
+    // Thick dark arc — heavy and slow
+    patterns.darkArc();
+    spawnBossParticle(bossX, 65, '🌑', '#3A2010', 0, -1);
+    if (rage) patterns.gentle();
+
+  } else if (id === 'si_ji_dou_guardian' || id === 'si_ji_dou_deity') {
+    // Boomerang green beans + particle
+    patterns.boomerang();
+    spawnBossParticle(bossX, 65, '🫘', '#3A7A3A', 0, -1.5);
+    if (rage) patterns.cascade(2);
+
+  } else if (id === 'yew_kee_champion' || id === 'duck_rice_overlord') {
+    // Rice scatter wide
+    patterns.riceScatter(rage ? 5 : 3);
+    spawnBossParticle(bossX, 65, '🍚', '#9A5A20', (Math.random()-0.5)*2, -1);
+
+  } else if (id === 'nightfall_wanderer' || id === 'midnight_weeknd_sorceress' || id === 'weeknd_colossus' || id === 'after_hours_phantom') {
+    // Musical note wave — slow and hypnotic
+    patterns.musicWave(rage ? 3 : 2);
+    spawnBossParticle(bossX, 65, '🎵', '#4A0080', (Math.random()-0.5)*2, -1.5);
+    if (rage) patterns.sniper();
+
+  } else if (id === 'maroon_cloak') {
+    patterns.sniper();
+    if (rage) patterns.flank();
+
+  } else {
+    // Generic fallback
+    rage ? patterns.flank() : patterns.gentle();
+  }
+}
+
+function updateBoss() {
+  if (!bossActive) return;
+  bossFrame++;
+  const boss = selectedBoss;
+  const rageMult = boss ? boss.rageMult : 1.2;
+  // Boss moves slower — easier to predict
+  const spd = bossPhase === 2 ? (1.6 * rageMult) : 1.4;
+  bossX += bossDir * spd;
+  if (bossX > W - 30 || bossX < 30) bossDir *= -1;
+
+  // Enter rage at 1/3 HP (easier — rage kicks in later)
+  if (bossHP <= Math.floor(bossMaxHP / 3) && bossPhase < 2) {
+    bossPhase = 2;
+    showPopup('💢 RAGE!', W/2, H/2, '#FF4444');
+  }
+
+  // Fire pattern — longer intervals = easier to dodge
+  if (frame >= bossNextSpawn) {
+    fireBossPattern();
+    // Normal: every 100 frames (~1.7s), rage: every 70 frames (~1.2s)
+    bossNextSpawn = frame + (bossPhase === 2 ? 70 : 100);
+  }
+
+  updateBossParticles();
+
+  // Move boss shots
+  for (let i = bossShot.length - 1; i >= 0; i--) {
+    const s = bossShot[i];
+    s.y += s.vy;
+    if (s.vx) s.x += s.vx;
+    if (s.drift) {
+      s.driftPhase = (s.driftPhase || 0) + 0.07;
+      s.x += Math.sin(s.driftPhase) * (s.driftAmp || 1.0);
+    }
+    // Keep in bounds
+    if (s.x < 0) s.x = 0;
+    if (s.x > W) s.x = W;
+    if (s.y > H + 30) bossShot.splice(i, 1);
+  }
+}
+
 
 function drawBoss(){
   if(!bossActive) return;
@@ -2147,10 +2700,16 @@ function drawBoss(){
   const emoji = boss ? boss.emoji : (level===3?'🍖':level===6?'🌶️':'💀');
   const bossColor = boss ? boss.color : '#FF4444';
   const scale = bossPhase===2 ? 2.6 : 2.1;
+  // Pre-fire warning telegraph: boss glows brightly 20 frames before firing
+  const framesUntilFire = bossNextSpawn - frame;
+  const telegraphing = framesUntilFire <= 20 && framesUntilFire > 0;
   // Boss name tag above
   ctx.save();
-  if(bossPhase===2){
-    // Rage glow using boss color
+  if(telegraphing){
+    // Bright warning flash — player gets visual cue to dodge
+    const pulse = Math.sin((20-framesUntilFire)*0.5)*0.5+0.5;
+    ctx.shadowBlur = 40 + pulse*20; ctx.shadowColor = '#FFFF00';
+  } else if(bossPhase===2){
     ctx.shadowBlur=35;ctx.shadowColor=bossColor;
   } else {
     ctx.shadowBlur=12;ctx.shadowColor=bossColor;
@@ -2200,6 +2759,8 @@ function checkBossHit(heartX,heartY){
 
 function defeatBoss(){
   bossActive=false;bossShot=[];bossDefeated++;
+  // Fire event for easter egg system
+  if(selectedBoss) document.dispatchEvent(new CustomEvent('bossDefeatedEvt',{detail:{bossId:selectedBoss.id}}));
   P.achievedLevels.push('boss'+level);
   saveP();
   running=false;
@@ -2330,9 +2891,33 @@ function resetGame(){
   if(shopHas('phoenix_start')) phoenixReady=true;
   if(shopHas('lucky_start'))   activeBuffs.push({id:'lucky_s',rarity:'common',emoji:'🍀',short:'Lucky',endsAt:Infinity});
   if(shopHas('omni_start'))    activeBuffs.push({id:'omni',rarity:'legendary',emoji:'✨',short:'OMNI',endsAt:frame+8*60});
+  // New shop item start bonuses
+  if(shopHas('soft_landing'))  window._softLandingUsed=false;
+  if(shopHas('head_start'))    xp+=5;
+  if(shopHas('pocket_change')) {coins+=3;P.coins+=3;}
+  if(shopHas('second_wind'))   window._secondWindReady=true;
+  if(shopHas('first_aid'))     window._firstAidReady=true;
+  if(shopHas('triple_start'))  activeBuffs.push({id:'triple',rarity:'epic',emoji:'🌟',short:'3×',endsAt:frame+5*60});
+  if(shopHas('double_xp_start')) activeBuffs.push({id:'xp_m',rarity:'rare',emoji:'⚡',short:'XP++',endsAt:frame+60*60});
+  if(shopHas('dudu_blessing')) streak=2;
+  if(shopHas('amber_heart'))   {lives=Math.min(lives+1,8);shieldsLeft=1;activeBuffs.push({id:'lucky_s',rarity:'common',emoji:'🍀',short:'Lucky',endsAt:Infinity});}
+  if(shopHas('bao_legend'))    {level=2;xp=0;lives=Math.min(lives+2,8);activeBuffs.push({id:'lucky_s',rarity:'common',emoji:'🍀',short:'Lucky',endsAt:Infinity});}
+  if(shopHas('kovan_memory_shop')){lives=Math.min(lives+3,8);shieldsLeft=1;window._kovanScatter=true;}
+  if(shopHas('boss_bane'))     window._bossBane=true;
   updateHUD();
 }
-function startGame(){resetGame();overlay.classList.add('hidden');running=true;gameLoop();}
+function startGame(){
+  resetGame();
+  overlay.classList.add('hidden');
+  running=true;
+  if(window._kovanScatter){
+    window._kovanScatter=false;
+    setTimeout(()=>{
+      for(let _i=0;_i<8;_i++) items.push({x:28+Math.random()*(W-56),y:-28-(Math.random()*120),vy:1.2,emoji:HEART_EMO[Math.floor(Math.random()*HEART_EMO.length)],bad:false,size:22,frozen:false});
+    },600);
+  }
+  gameLoop();
+}
 document.getElementById('start-btn').addEventListener('click',startGame);
 
 // ===================== CONTROLS =====================
@@ -3837,6 +4422,203 @@ if(_origDefeatBoss){
     </div>
   </div>
 </div>
+
+
+<!-- ══ EASTER EGG MODAL ══════════════════════════════════════════ -->
+<div id="egg-modal">
+  <div id="egg-inner">
+    <div id="egg-emoji">🥚</div>
+    <div id="egg-title">Secret Found!</div>
+    <div id="egg-msg"></div>
+    <button id="egg-close" onclick="closeEgg()">How sweet ♡</button>
+  </div>
+</div>
+<div class="egg-found-badge" id="egg-badge">🥚 Easter Egg Found!</div>
+
+<script>
+// ══ EASTER EGG SYSTEM ═══════════════════════════════════════════
+const EGGS = [
+  {
+    id:'egg_title_tap',
+    emoji:'💌',
+    title:'A Secret Message',
+    msg:`Hey Bao 🥟 You found it! This little hidden message was always here, waiting for the most curious person — which is you. I lub you more than you know. Happy exploring. 🧡`
+  },
+  {
+    id:'egg_dudu_logo',
+    emoji:'🐻',
+    title:'Dudu Appears!',
+    msg:`Psst — it's me, Dudu. I've been hiding in here the whole time. I just wanted to say that making this game for you was one of my favourite things ever. I lub you, Bao. 💛`
+  },
+  {
+    id:'egg_maroon',
+    emoji:'👑',
+    title:'Favourite Colour',
+    msg:`Maroon. Your favourite colour. The colour of something warm and chosen and just a little bit regal. Much like a certain someone I know. 🟥 I lub you, my Maroon Queen. 💕`
+  },
+  {
+    id:'egg_kovan',
+    emoji:'💌',
+    title:'Ding Te Le, Kovan',
+    msg:`Our first date. You wore your navy blue top and brown pants and I was already a little bit gone. Ding Te Le will forever be my favourite restaurant because of that evening. I lub you. 🧡`
+  },
+  {
+    id:'egg_weeknd',
+    emoji:'🌙',
+    title:'After Hours',
+    msg:`Late-night R&B energy. The Weeknd playing somewhere in the background. You, being completely yourself. That's my favourite vibe and it's entirely your fault. I lub you so much. 🎵`
+  },
+  {
+    id:'egg_steamboat',
+    emoji:'🫕',
+    title:'Steamboat Night!',
+    msg:`Chicken, crabsticks, enoki mushrooms, maggie noodles — the perfect steamboat lineup. Imagining sharing a hotpot with you right now. That would be a very good evening. I lub you. 🧡`
+  },
+  {
+    id:'egg_sheng_jian',
+    emoji:'🥟',
+    title:'Sheng Jian Bao!',
+    msg:`The Chinatown stall. Perfectly crispy bottoms, warm filling, just the right amount of soup. You have impeccable taste in dumplings and in everything else too. I lub you, Bao. 💕`
+  },
+  {
+    id:'egg_birthday',
+    emoji:'🎂',
+    title:'30 November!',
+    msg:`30 November — the day you arrived in the world, and I am very grateful for that. You deserve a whole celebration every single year. I lub you to the moon, birthday Bao. 🧡✨`
+  },
+  {
+    id:'egg_softbroccoli',
+    emoji:'🥦',
+    title:'Soft Broccoli Supremacy',
+    msg:`Soft broccoli is correct and I will defend this hill with you forever. Mushy is not bad. Mushy is comforting. You understand the true nature of vegetables. I lub you. 🥦💕`
+  },
+  {
+    id:'egg_udon',
+    emoji:'🍜',
+    title:'Udon? No Thank You.',
+    msg:`They look like worms. You are right. This is a completely valid stance and anyone who disagrees has simply not looked hard enough at udon. I lub you and I support you. 🪱🚫`
+  },
+  {
+    id:'egg_lor_mee',
+    emoji:'🍜',
+    title:'86 Lor Mee!',
+    msg:`Stall 86. The legendary thick sauce. You know the good ones. Having a favourite lor mee stall with an actual stall number memorised is elite behaviour and I love that about you. 💕`
+  },
+  {
+    id:'egg_yew_kee',
+    emoji:'🦆',
+    title:'Yew Kee Duck Rice!',
+    msg:`Yew Kee. The duck rice of your heart. I respect a person who knows their stall and I adore a person who knows theirs this specifically. I lub you, duck rice connoisseur. 🍚🧡`
+  },
+];
+
+let _eggsFound = JSON.parse(localStorage.getItem('bao_eggs')||'[]');
+
+function showEgg(id){
+  const egg = EGGS.find(e=>e.id===id);
+  if(!egg) return;
+  const isNew = !_eggsFound.includes(id);
+  if(isNew){ _eggsFound.push(id); localStorage.setItem('bao_eggs',JSON.stringify(_eggsFound)); flashEggBadge(); }
+  document.getElementById('egg-emoji').textContent = egg.emoji;
+  document.getElementById('egg-title').textContent = egg.title;
+  document.getElementById('egg-msg').textContent = egg.msg + (isNew ? '' : ' (Already found 🥚)');
+  document.getElementById('egg-modal').classList.add('show');
+}
+function closeEgg(){ document.getElementById('egg-modal').classList.remove('show'); }
+function flashEggBadge(){
+  const b=document.getElementById('egg-badge');
+  b.classList.add('show');
+  setTimeout(()=>b.classList.remove('show'),2800);
+}
+
+// ── Trigger: tap the main title 5 times ───────────────────────────────────
+let _titleTaps=0,_titleTimer=null;
+document.querySelector('.main-title').addEventListener('click',()=>{
+  _titleTaps++;
+  clearTimeout(_titleTimer);
+  _titleTimer=setTimeout(()=>_titleTaps=0,1400);
+  if(_titleTaps>=5){ _titleTaps=0; showEgg('egg_title_tap'); }
+});
+
+// ── Trigger: tap the envelope icon 3 times fast ───────────────────────────
+let _envTaps=0,_envTimer=null;
+document.getElementById('envBtn').addEventListener('click',()=>{
+  _envTaps++;
+  clearTimeout(_envTimer);
+  _envTimer=setTimeout(()=>_envTaps=0,1200);
+  if(_envTaps>=3){ _envTaps=0; showEgg('egg_dudu_logo'); }
+},true);
+
+// ── Trigger: long-press the note card (1.5s) ─────────────────────────────
+let _noteHold=null;
+document.getElementById('note-card').addEventListener('pointerdown',()=>{
+  _noteHold=setTimeout(()=>showEgg('egg_kovan'),1500);
+});
+document.getElementById('note-card').addEventListener('pointerup',()=>clearTimeout(_noteHold));
+document.getElementById('note-card').addEventListener('pointerleave',()=>clearTimeout(_noteHold));
+
+// ── Trigger: tap "Bao's Shop" heading 4 times ─────────────────────────────
+let _shopTaps=0,_shopTimer=null;
+document.querySelector('#tab-shop h3').addEventListener('click',()=>{
+  _shopTaps++;
+  clearTimeout(_shopTimer);
+  _shopTimer=setTimeout(()=>_shopTaps=0,1400);
+  if(_shopTaps>=4){ _shopTaps=0; showEgg('egg_steamboat'); }
+});
+
+// ── Trigger: buy Amber's Heart item ──────────────────────────────────────
+const _origBuyItem = buyItem;
+window.buyItem = function(item){
+  _origBuyItem(item);
+  if(item.id==='amber_heart') setTimeout(()=>showEgg('egg_maroon'),400);
+  if(item.id==='weeknd_mode') setTimeout(()=>showEgg('egg_weeknd'),400);
+  if(item.id==='kovan_memory_shop') setTimeout(()=>showEgg('egg_kovan'),400);
+  if(item.id==='bao_legend') setTimeout(()=>showEgg('egg_sheng_jian'),400);
+};
+
+// ── Trigger: score exactly 30 in a game ──────────────────────────────────
+const _origEndGame = endGame;
+window.endGame = function(){
+  _origEndGame();
+  if(score===30) setTimeout(()=>showEgg('egg_birthday'),1200);
+};
+
+// ── Trigger: defeat the Duck Rice Overlord ────────────────────────────────
+const _origDefeatBoss2 = typeof window.defeatBoss==='function' ? window.defeatBoss : null;
+// We hook via the boss selection click instead — patch via selectedBoss check in defeatBoss
+// Already patched via the existing _origDefeatBoss wrapper — add egg trigger here:
+document.addEventListener('bossDefeatedEvt', e=>{
+  if(e.detail && e.detail.bossId==='duck_rice_overlord') showEgg('egg_yew_kee');
+  if(e.detail && e.detail.bossId==='sheng_jian_empress') showEgg('egg_sheng_jian');
+  if(e.detail && e.detail.bossId==='udon_worm_titan') showEgg('egg_udon');
+  if(e.detail && e.detail.bossId==='steamboat_guardian') showEgg('egg_steamboat');
+  if(e.detail && e.detail.bossId==='lor_mee_specter'||
+     e.detail && e.detail.bossId==='lor_mee_demon') showEgg('egg_lor_mee');
+});
+
+// ── Trigger: triple-tap the stats heading ─────────────────────────────────
+let _statsTaps=0,_statsTimer=null;
+document.querySelector('#tab-stats h3')?.addEventListener('click',()=>{
+  _statsTaps++;
+  clearTimeout(_statsTimer);
+  _statsTimer=setTimeout(()=>_statsTaps=0,1400);
+  if(_statsTaps>=3){ _statsTaps=0; showEgg('egg_softbroccoli'); }
+});
+
+// ── Trigger: 10 consecutive hearts with streak (find it in-game) ─────────
+// We hook into the score display — when streak hits 30 first time ever
+let _egg30streak = false;
+setInterval(()=>{
+  if(!_egg30streak && typeof streak!=='undefined' && streak>=30){
+    _egg30streak=true; showEgg('egg_weeknd');
+  }
+},500);
+
+// Close on backdrop click
+document.getElementById('egg-modal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('egg-modal')) closeEgg();
+});
+</script>
 
 </body>
 </html>
