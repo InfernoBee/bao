@@ -336,16 +336,14 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
 .gacha-shop-entry h4{font-family:'Playfair Display',serif;color:#fff;margin:0 0 .2rem;font-size:1rem;}
 .gacha-shop-entry p{font-size:.68rem;color:rgba(255,255,255,.75);margin:0;}
 
-/* =================================================================
+/* ================================================================
    DESKTOP RESPONSIVE  (≥ 700 px)
-   ================================================================= */
+   ================================================================ */
 @media(min-width:700px){
   body{display:flex;flex-direction:column;align-items:center;
     background:radial-gradient(ellipse at 55% 0%,#f8e4cc 0%,var(--cream) 60%);}
   #landing{border-radius:0;}
   #main{width:100%;max-width:660px;}
-
-  /* Strip mobile side margins — column controls width now */
   .header{padding:4rem 2rem 2.5rem;}
   .note-card{margin:0 0 2rem;padding:2rem 2.2rem;}
   .char-select{margin:0 0 1rem;}
@@ -354,13 +352,9 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
   .panel{margin:0 0 2rem;padding:1.5rem 1.7rem;}
   .c4-section{margin:0 0 2rem;}
   footer{padding:0 0 3.5rem;}
-
-  /* Catch Hearts HUD */
   .hud-score .val,.hud-coins .val{font-size:1.3rem;}
   #hud-level-badge{font-size:.78rem;padding:.2rem .75rem;}
   .shop-grid{grid-template-columns:repeat(3,1fr);}
-
-  /* Connect Bao */
   #c4-wrap{padding:1.4rem 1.6rem;}
   .c4-fighter{padding:.6rem .9rem;}
   .c4-fighter-name{font-size:.8rem;}
@@ -998,7 +992,6 @@ const overlay=document.getElementById('overlay');
 let W,H;
 function resize(){
   W=canvas.width=document.getElementById('canvas-wrap').clientWidth;
-  // Taller on desktop so items have real room to fall
   H=canvas.height=window.innerWidth<700
     ? Math.round(Math.min(360,window.innerHeight*0.44))
     : Math.round(Math.min(540,window.innerHeight*0.60));
@@ -1212,13 +1205,11 @@ function showToast(msg){
 }
 
 // ===================== SPAWN =====================
-// Seconds of gameplay elapsed, capped at 180 (the full ramp window)
 function gameSecs(){return Math.min(frame/60,180);}
 
 function spawnItem(){
   const isBad=Math.random()<(0.09+level*0.01);
   const t=gameSecs();
-  // 0.8 px/frame at start → ~2.5 at 3 min; hard cap 3.0
   const base=0.8+(t/180)*1.7+level*0.06;
   let spd=Math.min(3.0,base*(0.88+Math.random()*0.24))*st.sm;
   if(shopHas('slow_start')&&frame<30*60) spd*=0.6;
@@ -1260,27 +1251,21 @@ function gameLoop(){
     showPopup('🚫 Bad items cleared!',W/2,H/2,'#aaa');
   }
 
-  // Spawn interval: 150 frames (~2.5s) at start → 32 frames (~0.5s) at 3 min
   const _t=gameSecs();
   const rate=Math.max(32,Math.round(150-(_t/180)*110-level*1.5));
   if(frame%rate===0&&!st.timeFrozen){
-    spawnItem(); // always one heart
-    // 2nd heart: only after 75s AND level>=3, probability grows slowly
+    spawnItem();
     if(_t>75&&level>=3&&Math.random()<Math.min(0.6,(_t-75)/150)) spawnItem();
-    // 3rd heart: only after 135s AND level>=6
     if(_t>135&&level>=6&&Math.random()<Math.min(0.45,(_t-135)/150)) spawnItem();
-    // Heartstorm buff: one extra, speed capped to ramp
     if(st.heartstorm&&Math.random()<.65){
       const _hs=Math.min(2.6,(0.8+(_t/180)*1.4)*st.sm);
       items.push({x:22+Math.random()*(W-44),y:-24,vy:_hs,emoji:HEART_EMO[Math.floor(Math.random()*HEART_EMO.length)],bad:false,size:22,frozen:false});
     }
   }
-  // Bao passive potatoes — every 220 frames, chance grows with time
   if(currentChar==='bao'&&frame%220===0&&Math.random()<(0.28+(_t/180)*0.38)){
     const _ps=Math.min(2.4,(0.75+(_t/180)*1.1)*st.sm);
     items.push({x:22+Math.random()*(W-44),y:-24,vy:_ps,emoji:'🥔',bad:false,isPotato:true,size:20,frozen:false});
   }
-  // Bubu passive bags — every 220 frames
   if(currentChar==='bubu'&&frame%220===0&&Math.random()<(0.28+(_t/180)*0.38)){
     const _bs=Math.min(2.4,(0.75+(_t/180)*1.1)*st.sm);
     items.push({x:22+Math.random()*(W-44),y:-24,vy:_bs,emoji:'🛍️',bad:false,isShopbag:true,size:20,frozen:false});
@@ -1449,7 +1434,8 @@ function gameLoop(){
       updateHUD();items.splice(i,1);continue;
     }
     if(it.y>H+30){
-      if(!it.bad){lives--;streak=0;if(currentChar==='dudu')duduAuraReady=false;if(lives<=0){endGame();return;}updateHUD();}
+      // Only plain hearts (not potatoes or bags) cost a life when missed
+      if(!it.bad&&!it.isPotato&&!it.isShopbag){lives--;streak=0;if(currentChar==='dudu')duduAuraReady=false;if(lives<=0){endGame();return;}updateHUD();}
       items.splice(i,1);
     }
   }
@@ -1529,7 +1515,7 @@ function showBossWarning(cb){
     <p style="font-size:.8rem;margin:.4rem 0">Catch 💕 hearts to deal damage!<br>Avoid 💀 projectiles from the boss!</p>
     <p style="font-size:.7rem;opacity:.6">Boss drops a guaranteed RARE+ buff on defeat</p>
     <button class="game-btn" id="boss-ready-btn" style="background:#E8736A;margin-top:.5rem">I'm Ready! ⚔️</button>`;
-  document.getElementById('boss-ready-btn').addEventListener('click',()=>{overlay.classList.add('hidden');cb();});
+  document.getElementById('boss-ready-btn').addEventListener('click',()=>{overlay.classList.add('hidden');items=[];bossShot=[];popups=[];cb();});
 }
 
 function spawnBoss(lv){
