@@ -727,8 +727,11 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
     <div id="c4-level-row">
       <span id="c4-level-label">⚔️ Level 1</span>
       <div id="c4-level-bar-wrap"><div id="c4-level-bar" style="width:0%"></div></div>
-      <span id="c4-level-label-r" style="font-size:.65rem;color:rgba(61,43,31,.45);font-style:italic">vs Baby Dough</span>
+      <span id="c4-level-label-r" style="font-size:.65rem;color:rgba(61,43,31,.45);font-style:italic">Choose your boss!</span>
     </div>
+
+    <!-- Boss pick panel (shown before each battle) -->
+    <div id="c4-boss-pick" style="display:none;background:linear-gradient(160deg,#1a0800,#0d0400);border:2px solid var(--gold);border-radius:18px;padding:.9rem .8rem;margin-bottom:.8rem;"></div>
 
     <div id="c4-wrap">
       <!-- HUD -->
@@ -792,7 +795,7 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
         </button>
       </div>
 
-      <button class="game-btn" id="c4-start-btn" onclick="c4StartGame(0)" style="width:100%;margin-top:0;">Start from Level 1 💕</button>
+      <button class="game-btn" id="c4-start-btn" onclick="showBossPick(0)" style="width:100%;margin-top:0;">Start from Level 1 💕</button>
     </div>
   </div>
 
@@ -1512,7 +1515,7 @@ function gameLoop(){
           // streak_save: don't reset streak on first miss
           const hadStreak=streak>0;
           if(st.streakSave&&hadStreak){streak=Math.max(1,streak-1);showPopup('🔥 Saved!',it.x,it.y,'#FF9800');}
-          else if(window._petStreakGuard&&streak>0){streak=Math.max(3,Math.floor(streak/2));showPopup('🐘 Guarded!',it.x,it.y,'#90caf9');}
+          else if(window._petStreakGuard&&streak>0){streak=Math.max(3,Math.floor(streak/2));showPopup('🐘 Guarded!',it.x,it.y,'#90caf9');triggerPetAnim('shake','#90caf9','🛡️');}
           else streak=0;
           // Armor: first hit is free
           if(st.armor&&!armorUsed){armorUsed=true;showPopup('🪖 Armored!',it.x,it.y,'#90caf9');items.splice(i,1);continue;}
@@ -1673,45 +1676,463 @@ function checkLevelUp(){
   }
 }
 
+// ===================== BOSS DEFINITIONS =====================
+// All bosses — randomly pick 3 per encounter
+const ALL_BOSSES = [
+
+  // ── TIER ONE (hp 15–25) ─────────────────────────────────
+  {
+    id:'udon_worm_titan', tier:1,
+    name:'The Udon Worm Titan', subtitle:'Chaos of Slippery Textures',
+    emoji:'🍜', shotEmoji:'🪱', color:'#8B6914', bgColor:'rgba(139,105,20,0.15)',
+    type:'hate', typeLabel:'Chaos Boss', typeColor:'#E8736A',
+    lore:'Born from Amber\'s deepest dread — worm-like noodles that wriggle and slither endlessly. Fires double squirming projectiles!',
+    hp:20, rageMult:1.2, specialty:'Fires two worm shots at once!',
+  },
+  {
+    id:'onion_overlord', tier:1,
+    name:'The Onion Overlord of Tears', subtitle:'Lord of Eye-Watering Intrusion',
+    emoji:'🧅', shotEmoji:'😭', color:'#9C7B2F', bgColor:'rgba(156,123,47,0.15)',
+    type:'hate', typeLabel:'Chaos Boss', typeColor:'#E8736A',
+    lore:'The pungent sovereign of garnishes Amber never ordered. Its crying shots flood the arena with lamentation!',
+    hp:18, rageMult:1.3, specialty:'Rains tear-shots in rage!',
+  },
+  {
+    id:'maroon_queen', tier:1,
+    name:'The Maroon Queen of Nostalgia', subtitle:'Guardian of Comfort and Memory',
+    emoji:'👑', shotEmoji:'💜', color:'#800020', bgColor:'rgba(128,0,32,0.15)',
+    type:'love', typeLabel:'Comfort Boss', typeColor:'#CE93D8',
+    lore:'Draped in Amber\'s favourite maroon, she tests your resolve with bittersweet pulses. Defeat her to earn the power of memory!',
+    hp:18, rageMult:1.1, specialty:'Fires nostalgic heart pulses!',
+  },
+  {
+    id:'broccoli_sprite', tier:1,
+    name:'The Soft Broccoli Sprite', subtitle:'Gentle Titan of the Steamer',
+    emoji:'🥦', shotEmoji:'🌿', color:'#2d6a2d', bgColor:'rgba(45,106,45,0.15)',
+    type:'love', typeLabel:'Comfort Boss', typeColor:'#CE93D8',
+    lore:'Perfectly steamed and utterly soft — just the way Amber loves it. This tiny titan bounces cheerfully and fires leafy blessings!',
+    hp:15, rageMult:1.0, specialty:'Bounces erratically across the arena!',
+  },
+  {
+    id:'grapefruit_witch', tier:1,
+    name:'The Grapefruit Citrus Witch', subtitle:'Sovereign of the Bitter Zest',
+    emoji:'🍊', shotEmoji:'⚡', color:'#CC5500', bgColor:'rgba(204,85,0,0.15)',
+    type:'love', typeLabel:'Comfort Boss', typeColor:'#CE93D8',
+    lore:'A citrusy sorceress with a bitter-sweet personality — much like the fruit Amber adores. Her zappy shots are sharp and fast!',
+    hp:16, rageMult:1.15, specialty:'Fires fast zap-shots in bursts!',
+  },
+  {
+    id:'raw_onion_specter', tier:1,
+    name:'The Raw Onion Specter', subtitle:'Ghost of Uninvited Garnishes',
+    emoji:'👻', shotEmoji:'🧅', color:'#6B5A2A', bgColor:'rgba(107,90,42,0.15)',
+    type:'hate', typeLabel:'Chaos Boss', typeColor:'#E8736A',
+    lore:'The translucent spirit of every raw onion ever placed on a dish without consent. It haunts the arena with pungent ghost-shots!',
+    hp:17, rageMult:1.25, specialty:'Fires ghost-onion ambush shots!',
+  },
+  {
+    id:'bean_sprout_imp', tier:1,
+    name:'The Bean Sprout Imp', subtitle:'Tiny Terror of Worm-Like Strings',
+    emoji:'🌱', shotEmoji:'🌿', color:'#5a8a3a', bgColor:'rgba(90,138,58,0.15)',
+    type:'hate', typeLabel:'Chaos Boss', typeColor:'#E8736A',
+    lore:'Small but relentless, the Bean Sprout Imp zips across the field firing stringy projectiles that look disturbingly worm-like!',
+    hp:15, rageMult:1.2, specialty:'Moves twice as fast as normal bosses!',
+  },
+  {
+    id:'potato_sentinel', tier:1,
+    name:'The Baked Potato Sentinel', subtitle:'Protector of Fluffy Comfort',
+    emoji:'🥔', shotEmoji:'💨', color:'#8B6347', bgColor:'rgba(139,99,71,0.15)',
+    type:'love', typeLabel:'Comfort Boss', typeColor:'#CE93D8',
+    lore:'Guardian of Amber\'s beloved baked potato — perfectly fluffy inside, golden outside. Its steam-puff shots are deceptively warm!',
+    hp:20, rageMult:1.05, specialty:'Fires steam puffs in all directions!',
+  },
+  {
+    id:'mashed_egg_duchess', tier:1,
+    name:'The Mashed Egg Duchess', subtitle:'Empress of Mayonnaise and Comfort',
+    emoji:'🥚', shotEmoji:'🫧', color:'#D4A800', bgColor:'rgba(212,168,0,0.15)',
+    type:'love', typeLabel:'Comfort Boss', typeColor:'#CE93D8',
+    lore:'The noble duchess of mashed egg with mayo — Amber\'s go-to comfort snack. She fires creamy bubble-shots with regal elegance!',
+    hp:16, rageMult:1.1, specialty:'Fires bubble volleys in rage!',
+  },
+  {
+    id:'maggie_noodle_fiend', tier:1,
+    name:'The Spicy Maggie Fiend', subtitle:'Lord of Late-Night Cravings',
+    emoji:'🍝', shotEmoji:'🌶️', color:'#CC2200', bgColor:'rgba(204,34,0,0.15)',
+    type:'love', typeLabel:'Comfort Boss', typeColor:'#CE93D8',
+    lore:'The spicy spirit of Amber\'s beloved instant noodles — always craved, always satisfying. It launches chilli shots that sting!',
+    hp:19, rageMult:1.2, specialty:'Fires triple chilli shots in rage!',
+  },
+  {
+    id:'penne_phantom', tier:1,
+    name:'The Penne Pasta Phantom', subtitle:'Specter of the Tube-Shaped Truth',
+    emoji:'🍝', shotEmoji:'✨', color:'#C8A040', bgColor:'rgba(200,160,64,0.15)',
+    type:'love', typeLabel:'Comfort Boss', typeColor:'#CE93D8',
+    lore:'Unlike the feared Udon Worm, penne pasta holds no terror — it is Amber\'s friend! This phantom showers the field in pasta bliss!',
+    hp:17, rageMult:1.1, specialty:'Fires pasta spirals that curve!',
+  },
+  {
+    id:'kovan_memory', tier:1,
+    name:'The Kovan Memory Wraith', subtitle:'Spirit of the First Date',
+    emoji:'💌', shotEmoji:'💕', color:'#A0307A', bgColor:'rgba(160,48,122,0.15)',
+    type:'love', typeLabel:'Comfort Boss', typeColor:'#CE93D8',
+    lore:'Conjured from the memory of Ding Te Le and that navy blue top — a wraith woven from the warmth of a perfect first evening!',
+    hp:15, rageMult:1.0, specialty:'Fires heart-shaped memory blasts!',
+  },
+  {
+    id:'navyblue_knight', tier:1,
+    name:'The Navy Blue Knight', subtitle:'Champion of the First Encounter',
+    emoji:'🫐', shotEmoji:'💙', color:'#003080', bgColor:'rgba(0,48,128,0.15)',
+    type:'love', typeLabel:'Comfort Boss', typeColor:'#CE93D8',
+    lore:'Clad in the colour of Amber\'s first-date top, the Navy Blue Knight is a fierce but honourable guardian of cherished memories!',
+    hp:22, rageMult:1.1, specialty:'Charges in straight-line dashes!',
+  },
+  {
+    id:'brown_pant_phantom', tier:1,
+    name:'The Brown Pant Phantom', subtitle:'Silent Warden of First Memories',
+    emoji:'🤎', shotEmoji:'🍂', color:'#7B4F2A', bgColor:'rgba(123,79,42,0.15)',
+    type:'love', typeLabel:'Comfort Boss', typeColor:'#CE93D8',
+    lore:'An apparition shaped like autumn warmth, inspired by the brown trousers of a certain nostalgic first date. Warm, steady, and deceptive!',
+    hp:18, rageMult:1.05, specialty:'Fires leaf-shot spirals!',
+  },
+
+  // ── TIER TWO (hp 28–40) ─────────────────────────────────
+  {
+    id:'bean_sprout_hydra', tier:2,
+    name:'The Bean Sprout Hydra', subtitle:'The Stringy Many-Headed Terror',
+    emoji:'🌿', shotEmoji:'🪱', color:'#4a7c3f', bgColor:'rgba(74,124,63,0.15)',
+    type:'hate', typeLabel:'Chaos Boss', typeColor:'#E8736A',
+    lore:'Every head regrows when severed! This stringy nightmare embodies every unwanted garnish Amber has ever encountered!',
+    hp:35, rageMult:1.4, specialty:'Splits into five shots in rage mode!',
+  },
+  {
+    id:'steamboat_guardian', tier:2,
+    name:'The Steamboat Guardian of Comfort', subtitle:'Protector of the Sacred Hot Pot',
+    emoji:'🫕', shotEmoji:'🍗', color:'#D4570A', bgColor:'rgba(212,87,10,0.15)',
+    type:'love', typeLabel:'Comfort Boss', typeColor:'#CE93D8',
+    lore:'The spirit of every beloved steamboat night — chicken, crabsticks, enoki mushrooms and maggie. Prove you deserve the cozy warmth!',
+    hp:30, rageMult:1.1, specialty:'Slowly heals during the fight!',
+  },
+  {
+    id:'sheng_jian_empress', tier:2,
+    name:'The Sheng Jian Flame Empress', subtitle:'The Crispy-Bottom Sovereign',
+    emoji:'🥟', shotEmoji:'🔥', color:'#C0392B', bgColor:'rgba(192,57,43,0.15)',
+    type:'love', typeLabel:'Comfort Boss', typeColor:'#CE93D8',
+    lore:'The fiery spirit of Chinatown\'s finest sheng jian bao — perfectly crispy below, perfectly soft above. Her flames are a loving test!',
+    hp:32, rageMult:1.2, specialty:'Drops fire rings in rage phase!',
+  },
+  {
+    id:'udon_warlord', tier:2,
+    name:'The Udon Warlord of Slime', subtitle:'Commander of Worm-Like Forces',
+    emoji:'🍜', shotEmoji:'🪱', color:'#7A5A10', bgColor:'rgba(122,90,16,0.15)',
+    type:'hate', typeLabel:'Chaos Boss', typeColor:'#E8736A',
+    lore:'A stronger evolution of the Udon threat — this warlord commands armies of slithering noodle-worms across the battlefield!',
+    hp:38, rageMult:1.3, specialty:'Fires waves of worm volleys!',
+  },
+  {
+    id:'onion_colossus', tier:2,
+    name:'The Onion Colossus of Sorrow', subtitle:'Ancient Weeping Giant',
+    emoji:'🧅', shotEmoji:'💧', color:'#8A6A1A', bgColor:'rgba(138,106,26,0.15)',
+    type:'hate', typeLabel:'Chaos Boss', typeColor:'#E8736A',
+    lore:'An ancient colossus made entirely of raw onion layers. It weeps constantly and its tears fill the whole arena!',
+    hp:36, rageMult:1.35, specialty:'Spreads teardrop shots widely!',
+  },
+  {
+    id:'crabstick_commander', tier:2,
+    name:'The Crabstick Commander', subtitle:'Admiral of the Steamboat Fleet',
+    emoji:'🦀', shotEmoji:'🌊', color:'#CC4400', bgColor:'rgba(204,68,0,0.15)',
+    type:'love', typeLabel:'Comfort Boss', typeColor:'#CE93D8',
+    lore:'The proud admiral of steamboat ingredients — crabsticks are Amber\'s favourite hot-pot pick! This commander fires ocean waves!',
+    hp:28, rageMult:1.15, specialty:'Fires ocean wave blasts!',
+  },
+  {
+    id:'enoki_empress', tier:2,
+    name:'The Enoki Mushroom Empress', subtitle:'Mistress of the Delicate Threads',
+    emoji:'🍄', shotEmoji:'🌾', color:'#C8B060', bgColor:'rgba(200,176,96,0.15)',
+    type:'love', typeLabel:'Comfort Boss', typeColor:'#CE93D8',
+    lore:'Slender and delicate like enoki mushrooms — a steamboat staple Amber adores. The Empress fires golden thread-shots!',
+    hp:30, rageMult:1.2, specialty:'Fires golden thread volleys!',
+  },
+  {
+    id:'lor_mee_specter', tier:2,
+    name:'The Lor Mee Specter of Stench', subtitle:'Dark Wraith of the Famous Stall',
+    emoji:'🫙', shotEmoji:'🌑', color:'#3A2010', bgColor:'rgba(58,32,16,0.15)',
+    type:'hate', typeLabel:'Chaos Boss', typeColor:'#E8736A',
+    lore:'A specter conjured from the darkest sauce — the legendary Lor Mee. It slathers the arena in thick dark blasts!',
+    hp:34, rageMult:1.4, specialty:'Fires dark sauce arc-shots!',
+  },
+  {
+    id:'si_ji_dou_guardian', tier:2,
+    name:'The Si Ji Dou Guardian', subtitle:'Protector of Grandma\'s Sacred Recipe',
+    emoji:'🫘', shotEmoji:'💚', color:'#3A7A3A', bgColor:'rgba(58,122,58,0.15)',
+    type:'love', typeLabel:'Comfort Boss', typeColor:'#CE93D8',
+    lore:'The faithful guardian of grandma\'s si ji dou — green beans cooked with love. This protector fires nourishing green bolts!',
+    hp:29, rageMult:1.1, specialty:'Fires green bean boomerangs!',
+  },
+  {
+    id:'cozy_maroon_sentinel', tier:2,
+    name:'The Cozy Maroon Sentinel', subtitle:'Warden of Warmth and Favourite Hues',
+    emoji:'🟥', shotEmoji:'❤️', color:'#7A0020', bgColor:'rgba(122,0,32,0.15)',
+    type:'love', typeLabel:'Comfort Boss', typeColor:'#CE93D8',
+    lore:'Clad entirely in Amber\'s beloved maroon, this sentinel defends the colour of comfort itself. Its heart-shots carry warmth!',
+    hp:31, rageMult:1.1, specialty:'Fires heart-burst volleys in rage!',
+  },
+  {
+    id:'penne_sorcerer', tier:2,
+    name:'The Penne Pasta Sorcerer', subtitle:'Archmage of Tube-Shaped Comfort',
+    emoji:'🍝', shotEmoji:'🌀', color:'#B89040', bgColor:'rgba(184,144,64,0.15)',
+    type:'love', typeLabel:'Comfort Boss', typeColor:'#CE93D8',
+    lore:'A pasta wizard of immense power — unlike the worm-like udon, penne is Amber\'s beloved ally! The sorcerer fires curling vortex spells!',
+    hp:33, rageMult:1.2, specialty:'Fires curved pasta vortex-shots!',
+  },
+  {
+    id:'yew_kee_champion', tier:2,
+    name:'The Yew Kee Champion of Rice', subtitle:'Keeper of the Sacred Duck Stall',
+    emoji:'🍚', shotEmoji:'🦆', color:'#9A5A20', bgColor:'rgba(154,90,32,0.15)',
+    type:'love', typeLabel:'Comfort Boss', typeColor:'#CE93D8',
+    lore:'Guardian of Amber\'s hallowed Yew Kee duck rice — the stall that holds a special place in her heart. Fights with rice-scatter attacks!',
+    hp:35, rageMult:1.2, specialty:'Rains rice pellets in a wide arc!',
+  },
+  {
+    id:'raw_bean_tyrant', tier:2,
+    name:'The Raw Bean Sprout Tyrant', subtitle:'Supreme Ruler of Unwanted Crunch',
+    emoji:'🌿', shotEmoji:'💢', color:'#3A5A1A', bgColor:'rgba(58,90,26,0.15)',
+    type:'hate', typeLabel:'Chaos Boss', typeColor:'#E8736A',
+    lore:'The supreme overlord of every bean sprout Amber ever pushed to the side of her bowl. It rains fury upon any who disrespect the crunch!',
+    hp:37, rageMult:1.45, specialty:'Fires anger-bursts in all directions!',
+  },
+  {
+    id:'nightfall_wanderer', tier:2,
+    name:'The Nightfall R&B Wanderer', subtitle:'Drifter of Late-Night Moods',
+    emoji:'🎧', shotEmoji:'🎵', color:'#3A0060', bgColor:'rgba(58,0,96,0.15)',
+    type:'love', typeLabel:'Comfort Boss', typeColor:'#CE93D8',
+    lore:'Fueled by The Weeknd\'s late-night energy, this wanderer drifts across the arena firing musical note projectiles into the dark!',
+    hp:32, rageMult:1.25, specialty:'Fires musical note streams!',
+  },
+
+  // ── TIER THREE (hp 45–65) ─────────────────────────────────
+  {
+    id:'midnight_weeknd_sorceress', tier:3,
+    name:'The Midnight Weeknd Sorceress', subtitle:'Queen of Late-Night Sorcery',
+    emoji:'🌙', shotEmoji:'🎵', color:'#4A0080', bgColor:'rgba(74,0,128,0.15)',
+    type:'love', typeLabel:'Legendary Boss', typeColor:'#FFD700',
+    lore:'Channelling the haunting energy of The Weeknd\'s midnight vibes. Every music note she fires pulses with dark R&B power!',
+    hp:55, rageMult:1.3, specialty:'Notes fire in musical wave-patterns!',
+  },
+  {
+    id:'duck_rice_overlord', tier:3,
+    name:'The Duck Rice Overlord of Yew Kee', subtitle:'Supreme Sovereign of the Sacred Stall',
+    emoji:'🦆', shotEmoji:'🍚', color:'#8B4513', bgColor:'rgba(139,69,19,0.15)',
+    type:'love', typeLabel:'Legendary Boss', typeColor:'#FFD700',
+    lore:'The ultimate spirit of Yew Kee Duck Rice — Amber\'s hallowed local favourite. Rich, savoury, and absolutely formidable!',
+    hp:50, rageMult:1.2, specialty:'Rains rice in a wide scatter!',
+  },
+  {
+    id:'lor_mee_demon', tier:3,
+    name:'The Great Lor Mee Demon', subtitle:'Dark Lord of the Thick Sauce',
+    emoji:'🫙', shotEmoji:'💀', color:'#2C1810', bgColor:'rgba(44,24,16,0.15)',
+    type:'hate', typeLabel:'Chaos Boss', typeColor:'#E8736A',
+    lore:'The ultimate chaos incarnate — the dark thick sauce of Lor Mee given demonic form. Terrifying, relentless, and pungent!',
+    hp:60, rageMult:1.5, specialty:'Fires massive dark sauce blasts!',
+  },
+  {
+    id:'weeknd_colossus', tier:3,
+    name:'The Starboy Colossus', subtitle:'Apex of Midnight R&B Power',
+    emoji:'⭐', shotEmoji:'🎶', color:'#200040', bgColor:'rgba(32,0,64,0.15)',
+    type:'love', typeLabel:'Legendary Boss', typeColor:'#FFD700',
+    lore:'The supreme manifestation of The Weeknd\'s entire discography given physical form. Its music-shots echo through the whole arena!',
+    hp:58, rageMult:1.35, specialty:'Fires star-pattern music bursts!',
+  },
+  {
+    id:'udon_demon_king', tier:3,
+    name:'The Udon Demon King', subtitle:'Ruler of the Worm Dimension',
+    emoji:'😈', shotEmoji:'🪱', color:'#600010', bgColor:'rgba(96,0,16,0.15)',
+    type:'hate', typeLabel:'Chaos Boss', typeColor:'#E8736A',
+    lore:'The final and most terrifying form of the udon threat — a demonic king who commands the worm dimension. Its projectiles writhe!',
+    hp:62, rageMult:1.5, specialty:'Fires worm-shots that zigzag!',
+  },
+  {
+    id:'onion_god', tier:3,
+    name:'The Ancient Onion God of Ruin', subtitle:'Primordial Force of Unwanted Garnish',
+    emoji:'🌋', shotEmoji:'🧅', color:'#5A4A00', bgColor:'rgba(90,74,0,0.15)',
+    type:'hate', typeLabel:'Chaos Boss', typeColor:'#E8736A',
+    lore:'A primordial onion deity that has haunted dinner tables since the dawn of time. Amber never asked for it. It came anyway. It always comes.',
+    hp:65, rageMult:1.55, specialty:'Erupts onion-volleys from every direction!',
+  },
+  {
+    id:'maroon_empress_eternal', tier:3,
+    name:'The Eternal Maroon Empress', subtitle:'Undying Queen of the Favourite Colour',
+    emoji:'💜', shotEmoji:'❤️', color:'#600018', bgColor:'rgba(96,0,24,0.15)',
+    type:'love', typeLabel:'Legendary Boss', typeColor:'#FFD700',
+    lore:'The eternal queen of maroon — Amber\'s colour made sovereign. She has guarded the hue since memory began, and she will not yield easily!',
+    hp:52, rageMult:1.25, specialty:'Fires triple heart volleys in rage!',
+  },
+  {
+    id:'steamboat_supreme', tier:3,
+    name:'The Steamboat Supreme Sovereign', subtitle:'Final Guardian of the Hot Pot Realm',
+    emoji:'🔥', shotEmoji:'🫕', color:'#B04000', bgColor:'rgba(176,64,0,0.15)',
+    type:'love', typeLabel:'Legendary Boss', typeColor:'#FFD700',
+    lore:'The supreme ruler of all hot pot ingredients — every chicken slice, every crabstick, every enoki mushroom bows before her!',
+    hp:55, rageMult:1.3, specialty:'Fires rings of all steamboat ingredients!',
+  },
+  {
+    id:'nostalgia_eclipse', tier:3,
+    name:'The Nostalgia Eclipse', subtitle:'Shadow of the Perfect First Evening',
+    emoji:'🌒', shotEmoji:'💌', color:'#300050', bgColor:'rgba(48,0,80,0.15)',
+    type:'love', typeLabel:'Legendary Boss', typeColor:'#FFD700',
+    lore:'A cosmic shadow conjured from the memory of Ding Te Le, navy blue tops, and first-date butterflies. Impossibly beautiful. Impossibly strong.',
+    hp:50, rageMult:1.2, specialty:'Fires love-letter blasts in crescents!',
+  },
+  {
+    id:'great_sheng_jian', tier:3,
+    name:'The Great Sheng Jian Titan', subtitle:'Supreme Lord of the Crispy Bottom',
+    emoji:'🥟', shotEmoji:'💥', color:'#A02000', bgColor:'rgba(160,32,0,0.15)',
+    type:'love', typeLabel:'Legendary Boss', typeColor:'#FFD700',
+    lore:'The ultimate embodiment of Chinatown\'s finest sheng jian bao — this Titan is impossibly crispy below and impossibly powerful above!',
+    hp:57, rageMult:1.4, specialty:'Fires explosion-bursts from below!',
+  },
+  {
+    id:'bean_sprout_apocalypse', tier:3,
+    name:'The Bean Sprout Apocalypse', subtitle:'End of All Garnish-Free Dining',
+    emoji:'☠️', shotEmoji:'🌿', color:'#1A4A0A', bgColor:'rgba(26,74,10,0.15)',
+    type:'hate', typeLabel:'Chaos Boss', typeColor:'#E8736A',
+    lore:'The final reckoning for all who dared to hope for a bowl without bean sprouts. The apocalypse fires relentless sprout-barrages!',
+    hp:63, rageMult:1.5, specialty:'Fires rapid-fire sprout barrages!',
+  },
+  {
+    id:'si_ji_dou_deity', tier:3,
+    name:'The Si Ji Dou Deity', subtitle:'Divine Guardian of Grandma\'s Kitchen',
+    emoji:'🌟', shotEmoji:'🫘', color:'#2A6A2A', bgColor:'rgba(42,106,42,0.15)',
+    type:'love', typeLabel:'Legendary Boss', typeColor:'#FFD700',
+    lore:'A deity born from every pot of si ji dou grandma ever made — the most sacred comfort food. Its power is as boundless as love itself!',
+    hp:48, rageMult:1.2, specialty:'Fires sacred green bean mandalas!',
+  },
+  {
+    id:'after_hours_phantom', tier:3,
+    name:'The After Hours Phantom', subtitle:'Phantom of the Darkest R&B Hour',
+    emoji:'🎙️', shotEmoji:'🌌', color:'#180030', bgColor:'rgba(24,0,48,0.15)',
+    type:'love', typeLabel:'Legendary Boss', typeColor:'#FFD700',
+    lore:'The phantom born at the darkest hour of the night — fueled by After Hours, Blinding Lights, and every late-night vibe Amber loves!',
+    hp:60, rageMult:1.4, specialty:'Fires cosmic music-wave blasts!',
+  },
+];
+
+// Pick 3 random bosses from the appropriate tier for the current level
+function getBossChoices(lv) {
+  const tier = lv===3?1:lv===6?2:3;
+  const pool = ALL_BOSSES.filter(b=>b.tier===tier);
+  // Shuffle and pick 3
+  const shuffled = pool.slice().sort(()=>Math.random()-0.5);
+  return shuffled.slice(0,3);
+}
+
+let selectedBoss = null;
+
 function showBossWarning(cb){
-  const bossNames={3:'🍖 The Greasy Pork Chunk',6:'🌶️ Lord Chili Burn',9:'💀 THE DEMON DUMPLING'};
-  const name=bossNames[level]||'Unknown Boss';
+  const bosses = getBossChoices(level);
   overlay.classList.remove('hidden');
+
+  // Build boss selection cards
+  const cardsHTML = bosses.map((b, i) => `
+    <div class="boss-select-card" data-idx="${i}" style="
+      flex:1; min-width:0; border-radius:14px; padding:.7rem .5rem; cursor:pointer;
+      border:2.5px solid ${b.typeColor}; background:${b.bgColor};
+      text-align:center; transition:transform .15s, box-shadow .2s;
+      display:flex; flex-direction:column; align-items:center; gap:3px;
+    ">
+      <div style="font-size:.52rem;border-radius:8px;padding:1px 6px;background:${b.typeColor};color:white;font-family:'Lora',serif;font-weight:700;letter-spacing:.05em;margin-bottom:2px;">${b.typeLabel}</div>
+      <div style="font-size:2rem;line-height:1.1;">${b.emoji}</div>
+      <div style="font-family:'Playfair Display',serif;font-size:.72rem;color:${b.typeColor};font-weight:700;line-height:1.2;">${b.name}</div>
+      <div style="font-size:.58rem;opacity:.7;font-style:italic;line-height:1.3;">${b.subtitle}</div>
+      <div style="font-size:.58rem;color:#FFD700;margin-top:2px;">❤️ ${b.hp} HP</div>
+      <div style="font-size:.56rem;color:rgba(255,255,255,.55);font-style:italic;margin-top:1px;">✨ ${b.specialty}</div>
+    </div>
+  `).join('');
+
   overlay.innerHTML=`
-    <h2 style="color:#FF4444;font-size:1.6rem;animation:pulse 0.6s ease-in-out infinite">⚠️ BOSS INCOMING!</h2>
-    <div style="font-size:2.5rem;margin:.5rem 0;animation:pulse 0.8s ease-in-out infinite">${level===3?'🍖':level===6?'🌶️':'💀'}</div>
-    <p style="color:#FF9999;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;font-style:normal">${name}</p>
-    <p style="font-size:.8rem;margin:.4rem 0">Catch 💕 hearts to deal damage!<br>Avoid 💀 projectiles from the boss!</p>
-    <p style="font-size:.7rem;opacity:.6">Boss drops a guaranteed RARE+ buff on defeat</p>
-    <button class="game-btn" id="boss-ready-btn" style="background:#E8736A;margin-top:.5rem">I'm Ready! ⚔️</button>`;
-  document.getElementById('boss-ready-btn').addEventListener('click',()=>{overlay.classList.add('hidden');items=[];bossShot=[];popups=[];cb();});
+    <h2 style="color:#FF4444;font-size:1.3rem;animation:pulse 0.6s ease-in-out infinite">⚠️ BOSS INCOMING!</h2>
+    <p style="color:rgba(253,246,236,.7);font-size:.75rem;margin:.3rem 0 .6rem;">Choose your opponent for Level ${level}!</p>
+    <div style="display:flex;gap:7px;width:100%;margin-bottom:.6rem;">${cardsHTML}</div>
+    <div id="boss-lore-box" style="background:rgba(0,0,0,.3);border-radius:10px;padding:.5rem .7rem;font-size:.7rem;color:rgba(253,246,236,.7);font-style:italic;min-height:2.5em;text-align:left;margin-bottom:.5rem;line-height:1.5;">← Tap a boss to learn their story</div>
+    <p style="font-size:.72rem;color:rgba(253,246,236,.55);margin-bottom:.4rem">Catch 💕 hearts to deal damage · Dodge their projectiles!</p>
+    <p style="font-size:.65rem;opacity:.5;margin-bottom:.4rem">Boss drops a guaranteed RARE+ buff on defeat</p>
+    <button class="game-btn" id="boss-ready-btn" style="background:#555;margin-top:.2rem;opacity:.5;cursor:not-allowed;" disabled>Select a Boss First!</button>`;
+
+  // Card hover/select logic
+  let chosenIdx = -1;
+  document.querySelectorAll('.boss-select-card').forEach(card => {
+    card.addEventListener('click', () => {
+      chosenIdx = parseInt(card.dataset.idx);
+      selectedBoss = bosses[chosenIdx];
+      document.querySelectorAll('.boss-select-card').forEach(c => {
+        const b2 = bosses[parseInt(c.dataset.idx)];
+        c.style.transform = c === card ? 'scale(1.04)' : 'scale(1)';
+        c.style.boxShadow = c === card ? `0 0 18px ${b2.typeColor}` : 'none';
+        c.style.opacity = c === card ? '1' : '0.6';
+      });
+      document.getElementById('boss-lore-box').textContent = selectedBoss.lore;
+      const btn = document.getElementById('boss-ready-btn');
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      btn.style.cursor = 'pointer';
+      btn.style.background = selectedBoss.typeColor;
+      btn.textContent = `Fight ${selectedBoss.emoji} ${selectedBoss.name.split(' ')[0]}! ⚔️`;
+    });
+  });
+
+  document.getElementById('boss-ready-btn').addEventListener('click',()=>{
+    if(!selectedBoss) return;
+    overlay.classList.add('hidden');items=[];bossShot=[];popups=[];cb();
+  });
 }
 
 function spawnBoss(lv){
   bossActive=true;
-  bossMaxHP=lv===3?20:lv===6?35:55;
+  // Use selectedBoss HP if available, else fallback
+  bossMaxHP = selectedBoss ? selectedBoss.hp : (lv===3?20:lv===6?35:55);
   bossHP=bossMaxHP;
   bossX=W/2;bossDir=1;bossFrame=0;bossPhase=0;
   bossShot=[];bossNextSpawn=frame+90;
-  showToast('💀 BOSS FIGHT! Catch hearts to deal damage!');
+  const bname = selectedBoss ? selectedBoss.name : 'The Boss';
+  showToast(`⚔️ BOSS FIGHT: ${bname}! Catch hearts to deal damage!`);
 }
 
 function updateBoss(){
   if(!bossActive) return;
   bossFrame++;
-  const spd=bossPhase===2?3.5:2.2;
+  const boss = selectedBoss;
+  const rageMult = boss ? boss.rageMult : 1.3;
+  const spd = bossPhase===2 ? (2.2*rageMult) : 2.2;
   bossX+=bossDir*spd;
   if(bossX>W-30||bossX<30) bossDir*=-1;
   // Enter rage at half HP
-  if(bossHP<=bossMaxHP/2&&bossPhase<2){bossPhase=2;}
-  // Boss fires projectiles
+  if(bossHP<=bossMaxHP/2&&bossPhase<2){
+    bossPhase=2;
+    showPopup('💢 RAGE MODE!',W/2,H/2,'#FF4444');
+  }
+  // Boss fires projectiles — vary count and pattern by boss type
   if(frame>=bossNextSpawn){
-    const count=bossPhase===2?3:1;
-    for(let k=0;k<count;k++){
-      const spread=(k-Math.floor(count/2))*40;
-      bossShot.push({x:bossX+spread,y:50,vy:2+bossPhase*0.7,emoji:'💀',bad:true,size:18,isBossShot:true});
+    const shotEmoji = boss ? boss.shotEmoji : '💀';
+    let count = bossPhase===2 ? 3 : 1;
+    // Specific boss behaviors
+    if(boss){
+      if(boss.id==='udon_titan') count = bossPhase===2 ? 4 : 2; // extra worm shots
+      if(boss.id==='bean_sprout_hydra') count = bossPhase===2 ? 5 : 2; // hydra splits
+      if(boss.id==='duck_rice_overlord' && bossPhase===2){count=4;} // rice spray
+      if(boss.id==='midnight_weeknd'){
+        // Musical pattern - alternating
+        count = bossPhase===2 ? 3 : 1;
+      }
     }
-    bossNextSpawn=frame+(bossPhase===2?55:85);
+    for(let k=0;k<count;k++){
+      const spread=(k-Math.floor(count/2))*(bossPhase===2?35:40);
+      const vy = bossPhase===2 ? (2.5+bossPhase*0.7) : (1.8+bossPhase*0.5);
+      bossShot.push({x:bossX+spread,y:55,vy,emoji:shotEmoji,bad:true,size:18,isBossShot:true});
+    }
+    // Steamboat guardian heals slightly
+    if(boss&&boss.id==='steamboat_guardian'&&Math.random()<0.1&&bossHP<bossMaxHP){
+      bossHP=Math.min(bossMaxHP,bossHP+1);
+      showPopup('🫕 +1 Heal!',bossX,55,'#4CAF50');
+    }
+    bossNextSpawn=frame+(bossPhase===2?50:80);
   }
   // Move boss shots
   for(let i=bossShot.length-1;i>=0;i--){
@@ -1722,29 +2143,46 @@ function updateBoss(){
 
 function drawBoss(){
   if(!bossActive) return;
-  const emoji=level===3?'🍖':level===6?'🌶️':'💀';
-  const scale=bossPhase===2?2.4:2.0;
-  // Rage glow
+  const boss = selectedBoss;
+  const emoji = boss ? boss.emoji : (level===3?'🍖':level===6?'🌶️':'💀');
+  const bossColor = boss ? boss.color : '#FF4444';
+  const scale = bossPhase===2 ? 2.6 : 2.1;
+  // Boss name tag above
+  ctx.save();
   if(bossPhase===2){
-    ctx.save();ctx.shadowBlur=30;ctx.shadowColor='rgba(255,50,50,0.8)';
-    ctx.font=`${scale*20}px serif`;ctx.textAlign='center';
-    ctx.fillText(emoji,bossX,50);ctx.restore();
+    // Rage glow using boss color
+    ctx.shadowBlur=35;ctx.shadowColor=bossColor;
   } else {
-    ctx.font=`${scale*20}px serif`;ctx.textAlign='center';
-    ctx.fillText(emoji,bossX,50);
+    ctx.shadowBlur=12;ctx.shadowColor=bossColor;
+  }
+  ctx.font=`${scale*20}px serif`;ctx.textAlign='center';
+  ctx.fillText(emoji,bossX,52);
+  ctx.restore();
+  // Boss name tag
+  if(boss){
+    ctx.save();
+    ctx.font='bold 8px serif';ctx.textAlign='center';
+    ctx.fillStyle = bossPhase===2 ? '#FF9999' : 'rgba(255,255,255,0.75)';
+    const nameShort = boss.name.length>22 ? boss.name.slice(0,20)+'…' : boss.name;
+    ctx.fillText(nameShort, bossX, 15);
+    if(bossPhase===2){
+      ctx.fillStyle='#FF4444';ctx.font='bold 7px serif';
+      ctx.fillText('💢 RAGE MODE!',bossX,25);
+    }
+    ctx.restore();
   }
   // HP bar
-  const barW=W*0.7,barX=(W-barW)/2,barY=60;
+  const barW=W*0.7,barX=(W-barW)/2,barY=62;
   ctx.fillStyle='rgba(0,0,0,0.4)';ctx.fillRect(barX,barY,barW,8);
   const pct=bossHP/bossMaxHP;
   const hpColor=pct>0.5?'#4CAF50':pct>0.25?'#FF9800':'#F44336';
   ctx.fillStyle=hpColor;ctx.fillRect(barX,barY,barW*pct,8);
   ctx.strokeStyle='rgba(255,255,255,0.3)';ctx.strokeRect(barX,barY,barW,8);
   ctx.font='bold 9px serif';ctx.fillStyle='white';ctx.textAlign='center';
-  ctx.fillText(`BOSS HP: ${bossHP}/${bossMaxHP}`,W/2,58);
+  ctx.fillText(`${boss?boss.emoji:'💀'} HP: ${bossHP}/${bossMaxHP}`,W/2,60);
   // Draw shots
   for(const s of bossShot){
-    ctx.save();ctx.shadowBlur=10;ctx.shadowColor='rgba(255,50,50,0.8)';
+    ctx.save();ctx.shadowBlur=10;ctx.shadowColor=bossColor||'rgba(255,50,50,0.8)';
     ctx.font=s.size+'px serif';ctx.textAlign='center';ctx.fillText(s.emoji,s.x,s.y);ctx.restore();
   }
 }
@@ -1768,11 +2206,17 @@ function defeatBoss(){
   // Give a guaranteed rare+ buff reward
   const rareBuff=ALL_BUFFS.filter(b=>['rare','epic','legendary'].includes(b.rarity));
   const reward=rareBuff[Math.floor(Math.random()*rareBuff.length)];
+  const boss = selectedBoss;
+  const bossDisplayName = boss ? `${boss.emoji} ${boss.name}` : (level===3?'🍖 The Greasy Pork Chunk':level===6?'🌶️ Lord Chili Burn':'💀 THE DEMON DUMPLING');
+  const bossTypeLabel = boss ? boss.typeLabel : 'Boss';
+  const bossColor = boss ? boss.color : '#FF4444';
   overlay.classList.remove('hidden');
   overlay.innerHTML=`
     <h2 style="color:var(--gold)">🏆 BOSS DEFEATED!</h2>
     <div style="font-size:2rem;margin:.5rem 0">🎉✨🎊</div>
-    <p>You beat <strong style="color:var(--peach)">${level===3?'🍖 The Greasy Pork Chunk':level===6?'🌶️ Lord Chili Burn':'💀 THE DEMON DUMPLING'}</strong>!</p>
+    <p>You beat the <span style="color:rgba(253,246,236,.6);font-size:.75rem">${bossTypeLabel}</span><br>
+    <strong style="color:var(--peach);font-size:1rem">${bossDisplayName}</strong>!</p>
+    ${boss?`<p style="font-size:.72rem;opacity:.65;font-style:italic;margin-bottom:.3rem">"${boss.lore.slice(0,80)}…"</p>`:''}
     <p style="font-size:.8rem">Bonus reward unlocked:</p>
     <div style="border:1.5px solid var(--${reward.rarity==='legendary'?'legendary':reward.rarity==='epic'?'epic':'rare'});border-radius:10px;padding:.5rem .8rem;margin:.4rem 0;background:rgba(255,255,255,0.05)">
       <strong style="font-family:'Playfair Display',serif">${reward.name}</strong><br>
@@ -1876,9 +2320,11 @@ function resetGame(){
   shieldsLeft=0;phoenixReady=false;starCache=null;
   passiveCharge=0;duduAuraReady=false;potatoCount=0;window._lifeDebt=0;window._dsToggle=false;
   bossActive=false;bossShot=[];bossDefeated=0;bossPhase=0;
+  selectedBoss=null;
   armorUsed=false;
   window._petHeartCount=0;window._petBadDodged=0;window._petMagnetTimer=0;
   window._petX2Timer=0;window._petDuduX2Timer=0;window._petDodgeDebt=0;window._petStreakGuard=false;
+  window._petAnim={pulseFrames:0,pulseColor:'#FFD700',burstParticles:[],shakeFrames:0};
   basket.x=W/2;
   if(shopHas('shield_start'))  shieldsLeft=1;
   if(shopHas('phoenix_start')) phoenixReady=true;
@@ -1942,37 +2388,82 @@ function promptLeaderboard(){
 // ============================================================
 const C4_ROWS=6, C4_COLS=7;
 
-// ── Connect Bao: Level-based enemy ladder ─────────────────────────────────
-// Each level entry: enemy stats are ABSOLUTE (not multiplied).
-// Player always has full HP at start of each level.
-// AI depth grows gently so the game stays beatable.
-// Key balance rule: enemy does at most ~10-15 HP per turn early, ~20 late.
-const C4_LEVELS=[
-  // Lv 1  — tutorial
-  {name:'Baby Dough',   emoji:'🫓', maxHP:18, atk:4,  aiDepth:1, rand:0.7,  special:'none',    reward:3,  flavor:'A soft lump of dough. Just learning.'},
-  // Lv 2
-  {name:'Flour Ghost',  emoji:'👻', maxHP:22, atk:5,  aiDepth:1, rand:0.55, special:'none',    reward:4,  flavor:'Spooky but harmless. Drifts randomly.'},
-  // Lv 3
-  {name:'Sesame Seed',  emoji:'🌰', maxHP:26, atk:6,  aiDepth:2, rand:0.4,  special:'none',    reward:5,  flavor:'Small but scrappy. Starting to think.'},
-  // Lv 4
-  {name:'Soy Boss',     emoji:'🍜', maxHP:30, atk:7,  aiDepth:2, rand:0.3,  special:'regen',   reward:6,  flavor:'Regenerates 4 HP every 4 turns.'},
-  // Lv 5
-  {name:'Steam Bun',    emoji:'♨️', maxHP:34, atk:7,  aiDepth:3, rand:0.25, special:'shield',  reward:7,  flavor:'Sometimes blocks your hits with steam.'},
-  // Lv 6
-  {name:'Rice Demon',   emoji:'🍚', maxHP:36, atk:8,  aiDepth:3, rand:0.2,  special:'none',    reward:8,  flavor:'Getting serious now. Prefers the center.'},
-  // Lv 7  — was too hard: aiDepth 4 + burn + low rand = impossible. Toned down.
-  {name:'Chili Pepper', emoji:'🌶️', maxHP:34, atk:7,  aiDepth:3, rand:0.25, special:'burn',    reward:10, flavor:'Spicy! Burns for 2 HP/turn. But a bit scatterbrained.'},
-  // Lv 8  — eased slightly since lv7 already filters casual players
-  {name:'Dumpling Lord',emoji:'🥟', maxHP:40, atk:8,  aiDepth:4, rand:0.12,  special:'counter', reward:12, flavor:'Hits 30% harder when you are on a streak.'},
-  // Lv 9
-  {name:'Iron Wok',     emoji:'🫕', maxHP:46, atk:9,  aiDepth:5, rand:0.08, special:'regen',   reward:14, flavor:'Regenerates AND defends. A real chef.'},
-  // Lv 10
-  {name:'Lord Chili Burn',emoji:'🔥',maxHP:50,atk:10, aiDepth:5, rand:0.05, special:'burn',    reward:16, flavor:'Inferno mode. Burns 2 HP/turn. You will feel the heat.'},
-  // Lv 11
-  {name:'Shadow Bao',   emoji:'🌑', maxHP:52, atk:10, aiDepth:6, rand:0.04, special:'shield',  reward:18, flavor:'Dark mirror of Bao. Blocks and counters.'},
-  // Lv 12  — boss
-  {name:'DARK BAO',     emoji:'💀', maxHP:55, atk:11, aiDepth:6, rand:0.02, special:'copy',    reward:25, flavor:'The final darkness. Nearly perfect play.'},
+// ── Connect Bao: Boss Pool — Amber-themed! ──────────────────────────────────
+// Bosses are grouped into tiers (1-4). Each level picks 3 random bosses from
+// the appropriate tier for the player to choose from.
+// Special tags: none | regen | shield | burn | counter | copy | rage | drain | thorns
+
+const C4_BOSS_TIERS=[
+  // ── TIER 1: Cozy beginners (Lv 1-3) ──────────────────────────────────────
+  {tier:1, bosses:[
+    {name:'Baby Dough',         emoji:'🫓', maxHP:18, atk:4,  aiDepth:1, rand:0.70, special:'none',    reward:3,  flavor:'A soft lump of dough — still figuring things out.'},
+    {name:'Flour Ghost',        emoji:'👻', maxHP:20, atk:4,  aiDepth:1, rand:0.65, special:'none',    reward:3,  flavor:'Drifts around aimlessly. Very harmless.'},
+    {name:'Soft Broccoli',      emoji:'🥦', maxHP:22, atk:5,  aiDepth:1, rand:0.60, special:'none',    reward:4,  flavor:"Amber's beloved soft broccoli. Gentle and nutritious."},
+    {name:'Baked Potato',       emoji:'🥔', maxHP:20, atk:4,  aiDepth:1, rand:0.65, special:'none',    reward:3,  flavor:"Warm, comforting, and a little slow. Amber approves."},
+    {name:'Penne Pasta',        emoji:'🍝', maxHP:22, atk:5,  aiDepth:1, rand:0.60, special:'none',    reward:4,  flavor:'Soft pasta energy. Slides around unpredictably.'},
+    {name:'Grapefruit Baby',    emoji:'🍊', maxHP:18, atk:4,  aiDepth:1, rand:0.70, special:'none',    reward:3,  flavor:'Sweet-sour little thing. Mostly just bounces around.'},
+    {name:'Mashed Egg',         emoji:'🥚', maxHP:20, atk:4,  aiDepth:1, rand:0.65, special:'none',    reward:3,  flavor:"Mashed with mayo — Amber's comfort. Surprisingly slippery."},
+    {name:'Enoki Scout',        emoji:'🍄', maxHP:22, atk:5,  aiDepth:1, rand:0.62, special:'none',    reward:4,  flavor:'Tiny steamboat mushroom scouting ahead of the group.'},
+  ]},
+  // ── TIER 2: Love-based comfort guardians (Lv 4-6) ─────────────────────────
+  {tier:2, bosses:[
+    {name:'Soy Boss',           emoji:'🍜', maxHP:30, atk:7,  aiDepth:2, rand:0.30, special:'regen',   reward:6,  flavor:'Regenerates 4 HP every 4 turns. Soy-powered stamina.'},
+    {name:'Steam Bun',          emoji:'♨️', maxHP:34, atk:7,  aiDepth:3, rand:0.25, special:'shield',  reward:7,  flavor:'Blocks hits with a burst of steam. Cozy but firm.'},
+    {name:'Sheng Jian Guardian',emoji:'🥟', maxHP:32, atk:7,  aiDepth:2, rand:0.28, special:'shield',  reward:7,  flavor:"Defender of Amber's fave Chinatown stall. Crispy base, steam shield."},
+    {name:'Duck Rice Overlord', emoji:'🦆', maxHP:36, atk:7,  aiDepth:3, rand:0.28, special:'regen',   reward:8,  flavor:"Yew Kee's legendary duck. Roasted to perfection, heals constantly."},
+    {name:'Lor Mee Baron',      emoji:'🍲', maxHP:34, atk:7,  aiDepth:2, rand:0.30, special:'regen',   reward:7,  flavor:'86 Lor Mee — thick gravy restores strength every few turns.'},
+    {name:'Crabstick Knight',   emoji:'🦀', maxHP:30, atk:6,  aiDepth:2, rand:0.32, special:'none',    reward:6,  flavor:"Amber's steamboat staple. Fast sideways moves."},
+    {name:'Maggie Spirit',      emoji:'🌶️', maxHP:32, atk:7,  aiDepth:2, rand:0.30, special:'none',    reward:6,  flavor:"Spicy Maggie noodles, Amber's midnight comfort. Feisty."},
+    {name:'Si Ji Dou Elder',    emoji:'🫘', maxHP:34, atk:7,  aiDepth:3, rand:0.28, special:'shield',  reward:7,  flavor:"Grandma's four-season beans. Old wisdom = good blocking."},
+    {name:'Maroon Queen',       emoji:'❤️', maxHP:36, atk:7,  aiDepth:3, rand:0.25, special:'regen',   reward:8,  flavor:"Amber's signature maroon energy. Regal and self-sustaining."},
+    {name:'Chicken Warrior',    emoji:'🍗', maxHP:30, atk:6,  aiDepth:2, rand:0.32, special:'none',    reward:6,  flavor:"Steamboat's MVP. Reliable, straightforward fighter."},
+  ]},
+  // ── TIER 3: Amber hates + mid-difficulty (Lv 7-9) ─────────────────────────
+  {tier:3, bosses:[
+    {name:'Chili Pepper',       emoji:'🌶️', maxHP:34, atk:7,  aiDepth:3, rand:0.25, special:'burn',    reward:10, flavor:'Burns for 2 HP/turn. Spicy but a bit scatterbrained.'},
+    {name:'Udon Worm Titan',    emoji:'🍜', maxHP:40, atk:8,  aiDepth:4, rand:0.18, special:'drain',   reward:11, flavor:"Looks like worms. Amber's worst nightmare. Drains 2 HP/turn on contact."},
+    {name:'Onion Overlord',     emoji:'🧅', maxHP:38, atk:8,  aiDepth:4, rand:0.20, special:'burn',    reward:10, flavor:"Tears. So many tears. Burns your eyes every other turn."},
+    {name:'Bean Sprout Hydra',  emoji:'🌱', maxHP:36, atk:7,  aiDepth:3, rand:0.22, special:'regen',   reward:10, flavor:"Regrows relentlessly. Amber finds this deeply unsettling."},
+    {name:'Worm Noodle Fiend',  emoji:'🐛', maxHP:42, atk:8,  aiDepth:4, rand:0.18, special:'counter', reward:12, flavor:'Stringy, slippery, worm-textured horror. Hits harder on your streaks.'},
+    {name:'Raw Onion Wraith',   emoji:'😤', maxHP:38, atk:8,  aiDepth:3, rand:0.22, special:'burn',    reward:10, flavor:"Pungent aura causes burn damage. Amber refuses to even look."},
+    {name:'Slimy Sprout',       emoji:'💧', maxHP:36, atk:7,  aiDepth:3, rand:0.25, special:'drain',   reward:10, flavor:"Wet, stringy, intrusive. Drains your energy just by being here."},
+    {name:'Iron Wok',           emoji:'🫕', maxHP:46, atk:9,  aiDepth:5, rand:0.08, special:'regen',   reward:14, flavor:'Regenerates AND defends. A real chef gone rogue.'},
+    {name:'The Weeknd Dusk',    emoji:'🎵', maxHP:40, atk:8,  aiDepth:4, rand:0.18, special:'counter', reward:11, flavor:"Late-night R&B energy turned hostile. Hits harder when you're on a roll."},
+    {name:'Rice Demon',         emoji:'🍚', maxHP:36, atk:8,  aiDepth:3, rand:0.20, special:'none',    reward:8,  flavor:'Getting serious now. Prefers the center.'},
+  ]},
+  // ── TIER 4: Elite / Final bosses (Lv 10-12) ───────────────────────────────
+  {tier:4, bosses:[
+    {name:'DARK BAO',           emoji:'💀', maxHP:55, atk:11, aiDepth:6, rand:0.02, special:'copy',    reward:25, flavor:'The final darkness. Nearly perfect play.'},
+    {name:'Lord Chili Burn',    emoji:'🔥', maxHP:50, atk:10, aiDepth:5, rand:0.05, special:'burn',    reward:16, flavor:'Inferno mode. Burns 2 HP/turn. You will feel the heat.'},
+    {name:'Shadow Bao',         emoji:'🌑', maxHP:52, atk:10, aiDepth:6, rand:0.04, special:'shield',  reward:18, flavor:'Dark mirror of Bao. Blocks and counters.'},
+    {name:'Midnight Weeknd',    emoji:'🌃', maxHP:50, atk:10, aiDepth:5, rand:0.05, special:'counter', reward:17, flavor:"The Weeknd's final form. Blinding drop damage on your streaks."},
+    {name:'Udon Titan Prime',   emoji:'🌀', maxHP:54, atk:11, aiDepth:6, rand:0.04, special:'drain',   reward:20, flavor:"Amber's ultimate nemesis. Drain + nearly perfect play."},
+    {name:'Onion Demon King',   emoji:'👁️', maxHP:52, atk:10, aiDepth:6, rand:0.04, special:'burn',    reward:18, flavor:'Tears of pure malice. Max burn damage, near-perfect AI.'},
+    {name:'Hydra Queen',        emoji:'🐍', maxHP:50, atk:10, aiDepth:5, rand:0.05, special:'regen',   reward:17, flavor:'Regen + shield. Amber shudders. You must end this.'},
+    {name:'Kovan Specter',      emoji:'🏮', maxHP:48, atk:10, aiDepth:5, rand:0.06, special:'shield',  reward:16, flavor:'Haunts the memory of Ding Te Le. Shields + nostalgia attacks.'},
+    {name:'Amber\'s Nemesis',   emoji:'💢', maxHP:55, atk:11, aiDepth:6, rand:0.03, special:'copy',    reward:22, flavor:'A distillation of every food Amber hates. The ultimate horror.'},
+  ]},
 ];
+
+// Flat C4_LEVELS for backward compatibility (used by c4Render level counter etc.)
+// We dynamically assign levels based on current progress
+const C4_LEVELS_COUNT=12;
+
+// Map game level (0-based) to tier
+function c4GetTier(lvIdx){
+  if(lvIdx<=2) return 0; // tier index 0 = tier 1
+  if(lvIdx<=5) return 1;
+  if(lvIdx<=8) return 2;
+  return 3;
+}
+
+// Pick 3 random unique bosses from the appropriate tier
+function c4PickBossChoices(lvIdx){
+  const pool=[...C4_BOSS_TIERS[c4GetTier(lvIdx)].bosses];
+  // Shuffle
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  return pool.slice(0,Math.min(3,pool.length));
+}
 
 const C4_CHARS={
   bao:{
@@ -2012,10 +2503,11 @@ let c4={
   pShield:false, eShield:false,
   pAuraActive:false, pStreak:0,
   skillCDs:[0,0,0],
-  turn:0, level:0,   // level = index into C4_LEVELS (0-based)
+  turn:0, level:0,   // level = 0-based index (0-11)
   burnActive:false, burnCounter:0,
   enemy:null, playerTurn:true, thinking:false,
   pendingSkill:-1,
+  lastWon:false,     // track win state for nextRound
 };
 let c4Char='bao';
 
@@ -2049,9 +2541,10 @@ function updateC4CharPreview(ch){
   if(ps) ps.textContent=cfg.passiveDesc;
 }
 
-function c4StartGame(lvIdx){
+function c4StartGame(lvIdx, bossObj){
   const ch=C4_CHARS[c4Char];
-  const lv=C4_LEVELS[lvIdx||0];
+  // If no boss passed, pick first from choices for that level
+  const lv=bossObj||c4PickBossChoices(lvIdx||0)[0];
   c4={
     active:true, char:c4Char,
     board:c4MakeBoard(),
@@ -2063,9 +2556,10 @@ function c4StartGame(lvIdx){
     turn:0, level:lvIdx||0,
     burnActive:false, burnCounter:0,
     enemy:lv, playerTurn:true, thinking:false,
-    pendingSkill:-1,
+    pendingSkill:-1, lastWon:false,
   };
   document.getElementById('c4-start-btn').style.display='none';
+  document.getElementById('c4-boss-pick').style.display='none';
   // Update player portrait
   const portEl=document.getElementById('c4-p-portrait');
   if(portEl) portEl.innerHTML=getCharPortraitHTML(c4Char,34);
@@ -2079,9 +2573,9 @@ function c4StartGame(lvIdx){
 }
 
 function c4UpdateLevelBar(){
-  const pct=((c4.level)/(C4_LEVELS.length-1))*100;
+  const pct=((c4.level)/(C4_LEVELS_COUNT-1))*100;
   document.getElementById('c4-level-bar').style.width=pct+'%';
-  document.getElementById('c4-level-label').textContent='⚔️ Level '+(c4.level+1)+' / '+C4_LEVELS.length;
+  document.getElementById('c4-level-label').textContent='⚔️ Level '+(c4.level+1)+' / '+C4_LEVELS_COUNT;
   if(c4.enemy) document.getElementById('c4-level-label-r').textContent='vs '+c4.enemy.emoji+' '+c4.enemy.name;
 }
 
@@ -2259,6 +2753,16 @@ function c4EnemyTurn(){
     c4Msg('🔥 Burn! -2 HP','');
   }
 
+  // Drain tick — enemy heals from player
+  if(lv.special==='drain'&&c4.burnActive&&c4.turn>=2){
+    const drainAmt=2;
+    c4.pHP=Math.max(0,c4.pHP-drainAmt);
+    c4.eHP=Math.min(c4.eMaxHP,c4.eHP+drainAmt);
+    c4.burnCounter=Math.max(0,c4.burnCounter-1);
+    if(c4.burnCounter<=0) c4.burnActive=false;
+    c4Msg('🩸 Drain! -2 HP → enemy heals','');
+  }
+
   setTimeout(()=>{
     // Pick column using level's own aiDepth + rand
     let col;
@@ -2281,6 +2785,8 @@ function c4EnemyTurn(){
     if(lv.special==='shield'&&Math.random()<0.25){c4.eShield=true;eDmg=Math.max(1,Math.round(eDmg*0.5));}
     // Burn: apply burn status (3 turns), but only if not already burning
     if(lv.special==='burn'&&!c4.burnActive){c4.burnActive=true;c4.burnCounter=3;}
+    // Drain: same mechanic but heals enemy
+    if(lv.special==='drain'&&!c4.burnActive){c4.burnActive=true;c4.burnCounter=3;}
     // Counter: +30% dmg when player is on a streak (toned down from 40%)
     if(lv.special==='counter'&&c4.pStreak>=4) eDmg=Math.round(eDmg*1.3);
 
@@ -2427,25 +2933,65 @@ function c4HighlightWin(line){
   });
 }
 
+// ── Boss selection UI ────────────────────────────────────────────────────────
+function showBossPick(lvIdx){
+  const choices=c4PickBossChoices(lvIdx);
+  const container=document.getElementById('c4-boss-pick');
+  if(!container) return;
+  const tierNames=['Cozy Tier','Comfort Tier','Chaos Tier','Elite Tier'];
+  const tierColors=['#E8736A','#D4A853','#9C27B0','#C0392B'];
+  const tier=c4GetTier(lvIdx);
+  container.innerHTML=`
+    <div style="font-family:'Playfair Display',serif;font-size:.95rem;color:var(--gold);margin-bottom:.5rem;text-align:center;">
+      ⚔️ Level ${lvIdx+1} — Choose your opponent!
+      <div style="font-size:.6rem;color:${tierColors[tier]};margin-top:.15rem;letter-spacing:.1em;">${tierNames[tier].toUpperCase()}</div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;">
+      ${choices.map((b,i)=>`
+        <div onclick="c4StartGame(${lvIdx}, window._c4BossChoices[${i}])"
+          style="flex:1;min-width:88px;max-width:130px;background:linear-gradient(160deg,#2a1200,#1a0800);border:1.5px solid ${tierColors[tier]};border-radius:12px;padding:.6rem .5rem;text-align:center;cursor:pointer;transition:transform .12s,filter .12s;"
+          onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+          <div style="font-size:1.8rem;margin-bottom:.2rem;">${b.emoji}</div>
+          <div style="font-family:'Playfair Display',serif;font-size:.72rem;color:var(--gold);margin-bottom:.2rem;line-height:1.2;">${b.name}</div>
+          <div style="font-size:.58rem;color:rgba(244,195,130,.5);margin-bottom:.3rem;line-height:1.3;">${b.flavor}</div>
+          <div style="display:flex;gap:3px;justify-content:center;flex-wrap:wrap;">
+            <span style="font-size:.55rem;background:rgba(255,100,100,.15);border:1px solid rgba(255,100,100,.3);border-radius:5px;padding:.1rem .3rem;color:#ff9999;">❤️ ${b.maxHP}</span>
+            <span style="font-size:.55rem;background:rgba(255,165,0,.12);border:1px solid rgba(255,165,0,.3);border-radius:5px;padding:.1rem .3rem;color:#ffcc88;">⚔️ ${b.atk}</span>
+            ${b.special!=='none'?`<span style="font-size:.55rem;background:rgba(180,79,255,.15);border:1px solid rgba(180,79,255,.3);border-radius:5px;padding:.1rem .3rem;color:#ce93ff;">${c4SpecialIcon(b.special)}</span>`:''}
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
+  window._c4BossChoices=choices;
+  container.style.display='block';
+  // Hide the start button since boss pick shows instead
+  document.getElementById('c4-start-btn').style.display='none';
+}
+
+function c4SpecialIcon(sp){
+  return {none:'',regen:'♻️ Regen',shield:'🛡️ Shield',burn:'🔥 Burn',counter:'⚡ Counter',copy:'🪞 Copy',drain:'🩸 Drain',thorns:'🌵 Thorns',rage:'💢 Rage'}[sp]||sp;
+}
+
 // ===== WIN/LOSE =====
 function c4Win(){
-  c4.active=false;
+  c4.active=false; c4.lastWon=true;
   const lv=c4.enemy;
-  const isLast=c4.level>=C4_LEVELS.length-1;
+  const isLast=c4.level>=C4_LEVELS_COUNT-1;
   let reward=lv.reward;
-  // Bubu passive: bonus coins on round win
   let bubuBonus=0;
   if(c4.char==='bubu'){ bubuBonus=3; reward+=bubuBonus; }
   coins+=reward;P.coins+=reward;P.coinsEarned+=reward;saveP();
   document.getElementById('coinsDisplay').textContent=P.coins;
   document.getElementById('shop-wallet').textContent=P.coins;
-  const nextLv=Math.min(c4.level+1, C4_LEVELS.length-1);
+  const nextLv=Math.min(c4.level+1, C4_LEVELS_COUNT-1);
+  // Peek at what comes next (random from next tier)
+  const nextPeek=isLast?null:c4PickBossChoices(nextLv);
   document.getElementById('c4-ov-title').textContent=isLast?'YOU WIN! 🎉':'Victory! 🏆';
   document.getElementById('c4-ov-body').innerHTML=
     'Defeated <strong>'+lv.emoji+' '+lv.name+'</strong>!<br>'+
     '<span style="color:var(--gold)">+'+reward+' coins!'+(bubuBonus>0?' <span style="color:#FF6BA8">(+'+bubuBonus+' Bubu bonus!)</span>':'')+' </span>'+(isLast?'<br><span style="color:var(--peach)">You cleared all 12 levels! 💕</span>':
-    '<br><span style="opacity:.6;font-size:.7rem">Next: '+C4_LEVELS[nextLv].emoji+' '+C4_LEVELS[nextLv].name+'</span>');
-  document.getElementById('c4-ov-streak').textContent='Level '+(c4.level+1)+' / '+C4_LEVELS.length+' cleared! ⭐';
+    '<br><span style="opacity:.6;font-size:.7rem">Next: pick from '+nextPeek.map(b=>b.emoji+' '+b.name).join(' · ')+'</span>');
+  document.getElementById('c4-ov-streak').textContent='Level '+(c4.level+1)+' / '+C4_LEVELS_COUNT+' cleared! ⭐';
   document.getElementById('c4-next-btn').textContent=isLast?'Play Again 💕':'Next Level ▶️';
   document.getElementById('c4-overlay').classList.add('show');
   c4Render();
@@ -2453,7 +2999,7 @@ function c4Win(){
 }
 
 function c4Lose(){
-  c4.active=false;
+  c4.active=false; c4.lastWon=false;
   const lv=c4.enemy;
   document.getElementById('c4-ov-title').textContent='Defeated... 💀';
   document.getElementById('c4-ov-body').innerHTML=
@@ -2467,10 +3013,15 @@ function c4Lose(){
 
 function c4NextRound(){
   document.getElementById('c4-overlay').classList.remove('show');
-  // On lose → retry same level; on win → next level
-  const isWin=document.getElementById('c4-next-btn').textContent.includes('Next')||document.getElementById('c4-next-btn').textContent.includes('Play Again');
-  const nextLv=isWin?Math.min(c4.level+1,C4_LEVELS.length-1):c4.level;
-  c4StartGame(nextLv);
+  const isWin=c4.lastWon;
+  const isLast=c4.level>=C4_LEVELS_COUNT-1&&isWin;
+  const nextLv=isWin?Math.min(c4.level+1,C4_LEVELS_COUNT-1):c4.level;
+  if(isLast){
+    // Restart from level 0 with boss pick
+    showBossPick(0);
+  } else {
+    showBossPick(nextLv);
+  }
 }
 
 // ===== RENDER =====
@@ -2487,7 +3038,7 @@ function c4Render(){
     document.getElementById('c4-e-name').textContent=c4.enemy.emoji+' '+c4.enemy.name;
     document.getElementById('c4-e-hp').textContent=c4.eHP+'/'+c4.eMaxHP+' HP';
   }
-  document.getElementById('c4-round-text').textContent='Level '+(c4.level+1)+' / '+C4_LEVELS.length;
+  document.getElementById('c4-round-text').textContent='Level '+(c4.level+1)+' / '+C4_LEVELS_COUNT;
   document.getElementById('c4-streak-hud').textContent=(c4.enemy?c4.enemy.emoji+' '+c4.enemy.name:'');
 
   // Board cells
@@ -2520,7 +3071,8 @@ function c4Render(){
   const bArr=[];
   if(c4.pShield) bArr.push('🛡️ Shield');
   if(c4.pAuraActive) bArr.push('💥 Aura');
-  if(c4.burnActive) bArr.push('🔥 Burned');
+  if(c4.burnActive&&c4.enemy?.special==='drain') bArr.push('🩸 Draining');
+  else if(c4.burnActive) bArr.push('🔥 Burned');
   if(c4.eShield) bArr.push('♨️ Enemy Shield');
   document.getElementById('c4-buffs').innerHTML=bArr.map(b=>'<div class="c4-buff-chip">'+b+'</div>').join('');
 }
@@ -2542,7 +3094,7 @@ function c4UpdateSkillLabels(){
 
 function c4UpdateIntent(){
   if(!c4.enemy||!c4.active){document.getElementById('c4-intent').textContent='';return;}
-  const intents={none:'planning its next move...',regen:'regenerating strength...',shield:'preparing a defense...',counter:'watching your streak...',burn:'heating the board...',copy:'reading your mind...',rage:'getting stronger...'};
+  const intents={none:'planning its next move...',regen:'regenerating strength...',shield:'preparing a defense...',counter:'watching your streak...',burn:'heating the board...',copy:'reading your mind...',drain:'draining your life...',rage:'getting stronger...',thorns:'sharpening its thorns...'};
   const burnStr=c4.burnActive?' (burning '+c4.burnCounter+' turns)':'';
   document.getElementById('c4-intent').textContent=c4.enemy.emoji+' '+c4.enemy.name+' is '+(intents[c4.enemy.special]||'thinking...')+burnStr;
 }
@@ -2682,7 +3234,7 @@ const GACHA_POOL = [
   {id:'pet_mushroom',type:'pet',rarity:'rare',      name:'🍄 Shroomie',   emoji:'🍄', desc:'Magical. Every 20 catches clears all baddies instantly.',    petSkill:'clearbad'},
   // ── EPIC PETS ────────────────────────────────────────────────────────────────
   {id:'pet_dino',   type:'pet', rarity:'epic',      name:'🦕 Nomnom Jr.', emoji:'🦕', desc:'Baby brachiosaurus. Every 20 hearts, all bad items vanish!', petSkill:'clearbad'},
-  {id:'pet_phoenix',type:'pet', rarity:'epic',      name:'🦅 Blaze',      emoji:'🦅', desc:'Reborn each catch. Bad items glow faintly (easier to see).', petSkill:'badglow'},
+  {id:'pet_phoenix',type:'pet', rarity:'epic',      name:'🦅 Blaze',      emoji:'🦅', desc:'Fiery guardian. Every 15 hearts, deflects the nearest falling bad item.',  petSkill:'deflect'},
   {id:'pet_lion',   type:'pet', rarity:'epic',      name:'🦁 Simba',      emoji:'🦁', desc:'Roar! Every bad item you dodge restores 0.5 life.',          petSkill:'dodgerheal'},
   {id:'pet_dolphin',type:'pet', rarity:'epic',      name:'🐬 Flipper',    emoji:'🐬', desc:'Playful! Grants a Lucky Break shield every 30 hearts.',      petSkill:'luckyregen'},
   {id:'pet_narwhal',type:'pet', rarity:'epic',      name:'🦑 Narwhal',    emoji:'🦑', desc:'Mystic horn. Every 15 hearts, a free XP surge (5s).',        petSkill:'xpburst'},
@@ -3031,20 +3583,59 @@ function checkComboFlash(s){
 const _origReset=typeof resetGame==='function'?resetGame:null;
 
 // ===================== DRAW COMPANION PET =====================
+// ── Pet animation state ──────────────────────────────────────
+window._petAnim={pulseFrames:0,pulseColor:'#FFD700',burstParticles:[],shakeFrames:0};
+
+function triggerPetAnim(type,color,burstEmoji){
+  const a=window._petAnim;
+  a.pulseFrames=44;a.pulseColor=color||'#FFD700';
+  if(type==='burst'&&burstEmoji){
+    for(let i=0;i<7;i++){
+      const angle=(Math.PI*2/7)*i;
+      a.burstParticles.push({x:W-28,y:50,vx:Math.cos(angle)*2.4,vy:Math.sin(angle)*2.4,color,emoji:burstEmoji,life:42,maxLife:42});
+    }
+  }
+  if(type==='shake') a.shakeFrames=18;
+}
+
 function drawEquippedPet(){
   if(!P.equippedPet||!running) return;
   const p=GACHA_POOL.find(x=>x.id===P.equippedPet);
   if(!p||p.type!=='pet') return;
-  // Float in top-right corner of game area, out of the way
+  const a=window._petAnim;
   const t=frame*0.06;
-  const px=W-28+Math.sin(t)*4;
-  const py=52+Math.cos(t*0.7)*5;
+  const shakeX=a.shakeFrames>0?(Math.random()-0.5)*5:0;
+  const shakeY=a.shakeFrames>0?(Math.random()-0.5)*5:0;
+  if(a.shakeFrames>0) a.shakeFrames--;
+  const px=W-28+Math.sin(t)*4+shakeX;
+  const py=50+Math.cos(t*0.7)*4+shakeY;
+  const pulsing=a.pulseFrames>0;
+  const scaleBoost=pulsing?1+0.4*(a.pulseFrames/44):1;
+  const fontSize=Math.round(18*Math.min(W,H)/340*scaleBoost);
   ctx.save();
-  ctx.globalAlpha=0.72;
-  ctx.font=`${Math.round(18*Math.min(W,H)/340)}px serif`;
-  ctx.textAlign='center';
-  ctx.fillText(p.emoji,px,py);
-  ctx.restore();
+  if(pulsing){
+    ctx.shadowBlur=22*(a.pulseFrames/44);ctx.shadowColor=a.pulseColor;
+    ctx.beginPath();ctx.arc(px,py-fontSize*0.35,fontSize*0.8,0,Math.PI*2);
+    ctx.globalAlpha=(a.pulseFrames/44)*0.3;ctx.fillStyle=a.pulseColor;ctx.fill();
+    ctx.globalAlpha=1;a.pulseFrames--;
+  }
+  if(p.rarity==='legendary'){ctx.shadowBlur=12+Math.sin(t)*4;ctx.shadowColor='#FFD700';}
+  else if(p.rarity==='epic'){ctx.shadowBlur=8+Math.sin(t)*3;ctx.shadowColor='#CE93D8';}
+  else ctx.shadowBlur=0;
+  ctx.globalAlpha=0.88;ctx.font=`${fontSize}px serif`;ctx.textAlign='center';
+  ctx.fillText(p.emoji,px,py);ctx.restore();
+  // burst particles
+  for(let i=a.burstParticles.length-1;i>=0;i--){
+    const bp=a.burstParticles[i];
+    bp.x+=bp.vx;bp.y+=bp.vy;bp.vy+=0.12;bp.life--;
+    ctx.save();ctx.globalAlpha=bp.life/bp.maxLife;
+    ctx.font=`${Math.round(9*(bp.life/bp.maxLife)+5)}px serif`;ctx.textAlign='center';
+    ctx.fillText(bp.emoji,bp.x,bp.y);ctx.restore();
+    if(bp.life<=0) a.burstParticles.splice(i,1);
+  }
+  // rarity dot
+  const dotColor=p.rarity==='legendary'?'#FFD700':p.rarity==='epic'?'#CE93D8':p.rarity==='rare'?'#90caf9':p.rarity==='uncommon'?'#a5d6a7':'#aaa';
+  ctx.save();ctx.globalAlpha=0.7;ctx.beginPath();ctx.arc(px,py+5,2.5,0,Math.PI*2);ctx.fillStyle=dotColor;ctx.fill();ctx.restore();
 }
 
 // ===================== PET SKILL SYSTEM =====================
@@ -3065,38 +3656,48 @@ function petOnHeartCaught(heartX, heartY){
   const sk=p.petSkill;
 
   // UNCOMMON: Starling — 1 life every 40 hearts
-  if(sk==='regen40'&&hc%40===0){lives=Math.min(lives+1,maxLives()+2);showPopup('⭐ Pet Heal!',heartX,heartY-14,'#FFD700');updateHUD();}
+  if(sk==='regen40'&&hc%40===0){lives=Math.min(lives+1,maxLives()+2);showPopup('⭐ Pet Heal!',heartX,heartY-14,'#FFD700');updateHUD();triggerPetAnim('burst','#FFD700','⭐');}
   // UNCOMMON: Buzzy bee — +1 coin every 10 hearts
-  if(sk==='beecoin'&&hc%10===0){coins+=1;P.coins+=1;P.coinsEarned+=1;showPopup('🐝 +1🪙',heartX,heartY-10,'#FFD700');}
+  if(sk==='beecoin'&&hc%10===0){coins+=1;P.coins+=1;P.coinsEarned+=1;showPopup('🐝 +1🪙',heartX,heartY-10,'#FFD700');triggerPetAnim('pulse','#FFD700','🪙');}
   // RARE: Mini Mochi magnet trigger
-  if(sk==='minimagnet'&&hc%20===0){window._petMagnetTimer=180;showPopup('🐼 Magnet!',heartX,heartY-14,'#90caf9');}
+  if(sk==='minimagnet'&&hc%20===0){window._petMagnetTimer=180;showPopup('🐼 Magnet!',heartX,heartY-14,'#90caf9');triggerPetAnim('burst','#90caf9','🧲');}
   // RARE: Sparkle — score double for 3s every 30 hearts
-  if(sk==='scoredouble'&&hc%30===0){window._petX2Timer=180;showPopup('🦄 2× Score!',heartX,heartY-14,'#CE93D8');}
+  if(sk==='scoredouble'&&hc%30===0){window._petX2Timer=180;showPopup('🦄 2× Score!',heartX,heartY-14,'#CE93D8');triggerPetAnim('burst','#CE93D8','✨');}
   // RARE: Howler — streak +1 every 25 hearts
-  if(sk==='streakboost'&&hc%25===0){streak=Math.min(streak+1,999);showPopup('🐺 +1 Streak!',heartX,heartY-14,'#aaa');}
+  if(sk==='streakboost'&&hc%25===0){streak=Math.min(streak+1,999);showPopup('🐺 +1 Streak!',heartX,heartY-14,'#aaa');triggerPetAnim('shake','#aaaaaa','🔥');}
   // EPIC: Dino/Mushroom — clear all bads every 20 hearts
-  if(sk==='clearbad'&&hc%20===0){items=items.filter(it=>!it.bad);bossShot=[];showPopup('🦕 Cleared!',W/2,H/2,'#4CAF50');}
+  if(sk==='clearbad'&&hc%20===0){items=items.filter(it=>!it.bad);bossShot=[];showPopup('🦕 Cleared!',W/2,H/2,'#4CAF50');triggerPetAnim('burst','#4CAF50','💨');}
   // EPIC: Lion — dodge heal (handled in bad-miss path below)
   // EPIC: Dolphin — Lucky Break regen every 30 hearts
   if(sk==='luckyregen'&&hc%30===0){
     if(!activeBuffs.find(b=>b.id==='lucky_s')) activeBuffs.push({id:'lucky_s',rarity:'common',emoji:'🍀',short:'Lucky',endsAt:Infinity});
-    showPopup('🐬 Lucky!',heartX,heartY-14,'#4CAF50');
+    showPopup('🐬 Lucky!',heartX,heartY-14,'#4CAF50');triggerPetAnim('burst','#4CAF50','🍀');
   }
   // EPIC: Narwhal — XP surge every 15 hearts
   if(sk==='xpburst'&&hc%15===0){
     activeBuffs.push({id:'xp_m',rarity:'rare',emoji:'⚡',short:'XP++',endsAt:frame+5*60});
-    showPopup('🦑 XP Surge!',heartX,heartY-14,'#FFD700');
+    showPopup('🦑 XP Surge!',heartX,heartY-14,'#FFD700');triggerPetAnim('burst','#FFD700','⚡');
   }
   // LEGENDARY: Mini Bao — Lucky Break + magnet every 25 hearts
   if(sk==='minibao'&&hc%25===0){
     if(!activeBuffs.find(b=>b.id==='lucky_s')) activeBuffs.push({id:'lucky_s',rarity:'common',emoji:'🍀',short:'Lucky',endsAt:Infinity});
     if(!activeBuffs.find(b=>b.id==='magnet_s')) activeBuffs.push({id:'magnet_s',rarity:'uncommon',emoji:'🧲',short:'Magnet',endsAt:frame+5*60});
-    showPopup('🥟 Pet Power!',heartX,heartY-18,'#FFD700');
+    showPopup('🥟 Pet Power!',heartX,heartY-18,'#FFD700');triggerPetAnim('burst','#FFD700','🥟');
   }
   // LEGENDARY: Lil Dudu — 2× score for 5s every 35 hearts
-  if(sk==='dudubuff'&&hc%35===0){window._petDuduX2Timer=300;showPopup('🐻 DUDU BUFF!',W/2,H/3,'#CE93D8');}
+  if(sk==='dudubuff'&&hc%35===0){window._petDuduX2Timer=300;showPopup('🐻 DUDU BUFF!',W/2,H/3,'#CE93D8');triggerPetAnim('burst','#CE93D8','💥');}
   // EPIC: streakguard — handled in bad-hit path, set flag
   if(sk==='streakguard') window._petStreakGuard=true;
+  // EPIC: Blaze — deflect nearest bad item every 15 hearts
+  if(sk==='deflect'&&hc%15===0){
+    const bads=items.filter(it=>it.bad&&!it.frozen);
+    if(bads.length){
+      const closest=bads.reduce((a,b)=>b.y>a.y?b:a);
+      closest.bad=false;
+      closest.emoji=HEART_EMO[Math.floor(Math.random()*HEART_EMO.length)];
+      showPopup('🦅 Deflected!',closest.x,closest.y-14,'#F4A56A');triggerPetAnim('burst','#F4A56A','🔥');
+    }
+  }
 }
 
 // Called each frame in the game loop for always-on effects
@@ -3113,13 +3714,15 @@ function petTickFrame(){
   if(sk==='minimagnet'&&window._petMagnetTimer>0){
     window._petMagnetTimer--;
     items.forEach(it=>{if(!it.bad) it.x+=(basket.x-it.x)*0.025;});
+    // Pulse glow while magnet is active (every 20 frames)
+    if(window._petMagnetTimer%20===0) triggerPetAnim('pulse','#90caf9','🧲');
   }
   // LEGENDARY: Royal Dragon — ongoing bad-shrink + slow (via petState)
   // COMMON: Heartsnag — 0.4% chance per frame to auto-snap nearest heart
   if(sk==='heartsnag'){
     if(Math.random()<0.004){
       const nearest=items.filter(it=>!it.bad&&!it.isPotato&&!it.isShopbag).sort((a,b)=>Math.abs(a.x-basket.x)-Math.abs(b.x-basket.x))[0];
-      if(nearest){nearest.x+=(basket.x-nearest.x)*0.15;}
+      if(nearest){nearest.x+=(basket.x-nearest.x)*0.15;triggerPetAnim('pulse','#F4A56A','💕');}
     }
   }
   // Score multiplier timers for Sparkle & Lil Dudu
@@ -3143,7 +3746,8 @@ function petApplyState(st){
   if(sk==='coinchance') st._petCoinBonus=true;
   // RARE: bad→good 5% chance (Deerling) — flag for item loop
   if(sk==='baddtonluck') st._petDeerling=true;
-  // EPIC: Bad glow is visual-only for Blaze — no stat change needed
+  // EPIC: Blaze/Phoenix deflect — visual trigger flag (actual logic in petOnHeartCaught)
+  if(sk==='deflect') st._petDeflect=true;
   // LEGENDARY: Royal Dragon — shrink + slow bad always
   if(sk==='royalguard'){st.badShrink=true;st.sm=Math.min(st.sm||1, (st.sm||1)*0.88);}
   // Score double for Sparkle/Dudu2
@@ -3158,7 +3762,7 @@ function petOnBadDodged(it){
   if(p.petSkill==='dodgerheal'){
     if(!window._petDodgeDebt) window._petDodgeDebt=0;
     window._petDodgeDebt+=0.5;
-    if(window._petDodgeDebt>=1){window._petDodgeDebt-=1;lives=Math.min(lives+1,maxLives()+2);showPopup('🦁 Dodge Heal!',it.x,H-40,'#FF9800');updateHUD();}
+    if(window._petDodgeDebt>=1){window._petDodgeDebt-=1;lives=Math.min(lives+1,maxLives()+2);showPopup('🦁 Dodge Heal!',it.x,H-40,'#FF9800');updateHUD();triggerPetAnim('burst','#FF9800','❤️');}
   }
 }
 
