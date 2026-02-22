@@ -494,6 +494,15 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
     <small>pick your character · level up · unlock tiered buffs · shop!</small>
   </div>
 
+  <!-- Heart Catcher Sub-tabs -->
+  <div style="display:flex;gap:5px;margin:0 1.2rem .7rem;">
+    <button class="tab-btn active" onclick="hcSubTab('play')" id="hc-subtab-play" style="flex:1;font-size:.78rem;">💕 Play</button>
+    <button class="tab-btn" onclick="hcSubTab('shop')" id="hc-subtab-shop" style="flex:1;font-size:.78rem;">🛒 Shop</button>
+  </div>
+
+  <!-- PLAY SUB-TAB -->
+  <div id="hc-subtab-play-content">
+
   <!-- CHARACTER SELECT -->
   <div class="char-select">
     <h4>Choose your character</h4>
@@ -547,7 +556,9 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
       <p id="game-msg">Catch hearts, avoid the ✖️ ones!</p>
     </div>
 
-  <!-- SHOP (embedded in Heart Catcher tab) -->
+  <!-- SHOP SUB-TAB (embedded in Heart Catcher tab) -->
+  </div><!-- end hc-subtab-play-content -->
+  <div id="hc-subtab-shop-content" style="display:none;">
   <div id="tab-game-shop" style="margin:0 1.2rem 2rem;background:white;border-radius:20px;padding:1.3rem;box-shadow:0 6px 24px rgba(61,43,31,.08);border-top:4px solid var(--gold);">
     <div class="shop-header">
       <h3>🛒 Bao's Shop</h3>
@@ -630,6 +641,7 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
     <!-- pagination -->
     <div id="shop-pages" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:.8rem;flex-wrap:wrap;"></div>
   </div>
+  </div><!-- end hc-subtab-shop-content -->
     </div><!-- end tab-game -->
 
   <!-- STATS TAB -->
@@ -1640,6 +1652,29 @@ const SHOP_ITEMS=[
   {id:'weeknd_mode',      rarity:'legendary',price:450, icon:'🌙', name:'Weeknd Mode',        desc:'Night theme: heart scores +1 and coins +50% always', cat:'Passive'},
   {id:'dudu_ultimate',    rarity:'legendary',price:420, icon:'🧡', name:"Dudu's Ultimate",    desc:'All buffs last 40% longer AND XP doubled always',  cat:'Passive'},
   {id:'kovan_memory_shop',rarity:'legendary',price:350, icon:'💌', name:'Kovan Memory',       desc:'Game start: +3 lives, shield, and 8 bonus hearts', cat:'Starter'},
+  // ── NEW COMMON ITEMS ─────────────────────────────────────────
+  {id:'soft_landing',     rarity:'common',   price:22,  icon:'🌸', name:'Soft Landing',       desc:'Missing a heart only costs 0.5 streak (rounded down)', cat:'Combat'},
+  {id:'warm_start',       rarity:'common',   price:25,  icon:'☕', name:'Warm Start',         desc:'Start each game with streak already at 2',             cat:'Starter'},
+  {id:'candy_heart',      rarity:'common',   price:18,  icon:'🍬', name:'Candy Heart',        desc:'Every 10th heart caught gives +1 bonus coin',          cat:'Passive'},
+  {id:'lucky_charm',      rarity:'common',   price:30,  icon:'🍀', name:'Lucky Charm',        desc:'5% chance any bad item becomes a heart instead',       cat:'Combat'},
+  // ── NEW UNCOMMON ITEMS ───────────────────────────────────────
+  {id:'heart_magnet',     rarity:'uncommon', price:62,  icon:'🧲', name:'Heart Magnet',       desc:'Hearts drift toward basket from up to 20px away',      cat:'Passive'},
+  {id:'extra_time',       rarity:'uncommon', price:58,  icon:'⏳', name:'Time Cushion',       desc:'Game lasts 15 extra seconds before speed peaks',       cat:'Passive'},
+  {id:'life_saver',       rarity:'uncommon', price:70,  icon:'💊', name:'Life Saver',         desc:'Once per game, a lethal hit leaves you at 1 HP instead', cat:'Combat'},
+  {id:'xp_rush',          rarity:'uncommon', price:55,  icon:'📈', name:'XP Rush',            desc:'First 20 hearts each game give 2× XP',                 cat:'Passive'},
+  {id:'coin_shower',      rarity:'uncommon', price:65,  icon:'🌧️', name:'Coin Shower',        desc:'After each boss kill, earn +8 bonus coins immediately', cat:'Passive'},
+  // ── NEW RARE ITEMS ───────────────────────────────────────────
+  {id:'basket_bumper',    rarity:'rare',     price:115, icon:'🪃', name:'Basket Bumper',      desc:'Basket catches hearts 6px beyond each edge (wider reach)', cat:'Combat'},
+  {id:'streak_fire',      rarity:'rare',     price:105, icon:'🔥', name:'Streak Fire',        desc:'At streak 8+, every catch scores +2 extra pts',        cat:'Passive'},
+  {id:'diamond_rain',     rarity:'rare',     price:120, icon:'💎', name:'Diamond Rain',       desc:'Earn +1 diamond for every 5 hearts caught in a game',  cat:'Passive'},
+  {id:'heart_echo',       rarity:'rare',     price:98,  icon:'💞', name:'Heart Echo',         desc:'Every 15th catch spawns a bonus free heart instantly',  cat:'Passive'},
+  // ── NEW EPIC ITEMS ───────────────────────────────────────────
+  {id:'overdrive',        rarity:'epic',     price:230, icon:'⚡', name:'Overdrive',          desc:'After level-up: 10s of 3× score and magnet',           cat:'Combat'},
+  {id:'golden_heart',     rarity:'epic',     price:210, icon:'💛', name:'Golden Heart',       desc:'+2 coins per heart always AND streak bonus at 3 (not 5)', cat:'Passive'},
+  {id:'shield_wall',      rarity:'epic',     price:195, icon:'🛡️', name:'Shield Wall',        desc:'Start with 2 shields. Shields recharge 1 per boss kill', cat:'Starter'},
+  // ── NEW LEGENDARY ITEMS ──────────────────────────────────────
+  {id:'heart_empress',    rarity:'legendary',price:480, icon:'👸', name:'Heart Empress',      desc:'All hearts worth +2pts. Bad items fall 20% slower. Start with 2 shields.', cat:'Passive'},
+  {id:'infinite_nomnom',  rarity:'legendary',price:460, icon:'🍜', name:'Infinite Nomnom',   desc:'Bao needs only 3 potatoes (not 5) AND potato gives +1 life AND +5 coins', cat:'Passive'},
 ];
 
 // ===================== PERSISTENT STORAGE =====================
@@ -1665,7 +1700,9 @@ const ctx=canvas.getContext('2d');
 const overlay=document.getElementById('overlay');
 let W,H;
 function resize(){
-  W=canvas.width=document.getElementById('canvas-wrap').clientWidth;
+  const wrap=document.getElementById('canvas-wrap');
+  const cw=wrap.clientWidth;
+  W=canvas.width=cw>0?cw:(window.innerWidth>700?Math.min(660,window.innerWidth-40):window.innerWidth-24);
   H=canvas.height=window.innerWidth<700
     ? Math.round(Math.min(360,window.innerHeight*0.44))
     : Math.round(Math.min(540,window.innerHeight*0.60));
@@ -1772,6 +1809,16 @@ function computeState(){
   if(shopHas('dudu_ultimate')) {st.xpM=Math.max(st.xpM||1,2);} // buff extend handled in buff loop
   if(shopHas('eternal_streak')) window._petStreakGuard=true;
   if(shopHas('streak_shield'))  window._petStreakGuard=true;
+  // New shop items
+  if(shopHas('heart_magnet'))   st.magnet=true;
+  if(shopHas('lucky_charm'))    st._luckyCharm=true;
+  if(shopHas('basket_bumper'))  st._bumper=true;
+  if(shopHas('streak_fire'))    st._streakFire=true;
+  if(shopHas('golden_heart'))   {st.coinPerHeart=Math.max(st.coinPerHeart||0,2);st.streakBonus=true;}
+  if(shopHas('shield_wall'))    st._shieldWall=true;
+  if(shopHas('heart_empress'))  {st.rallyBonus=Math.max(st.rallyBonus||0,2);st.badShrink=true;st.sm=Math.min(st.sm,0.8);}
+  if(shopHas('infinite_nomnom')&&currentChar==='bao') st._infiniteNomnom=true;
+  if(shopHas('overdrive'))      st._overdrive=true;
 }
 
 // ===================== HUD =====================
@@ -1994,14 +2041,11 @@ function spawnItem(){
   const itemSize = st.bigHeartMode ? 31 : 22;
   if(shopHas('slow_start')&&frame<30*60) spd*=0.6;
   const badSpd = st.bigHeartMode ? spd * 0.85 : spd;
-  // 28% of good hearts get a Perfect Catch window (25 frames long, starts at a random point in their fall)
-  const isPerfect = !isBad && Math.random() < 0.28;
   items.push(petDeerlingFilter({
     x:22+Math.random()*(W-44),y:-24,
     vy:isBad&&st.freezeBad?0.3:isBad?badSpd:spd,
     emoji:isBad?BAD_EMO[Math.floor(Math.random()*BAD_EMO.length)]:HEART_EMO[Math.floor(Math.random()*HEART_EMO.length)],
     bad:isBad,size:itemSize,frozen:isBad&&st.freezeBad,
-    perfectWindow:isPerfect?{startY:H-150+Math.random()*50,duration:32}:null,
   }));
 }
 
@@ -2043,11 +2087,27 @@ function gameLoop(){
   const rate=Math.max(38,Math.round(165-(_t/180)*105-level*1.2));
   if(frame%rate===0&&!st.timeFrozen){
     spawnItem();
-    if(_t>90&&level>=3&&Math.random()<Math.min(0.55,(_t-90)/160)) spawnItem();
-    if(_t>150&&level>=6&&Math.random()<Math.min(0.4,(_t-150)/120)) spawnItem();
+    if(_t>90&&level>=3&&Math.random()<Math.min(0.55,(_t-90)/160)){
+      // Stagger: give the extra item a head start offset so it doesn't land at same time
+      const _staggerY = -(28 + Math.random()*60);
+      const _staggerVy = Math.min(2.8,(0.85+(_t/180)*1.4+level*0.035)*(0.78+Math.random()*0.24)*st.sm);
+      const _isBad2 = Math.random()<(0.09+level*0.01);
+      items.push(petDeerlingFilter({x:22+Math.random()*(W-44),y:_staggerY,vy:_staggerVy,
+        emoji:_isBad2?BAD_EMO[Math.floor(Math.random()*BAD_EMO.length)]:HEART_EMO[Math.floor(Math.random()*HEART_EMO.length)],
+        bad:_isBad2,size:st.bigHeartMode?31:22,frozen:_isBad2&&st.freezeBad}));
+    }
+    if(_t>150&&level>=6&&Math.random()<Math.min(0.4,(_t-150)/120)){
+      const _staggerY2 = -(55 + Math.random()*80);
+      const _staggerVy2 = Math.min(2.8,(0.85+(_t/180)*1.4+level*0.035)*(0.72+Math.random()*0.24)*st.sm);
+      const _isBad3 = Math.random()<(0.09+level*0.01);
+      items.push(petDeerlingFilter({x:22+Math.random()*(W-44),y:_staggerY2,vy:_staggerVy2,
+        emoji:_isBad3?BAD_EMO[Math.floor(Math.random()*BAD_EMO.length)]:HEART_EMO[Math.floor(Math.random()*HEART_EMO.length)],
+        bad:_isBad3,size:st.bigHeartMode?31:22,frozen:_isBad3&&st.freezeBad}));
+    }
     if(st.heartstorm&&Math.random()<.65){
       const _hs=Math.min(2.6,(0.8+(_t/180)*1.4)*st.sm);
-      items.push({x:22+Math.random()*(W-44),y:-24,vy:_hs,emoji:HEART_EMO[Math.floor(Math.random()*HEART_EMO.length)],bad:false,size:22,frozen:false});
+      const _hsStagger = -(20 + Math.random()*50);
+      items.push({x:22+Math.random()*(W-44),y:_hsStagger,vy:_hs,emoji:HEART_EMO[Math.floor(Math.random()*HEART_EMO.length)],bad:false,size:22,frozen:false});
     }
   }
   if(currentChar==='bao'&&frame%220===0&&Math.random()<(0.28+(_t/180)*0.38)){
@@ -2059,6 +2119,8 @@ function gameLoop(){
     items.push({x:22+Math.random()*(W-44),y:-24,vy:_bs,emoji:'🛍️',bad:false,isShopbag:true,size:20,frozen:false});
   }
   ctx.clearRect(0,0,W,H);
+  // Draw background so canvas isn't transparent
+  drawGameBackground();
   if(level>=5) drawStars();
   updateBoss();
 
@@ -2399,42 +2461,18 @@ function gameLoop(){
       ctx.fillText(it.emoji,it.x+2,it.y+3);
       ctx.globalAlpha=1;ctx.fillText(it.emoji,it.x,it.y);
 
-      // ── PERFECT CATCH RING ────────────────────────────────────────────────
-      if(it.perfectWindow){
-        const pw=it.perfectWindow;
-        // Mark when the window opened
-        if(!pw.openedAt && it.y >= pw.startY) pw.openedAt=frame;
-        if(pw.openedAt){
-          const elapsed=frame-pw.openedAt;
-          if(elapsed <= pw.duration){
-            // Active window — draw pulsing golden ring
-            const progress=elapsed/pw.duration;
-            const ringAlpha=1-progress*0.3;
-            const ringScale=1+Math.sin(progress*Math.PI)*0.18;
-            const ringR=(it.size*0.62)*ringScale;
-            ctx.save();
-            ctx.globalAlpha=ringAlpha;
-            ctx.strokeStyle=`hsl(${45+progress*20},100%,62%)`;
-            ctx.lineWidth=2.5;
-            ctx.shadowBlur=12; ctx.shadowColor='#FFD700';
-            ctx.beginPath(); ctx.arc(it.x,it.y-it.size*0.1,ringR,0,Math.PI*2); ctx.stroke();
-            // Star markers at 4 corners of the ring
-            ctx.fillStyle='#FFD700'; ctx.font='8px serif';
-            ctx.fillText('✦',it.x+ringR,it.y-it.size*0.1);
-            ctx.fillText('✦',it.x-ringR,it.y-it.size*0.1);
-            ctx.restore();
-            it.perfectActive=true;
-          } else {
-            it.perfectActive=false;
-            it.perfectWindow=null; // window expired
-          }
-        }
-      }
+
     }
     ctx.restore();
 
     // catch
-    if(it.y>=by-4&&it.y<=by+BH+14&&it.x>=bx-8&&it.x<=bx+bw+8){
+    const bumperExtra = st._bumper ? 6 : 0;
+    if(it.y>=by-4&&it.y<=by+BH+14&&it.x>=bx-8-bumperExtra&&it.x<=bx+bw+8+bumperExtra){
+      // Lucky charm: 5% chance to convert bad item to heart
+      if(it.bad && st._luckyCharm && Math.random()<0.05){
+        it.bad=false; it.emoji=HEART_EMO[Math.floor(Math.random()*HEART_EMO.length)];
+        showPopup('🍀 Charmed!',it.x,it.y,'#4CAF50');
+      }
       if(it.bad){
         // Ghost mode: bad items pass through
         if(st.ghost){showPopup('👻 Phased!',it.x,it.y,'#CE93D8');items.splice(i,1);continue;}
@@ -2456,7 +2494,9 @@ function gameLoop(){
           lives--;duduAuraReady=false;passiveCharge=0;potatoCount=0;
           showPopup('💢 Ouch!',it.x,it.y,'#E8736A');
           if(lives<=0){
-            if(phoenixReady){phoenixReady=false;lives=3;showPopup('🔥 PHOENIX!',W/2,H/2,'#FF9800');activeBuffs=activeBuffs.filter(b=>b.id!=='phoenix');}
+            // Life Saver: once per game prevent death at 0
+            if(window._lifeSaverReady){window._lifeSaverReady=false;lives=1;showPopup('💊 Life Saved!',W/2,H/2,'#90caf9');updateHUD();}
+            else if(phoenixReady){phoenixReady=false;lives=3;showPopup('🔥 PHOENIX!',W/2,H/2,'#FF9800');activeBuffs=activeBuffs.filter(b=>b.id!=='phoenix');}
             else{endGame();return;}
           }
         }
@@ -2464,11 +2504,13 @@ function gameLoop(){
         // Bao passive: potato collected!
         potatoCount++;
         showPopup('🥔 +1 potato!',it.x,it.y,'#F4A56A');
-        if(potatoCount>=CHARS.bao.passiveTrigger-(shopHas('potato_boost')?1:0)){
+        const nommTrigger = st._infiniteNomnom ? 3 : CHARS.bao.passiveTrigger-(shopHas('potato_boost')?1:0);
+        if(potatoCount>=nommTrigger){
           potatoCount=0;
           lives=Math.min(lives+1,6);
-          P.steamShields++; // reuse stat for nomnom procs
-          showPopup('🥔 Nomnom! +1 Life! 💕',basket.x,by-20,'#F4A56A');
+          P.steamShields++;
+          if(st._infiniteNomnom){coins+=5;P.coins+=5;P.coinsEarned+=5;showPopup('🍜 Infinite Nomnom! +1 Life +5💰',basket.x,by-20,'#F4A56A');}
+          else showPopup('🥔 Nomnom! +1 Life! 💕',basket.x,by-20,'#F4A56A');
         }
         updateHUD();items.splice(i,1);continue;
       } else if(it.isShopbag){
@@ -2489,20 +2531,6 @@ function gameLoop(){
         if(st.starburstBonus) pts+=2; // starburst boost
         const bonusStreak=(st.streakBonus&&streak>=5)?2:0;
 
-        // ── PERFECT CATCH BONUS ───────────────────────────────────────────
-        const isPerfectCatch = it.perfectActive === true;
-        if(isPerfectCatch){
-          pts = pts * 3; // 3× score on perfect catch
-          if(!window._perfectCount) window._perfectCount=0;
-          window._perfectCount++;
-          showPopup(`✨ PERFECT! ×3`,it.x,it.y-18,'#FFD700');
-          // Play a tiny chime
-          if(window._audioCtx){
-            _playTone(1174,'triangle',0,0.12,0.18);
-            _playTone(1568,'triangle',0.1,0.1,0.14);
-          }
-        }
-
         // DUDU passive: Angry Aura
         let auraBonus=0;
         if(currentChar==='dudu'&&duduAuraReady){
@@ -2522,6 +2550,19 @@ function gameLoop(){
         score+=total;streak++;sessionHearts++;P.totalHearts++;
         petOnHeartCaught(it.x,it.y);
         if(streak>P.bestStreak) P.bestStreak=streak;
+        // Streak Fire: at streak 8+, +2 extra pts
+        if(st._streakFire&&streak>=8){score+=2;showPopup('🔥+2!',it.x,it.y-8,'#FF9800');}
+        // Candy Heart: every 10th catch +1 coin
+        if(!window._candyCount)window._candyCount=0;
+        window._candyCount++;
+        if(shopHas('candy_heart')&&window._candyCount%10===0){coins+=1;P.coins+=1;P.coinsEarned+=1;showPopup('🍬+1💰',basket.x,by-18,'#FFD700');}
+        // Heart Echo: every 15th catch spawns a bonus heart
+        if(shopHas('heart_echo')&&window._candyCount%15===0){
+          items.push({x:basket.x+(Math.random()-.5)*60,y:-24,vy:1.0,emoji:HEART_EMO[Math.floor(Math.random()*HEART_EMO.length)],bad:false,size:st.bigHeartMode?31:22,frozen:false});
+          showPopup('💞 Echo!',basket.x,by-28,'#FF9ECD');
+        }
+        // Diamond Rain: every 5 catches = +1 diamond
+        if(shopHas('diamond_rain')&&window._candyCount%5===0){P.diamonds=(P.diamonds||0)+1;showPopup('💎+1',it.x,it.y-14,'#a78bfa');}
         // Lifesteal: 0.25 life per heart (tracked with debt system)
         if(st.lifesteal){if(!window._lifeDebt)window._lifeDebt=0;window._lifeDebt+=0.25;if(window._lifeDebt>=1){window._lifeDebt-=1;lives=Math.min(lives+1,maxLives()+2);showPopup('🧛 +1 Life!',basket.x,by-22,'#CE93D8');updateHUD();}}
         // Soulbound: 1 full life per heart caught
@@ -2587,6 +2628,55 @@ function gameLoop(){
   requestAnimationFrame(gameLoop);
 }
 
+function drawGameBackground(){
+  ctx.save();
+  const lvl=level||1;
+  const char=currentChar||'bao';
+
+  // The outer #game-wrap is #3D2B1F (deep warm brown).
+  // Canvas edge must match this so there's no jarring border.
+  // We paint a base fill matching the wrapper, then a radial vignette
+  // that deepens toward the character's signature mid-tone in the centre.
+
+  // Outer edge colour — must match #game-wrap background exactly
+  const outerBrown='#3D2B1F';
+
+  // Character inner colours (centre of the radial gradient)
+  const charInner={
+    bao: lvl>=7?`hsl(${(frame*0.4)%360},40%,14%)`
+               :lvl>=5?'#2a1828'
+               :lvl>=3?'#2d1820'
+               :'#2e1e18',   // warm rose-brown, deeper than outer
+    dudu:lvl>=7?`hsl(${(frame*0.4)%360},40%,14%)`
+               :lvl>=5?'#281828'
+               :lvl>=3?'#321c10'
+               :'#301c0e',   // deeper amber-brown
+    bubu:lvl>=7?`hsl(${(frame*0.4)%360},40%,14%)`
+               :lvl>=5?'#261428'
+               :lvl>=3?'#2e1630'
+               :'#2a1628',   // deep rose-lilac
+  };
+
+  const inner=charInner[char]||charInner.bao;
+
+  // 1. Fill entire canvas with the outer brown (edges will naturally match)
+  ctx.fillStyle=outerBrown;
+  ctx.fillRect(0,0,W,H);
+
+  // 2. Radial gradient from inner colour (centre) → transparent (edges)
+  //    This darkens/tints the centre while leaving edges = outerBrown
+  const cx2=W/2, cy2=H/2;
+  const radius=Math.max(W,H)*0.72;
+  const radial=ctx.createRadialGradient(cx2,cy2,0,cx2,cy2,radius);
+  radial.addColorStop(0,inner);
+  radial.addColorStop(0.55,inner);
+  radial.addColorStop(1,'rgba(61,43,31,0)'); // fades to transparent → shows outerBrown base
+  ctx.fillStyle=radial;
+  ctx.fillRect(0,0,W,H);
+
+  ctx.restore();
+}
+
 let starCache=null;
 function drawStars(){
   if(!starCache) starCache=Array.from({length:28},()=>({x:Math.random()*100,y:Math.random()*100,r:Math.random()*1.3+.3}));
@@ -2619,6 +2709,12 @@ function checkLevelUp(){
       running=false;
       showBossWarning(()=>{running=true;spawnBoss(level);gameLoop();});
     } else {
+      // Overdrive: 10s of triple + magnet after level-up
+      if(shopHas('overdrive')){
+        activeBuffs.push({id:'triple',rarity:'epic',emoji:'⚡',short:'OVERDRIVE',endsAt:frame+10*60});
+        activeBuffs.push({id:'magnet_s',rarity:'epic',emoji:'🧲',short:'Magnet',endsAt:frame+10*60});
+        showPopup('⚡ OVERDRIVE!',W/2,H/3,'#FFD700');
+      }
       running=false;showLevelUpScreen();
     }
   }
@@ -3581,6 +3677,10 @@ function defeatBoss(){
   // Fire event for easter egg system
   if(selectedBoss) document.dispatchEvent(new CustomEvent('bossDefeatedEvt',{detail:{bossId:selectedBoss.id}}));
   P.achievedLevels.push('boss'+level);
+  // Coin Shower: +8 coins on boss kill
+  if(shopHas('coin_shower')){coins+=8;P.coins+=8;P.coinsEarned+=8;showPopup('🌧️ +8 Coins!',W/2,H/3,'#FFD700');}
+  // Shield Wall recharge: +1 shield on boss kill
+  if(shopHas('shield_wall')&&shieldsLeft<2){shieldsLeft=Math.min(2,shieldsLeft+1);showPopup('🛡️ Shield recharged!',W/2,H/3+24,'#90caf9');}
   saveP();
   running=false;
 
@@ -3762,9 +3862,15 @@ function resetGame(){
   if(shopHas('bao_legend'))    {level=2;xp=0;lives=Math.min(lives+2,8);activeBuffs.push({id:'lucky_s',rarity:'common',emoji:'🍀',short:'Lucky',endsAt:Infinity});}
   if(shopHas('kovan_memory_shop')){lives=Math.min(lives+3,8);shieldsLeft=1;window._kovanScatter=true;}
   if(shopHas('boss_bane'))     window._bossBane=true;
+  if(shopHas('warm_start'))    streak=2;
+  if(shopHas('shield_wall'))   shieldsLeft=Math.max(shieldsLeft,2);
+  if(shopHas('life_saver'))    window._lifeSaverReady=true;
+  if(shopHas('overdrive'))     window._overdriveReady=true;
+  window._candyCount=0;
   updateHUD();
 }
 function startGame(){
+  resize(); // ensure canvas dimensions are correct before starting
   resetGame();
   overlay.classList.add('hidden');
   running=true;
@@ -3790,6 +3896,14 @@ canvas.addEventListener('touchmove',e=>{e.preventDefault();if(running)moveBasket
 canvas.addEventListener('touchstart',e=>{if(running)moveBasket(e.touches[0].clientX);},{passive:true});
 
 // ===================== TABS =====================
+function hcSubTab(sub){
+  document.getElementById('hc-subtab-play-content').style.display = sub==='play' ? '' : 'none';
+  document.getElementById('hc-subtab-shop-content').style.display = sub==='shop' ? '' : 'none';
+  document.getElementById('hc-subtab-play').classList.toggle('active', sub==='play');
+  document.getElementById('hc-subtab-shop').classList.toggle('active', sub==='shop');
+  if(sub==='shop') renderShop();
+}
+
 function showTab(tab){
   const tabs=['game','blackjack','c4','stats'];
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',tabs[i]===tab));
@@ -3797,8 +3911,13 @@ function showTab(tab){
     document.getElementById(id).classList.add('hidden');
   });
   document.getElementById('tab-'+tab).classList.remove('hidden');
+  if(tab==='game'){
+    // Canvas-wrap was hidden (display:none), so clientWidth was 0. Re-measure now it's visible.
+    requestAnimationFrame(()=>{ resize(); });
+    const shopVisible = document.getElementById('hc-subtab-shop-content') && document.getElementById('hc-subtab-shop-content').style.display !== 'none';
+    if(shopVisible) renderShop();
+  }
   if(tab==='stats') updateStatsPanel();
-  if(tab==='game') renderShop();
   if(tab==='blackjack'){ if(typeof pdUpdateCoinDisplay==='function') pdUpdateCoinDisplay(); }
 }
 
@@ -3891,7 +4010,7 @@ const PD_CHARS = {
       {id:'shield', name:'Potato Shield', icon:'🥔', desc:'Block next dealer attack (0 dmg)', cooldown:3},
       {id:'double',  name:'Double Luck',    icon:'💥', desc:'Win = 2× damage dealt',           cooldown:2},
     ],
-    ult:{id:'nomnom', name:'Nomnom Feast', icon:'🍟', desc:'Heal 40 HP + 2 free cards', cost:3}
+    ult:{id:'nomnom', name:'Nomnom Feast', icon:'🍟', desc:'Heal 50 HP. If your hand is under 15, swap your worst card for a safer one. Peek the dealer\'s hidden card.', cost:3}
   },
   dudu: {
     name:'Dudu', color:'#f4a261', hp:100,
@@ -3951,7 +4070,7 @@ const PD_REWARD_POOL = {
   1: [
     {id:'extra_hp_sm',   name:'Potato Snack',      icon:'🥔', desc:'Restore 20 HP right now.', type:'instant', val:20},
     {id:'shield_charge', name:'Extra Spud Shield',  icon:'🛡️', desc:'Next Potato Shield has 2 charges.', type:'passive'},
-    {id:'start_bonus',   name:'Head Start',         icon:'🎴', desc:'Start each hand with 1 extra card drawn free.', type:'passive'},
+    {id:'start_bonus',   name:'Head Start',         icon:'🎴', desc:'Start each hand with 1 safe bonus card (only added if it won\'t bust you — skipped if your hand is already 17+).', type:'passive'},
     {id:'win_heal',      name:'Victory Snack',       icon:'🌸', desc:'Heal 5 HP every time you win a hand.', type:'passive'},
     {id:'reduced_cd_1',  name:'Quick Hands',         icon:'⚡', desc:'Ability 1 cooldown reduced by 1.', type:'passive'},
     {id:'lucky_draw',    name:'Lucky Potato',        icon:'✨', desc:'Once per hand, re-draw 1 card automatically if over 18.', type:'passive'},
@@ -4408,9 +4527,44 @@ function pdUseAbility(which){
     s.ultWins=0;
     const ult=def.ult;
     if(ult.id==='nomnom'){
-      s.hp=Math.min(s.maxHp,s.hp+40); s.freeCards=2;
-      pdMsg('🍟 NOMNOM FEAST! +40 HP & 2 free cards next hand!');
+      // 1. Big heal
+      s.hp=Math.min(s.maxHp,s.hp+50);
       pdUpdateHpBars();
+      let msg='🍟 NOMNOM FEAST! +50 HP!';
+
+      // 2. Reveal dealer's hidden card
+      const hiddenCard=s.dealerCards.find(c=>c.hidden);
+      if(hiddenCard){
+        hiddenCard.hidden=false;
+        msg+=` Dealer has ${hiddenCard.rank}${hiddenCard.suit}!`;
+        setTimeout(()=>{ hiddenCard.hidden=true; pdRenderCards(); },2800);
+        pdRenderCards();
+      }
+
+      // 3. If hand is under 15, swap worst high card for a safer one (≤6)
+      const currentTotal=pdHandTotal(s.playerCards);
+      if(currentTotal<15 && s.playerCards.length>0){
+        // Find the highest-value card (most likely to cause problems)
+        let worstIdx=0, worstVal=-1;
+        s.playerCards.forEach((c,i)=>{ const v=pdCardVal(c.rank); if(v>worstVal){worstVal=v;worstIdx=i;} });
+        // Try to draw a card worth 6 or less
+        let safeCard=null, attempts=0;
+        while(attempts<8){
+          const drawn=pdDraw();
+          if(pdCardVal(drawn.rank)<=6){ safeCard=drawn; break; }
+          // put back and try again (simplified — just draw until safe or give up)
+          s.deck.unshift(drawn); attempts++;
+        }
+        if(safeCard){
+          s.playerCards[worstIdx]=safeCard;
+          pdRenderCards();
+          msg+=` Swapped ${['A','2','3','4','5','6','7','8','9','10','J','Q','K'][worstIdx]||'a card'} for a safer one!`;
+        }
+      } else if(currentTotal>=15){
+        msg+=' Hand already strong, no swap needed!';
+      }
+
+      pdMsg(msg);
     } else if(ult.id==='bearrage'){
       const dmg=35+s.streakBonus*2;
       s.bossHp-=dmg;
@@ -4843,6 +4997,28 @@ const PD_PET_DEFS = [
   {id:'pd_pet_minibao', rarity:'legendary',emoji:'🥟', name:'Mini Bao',    bjSkill:'ultimate',bjVal:0, desc:'All abilities: heal 8, +8 dmg, 25% block, +3 coins', sound:'pet_ult'},
   {id:'pd_pet_lildudu', rarity:'legendary',emoji:'🐻', name:'Lil Dudu',    bjSkill:'ultimate',bjVal:0, desc:'Rage mode: 2× damage for 3 hands after boss hit',     sound:'pet_ult'},
   {id:'pd_pet_royaldragon',rarity:'legendary',emoji:'🔱',name:'Royal Dragon',bjSkill:'ultimate',bjVal:0,desc:'Dragon fire: 15 dmg on win + 20% block + heal 5',    sound:'pet_ult'},
+  // NEW COMMON PETS
+  {id:'pd_pet_snail',   rarity:'common',   emoji:'🐌', name:'Sludge',      bjSkill:'shield', bjVal:6,  desc:'6% block chance',          sound:'pet_shield'},
+  {id:'pd_pet_mouse',   rarity:'common',   emoji:'🐭', name:'Nibbles',     bjSkill:'coins',  bjVal:1,  desc:'+1 coin on win',           sound:'pet_coin'},
+  {id:'pd_pet_parrot',  rarity:'common',   emoji:'🦜', name:'Polly',       bjSkill:'heal',   bjVal:2,  desc:'Heals 2 HP on win',        sound:'pet_heal'},
+  {id:'pd_pet_hedgehog',rarity:'common',   emoji:'🦔', name:'Spikes',      bjSkill:'shield', bjVal:7,  desc:'7% block + 1 reflect dmg', sound:'pet_shield'},
+  {id:'pd_pet_fish',    rarity:'common',   emoji:'🐠', name:'Bubbles',     bjSkill:'lucky',  bjVal:4,  desc:'4% free re-draw chance',   sound:'pet_lucky'},
+  // NEW UNCOMMON PETS
+  {id:'pd_pet_koala',   rarity:'uncommon', emoji:'🐨', name:'Eucalyptus',  bjSkill:'heal',   bjVal:6,  desc:'Heals 6 HP on win',        sound:'pet_heal'},
+  {id:'pd_pet_flamingo',rarity:'uncommon', emoji:'🦩', name:'Rosie',       bjSkill:'coins',  bjVal:3,  desc:'+3 coins on win',          sound:'pet_coin'},
+  {id:'pd_pet_sloth',   rarity:'uncommon', emoji:'🦥', name:'Lazy',        bjSkill:'shield', bjVal:18, desc:'18% block chance',         sound:'pet_shield'},
+  {id:'pd_pet_raccoon', rarity:'uncommon', emoji:'🦝', name:'Bandit',      bjSkill:'lucky',  bjVal:8,  desc:'8% free re-draw chance',   sound:'pet_lucky'},
+  // NEW RARE PETS
+  {id:'pd_pet_elephant',rarity:'rare',     emoji:'🐘', name:'Peanut',      bjSkill:'heal',   bjVal:10, desc:'Heals 10 HP on win + 5% block', sound:'pet_heal'},
+  {id:'pd_pet_croc',    rarity:'rare',     emoji:'🐊', name:'Chomper',     bjSkill:'damage', bjVal:8,  desc:'+8 bonus damage on win',   sound:'pet_atk'},
+  {id:'pd_pet_octopus', rarity:'rare',     emoji:'🐙', name:'Inky',        bjSkill:'lucky',  bjVal:12, desc:'12% re-draw + heal 3 HP',  sound:'pet_lucky'},
+  {id:'pd_pet_shark',   rarity:'rare',     emoji:'🦈', name:'Finn',        bjSkill:'damage', bjVal:9,  desc:'+9 dmg + 10% lifesteal',   sound:'pet_atk'},
+  // NEW EPIC PETS
+  {id:'pd_pet_whale',   rarity:'epic',     emoji:'🐋', name:'Moby',        bjSkill:'heal',   bjVal:15, desc:'Heals 15 HP on win',       sound:'pet_heal'},
+  {id:'pd_pet_gorilla', rarity:'epic',     emoji:'🦍', name:'Kong',        bjSkill:'damage', bjVal:12, desc:'+12 dmg + stun 1 turn',    sound:'pet_atk'},
+  {id:'pd_pet_snake',   rarity:'epic',     emoji:'🐍', name:'Venom',       bjSkill:'lucky',  bjVal:18, desc:'18% re-draw + +6 dmg',     sound:'pet_lucky'},
+  // NEW LEGENDARY PET
+  {id:'pd_pet_bubu',    rarity:'legendary',emoji:'🐼', name:'Bubu Paw',    bjSkill:'ultimate',bjVal:0, desc:'Fortune paw: guarantee 1 win per boss + heal 20 HP', sound:'pet_ult'},
 ];
 
 // Casino-grade probabilities for pet egg machine
@@ -6119,6 +6295,27 @@ const GACHA_POOL = [
   {id:'pet_dudu2',  type:'pet', rarity:'legendary', name:'🐻 Lil Dudu',   emoji:'🐻', desc:'Fluffiest boy. Doubles score for 5s every 35 hearts caught.', petSkill:'dudubuff'},
   {id:'pet_dragon2',type:'pet', rarity:'legendary', name:'🔱 Royal Dragon',emoji:'🔱',desc:'Majestic. Bad items shrink AND fall slower. Always on.',        petSkill:'royalguard'},
   {id:'char_bubu',  type:'char',rarity:'legendary', name:'🐼 BUBU',        emoji:'🐼', desc:'Unlock Bubu as a playable character! 🎉 (Shopaholic passive)'},
+  // NEW COMMON PETS
+  {id:'pet_snail',  type:'pet', rarity:'common',    name:'🐌 Sludge',     emoji:'🐌', desc:'Slow and chill. Slightly widens basket edges.',              petSkill:'luck'},
+  {id:'pet_mouse',  type:'pet', rarity:'common',    name:'🐭 Nibbles',    emoji:'🐭', desc:'Tiny but brave. +5% coin drop rate.',                        petSkill:'coinchance'},
+  {id:'pet_parrot', type:'pet', rarity:'common',    name:'🦜 Polly',      emoji:'🦜', desc:'Squawk! Announces incoming bad items with a flash.',          petSkill:'frogluck'},
+  {id:'pet_hedgehog',type:'pet',rarity:'common',    name:'🦔 Spikes',     emoji:'🦔', desc:'Prickly pal. Very small chance to deflect a bad item.',       petSkill:'frogluck'},
+  {id:'pet_fish',   type:'pet', rarity:'common',    name:'🐠 Bubbles',    emoji:'🐠', desc:'Bubbly friend. Boosts coin chance by +4%.',                   petSkill:'coinchance'},
+  // NEW UNCOMMON PETS
+  {id:'pet_koala',  type:'pet', rarity:'uncommon',  name:'🐨 Eucalyptus', emoji:'🐨', desc:'Drowsy but helpful. Restores 1 life every 35 hearts.',        petSkill:'regen40'},
+  {id:'pet_flamingo',type:'pet',rarity:'uncommon',  name:'🦩 Rosie',      emoji:'🦩', desc:'Elegant dancer. XP gains +12%.',                             petSkill:'xpowl'},
+  {id:'pet_sloth',  type:'pet', rarity:'uncommon',  name:'🦥 Lazy',       emoji:'🦥', desc:'Takes it easy. Bad items fall 10% slower.',                  petSkill:'slowbad'},
+  {id:'pet_raccoon',type:'pet', rarity:'uncommon',  name:'🦝 Bandit',     emoji:'🦝', desc:'Sneaky! Grabs +1 bonus coin every 12 hearts.',               petSkill:'beecoin'},
+  {id:'pet_butterfly',type:'pet',rarity:'uncommon', name:'🦋 Flutter',    emoji:'🦋', desc:'Gentle flutter nudges stray hearts toward basket.',           petSkill:'heartsnag'},
+  // NEW RARE PETS
+  {id:'pet_elephant',type:'pet',rarity:'rare',      name:'🐘 Peanut',     emoji:'🐘', desc:'Never forgets AND streak resets to 4 instead of 0.',         petSkill:'streakguard'},
+  {id:'pet_octopus',type:'pet', rarity:'rare',      name:'🐙 Inky',       emoji:'🐙', desc:'Eight arms! 8% chance to catch a second nearby heart.',       petSkill:'heartsnag'},
+  {id:'pet_shark',  type:'pet', rarity:'rare',      name:'🦈 Finn',       emoji:'🦈', desc:'Fins up! Doubles coin gain for 5s every 20 hearts.',          petSkill:'scoredouble'},
+  {id:'pet_gorilla',type:'pet', rarity:'rare',      name:'🦍 Kong',       emoji:'🦍', desc:'Mighty! Every 25 hearts, clears all bad items instantly.',    petSkill:'clearbad'},
+  // NEW EPIC PETS
+  {id:'pet_whale',  type:'pet', rarity:'epic',      name:'🐋 Moby',       emoji:'🐋', desc:'Ocean giant. Every 20 hearts spawns 2 bonus hearts.',         petSkill:'heartspawn'},
+  {id:'pet_snake',  type:'pet', rarity:'epic',      name:'🐍 Venom',      emoji:'🐍', desc:'Bad items that fall past the basket give +1 coin instead of hurting.', petSkill:'dodgerheal'},
+  {id:'pet_tiger',  type:'pet', rarity:'epic',      name:'🐯 Stripes',    emoji:'🐯', desc:'Fierce! Streak multiplier kicks in at 3 instead of 5.',       petSkill:'xpburst'},
 ];
 const GACHA_WEIGHTS = {common:55,uncommon:28,rare:12,epic:4,legendary:1};
 const GACHA_RARITIES = ['common','uncommon','rare','epic','legendary'];
@@ -6169,7 +6366,7 @@ function gachaRoll(){
   return chosen;
 }
 
-function openGacha(){showTab('game');setTimeout(()=>document.getElementById('tab-game-shop')?.scrollIntoView({behavior:'smooth'}),100);}
+function openGacha(){showTab('game');setTimeout(()=>{hcSubTab('shop');document.getElementById('tab-game-shop')?.scrollIntoView({behavior:'smooth'});},100);}
 function closeGacha(){}
 
 function refreshBubuCard(){
@@ -6813,8 +7010,8 @@ const _origDefeatBoss=typeof defeatBoss==='function'?defeatBoss:null;
 if(_origDefeatBoss){
   window.defeatBoss=function(){
     _origDefeatBoss();
-    if(bossesDefeated===1&&!P._ach_b1){P._ach_b1=true;saveP();showAchievement(`⚔️ First Boss Down! You're unstoppable!`);}
-    if(bossesDefeated===5&&!P._ach_b5){P._ach_b5=true;saveP();showAchievement(`🏆 5 Bosses Defeated! Legendary warrior!`);}
+    if(bossDefeated===1&&!P._ach_b1){P._ach_b1=true;saveP();showAchievement(`⚔️ First Boss Down! You're unstoppable!`);}
+    if(bossDefeated===5&&!P._ach_b5){P._ach_b5=true;saveP();showAchievement(`🏆 5 Bosses Defeated! Legendary warrior!`);}
   };
 }
 
