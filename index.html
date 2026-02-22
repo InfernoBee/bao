@@ -457,6 +457,21 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
 }
 .egg-found-badge.show{opacity:1;}
 
+/* ── HOLIDAY OVERLAY ─────────────────────────────────── */
+#holiday-overlay{
+  position:fixed;top:0;left:0;width:100%;
+  background:rgba(0,0,0,0.55);
+  color:1.6rem; font-size:1.5rem;
+  white-space:nowrap;overflow:hidden;
+  z-index:9999;pointer-events:none;
+  padding:6px 0;
+  animation:holidayScroll 28s linear infinite;
+}
+@keyframes holidayScroll{
+  0%{transform:translateX(100%);}
+  100%{transform:translateX(-100%);}
+}
+
 </style>
 </head>
 <body>
@@ -1238,6 +1253,223 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
   document.getElementById('day-name-el').textContent=`${day},`;
 })();
 
+// ===================== SINGAPORE PUBLIC HOLIDAYS =====================
+(function(){
+  const now = new Date();
+  const month = now.getMonth()+1; // 1-12
+  const date = now.getDate();
+  const year = now.getFullYear();
+
+  // Helper: compute Easter Sunday (Anonymous Gregorian algorithm)
+  function easterSunday(y){
+    const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4;
+    const f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30;
+    const i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7;
+    const m=Math.floor((a+11*h+22*l)/451);
+    const mo=Math.floor((h+l-7*m+114)/31),da=((h+l-7*m+114)%31)+1;
+    return {month:mo,date:da};
+  }
+  const easter=easterSunday(year);
+  const goodFridayDate = new Date(year,easter.month-1,easter.date-2);
+
+  // CNY: Chinese New Year dates (pre-computed for several years)
+  const cnyDates={
+    2024:{month:2,date:10},2025:{month:1,date:29},2026:{month:2,date:17},
+    2027:{month:2,date:6},2028:{month:1,date:26},2029:{month:2,date:13}
+  };
+  const cny=cnyDates[year]||{month:0,date:0};
+
+  // Hari Raya Puasa (approximate — shifts ~11 days/year)
+  const hariRayaPuasa={
+    2024:{month:4,date:10},2025:{month:3,date:30},2026:{month:3,date:20},
+    2027:{month:3,date:10},2028:{month:2,date:27}
+  };
+  const hrp=hariRayaPuasa[year]||{month:0,date:0};
+
+  // Hari Raya Haji (approximate)
+  const hariRayaHaji={
+    2024:{month:6,date:17},2025:{month:6,date:7},2026:{month:5,date:27},
+    2027:{month:5,date:17},2028:{month:5,date:5}
+  };
+  const hrh=hariRayaHaji[year]||{month:0,date:0};
+
+  // Vesak Day (approximate)
+  const vesakDay={
+    2024:{month:5,date:22},2025:{month:5,date:12},2026:{month:5,date:31},
+    2027:{month:5,date:21},2028:{month:5,date:9}
+  };
+  const vesak=vesakDay[year]||{month:0,date:0};
+
+  // Deepavali (approximate)
+  const deepavali={
+    2024:{month:10,date:31},2025:{month:10,date:20},2026:{month:11,date:8},
+    2027:{month:10,date:29},2028:{month:10,date:17}
+  };
+  const diwali=deepavali[year]||{month:0,date:0};
+
+  function matchDate(h){ return h.month===month && h.date===date; }
+
+  let holiday=null;
+
+  if(month===1 && date===1) holiday={
+    name:'New Year',
+    label:"Happy New Year 🎊",
+    heading:"New Year,",
+    emoji:"🎉🎊✨",
+    overlay:`<div class="holiday-overlay" id="holiday-overlay">🎊🎉🥂🎊🎉🥂🎊🎉🥂🎊🎉🎊🎉🥂🎊🎉🥂🎊</div>`,
+    css:`
+      body { background: linear-gradient(135deg, #0a0a2e 0%, #1a1a5e 40%, #0a0a2e 100%) !important; }
+      .main-title { color: #ffd700 !important; text-shadow: 0 0 20px #ffd700, 0 0 40px #ffaa00 !important; }
+      .day-label { color: #ffd700 !important; }
+    `
+  };
+  else if(matchDate(cny)||( cny.month===month && date===cny.date+1)) holiday={
+    name:'Chinese New Year',
+    label:"Happy Chinese New Year 🧧🐉",
+    heading:"新年快乐, Bao!",
+    emoji:"🧧🎆🐉🏮🧧🎆🐉",
+    overlay:`<div class="holiday-overlay" id="holiday-overlay">🏮🧧🐉🎆🏮🧧🐉🎆🏮🧧🐉🎆🏮🧧🐉🎆🏮🧧🐉🎆</div>`,
+    css:`
+      body { background: linear-gradient(135deg, #3d0000 0%, #8b0000 40%, #3d0000 100%) !important; }
+      .main-title { color: #ffd700 !important; text-shadow: 0 0 20px #ffd700, 0 0 40px #ff4400 !important; }
+      .day-label { color: #ffd700 !important; }
+      .love-card { border: 2px solid #ffd700 !important; background: rgba(139,0,0,0.3) !important; }
+    `
+  };
+  else if(month===2 && date===14) holiday={
+    name:"Valentine's Day",
+    label:"Happy Valentine's Day 💕",
+    heading:"Valentine's,",
+    emoji:"💕💖💝💕💖💝",
+    overlay:`<div class="holiday-overlay" id="holiday-overlay">💕💖💝💕💖💝💕💖💝💕💖💝💕💖💝💕💖💝</div>`,
+    css:`
+      body { background: linear-gradient(135deg, #3d0020 0%, #8b0040 40%, #3d0020 100%) !important; }
+      .main-title { color: #ff69b4 !important; text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff1493 !important; }
+      .day-label { color: #ff69b4 !important; }
+    `
+  };
+  else if(month===goodFridayDate.getMonth()+1 && date===goodFridayDate.getDate()) holiday={
+    name:'Good Friday',
+    label:"Good Friday 🌿",
+    heading:"Good Friday,",
+    emoji:"🌿✝️🕊️",
+    overlay:`<div class="holiday-overlay" id="holiday-overlay">🌿✝️🕊️🌿✝️🕊️🌿✝️🕊️🌿✝️🕊️🌿✝️🕊️🌿✝️🕊️</div>`,
+    css:`
+      body { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%) !important; }
+      .main-title { color: #c8a96e !important; }
+      .day-label { color: #c8a96e !important; }
+    `
+  };
+  else if(month===5 && date===1) holiday={
+    name:'Labour Day',
+    label:"Happy Labour Day 🛠️",
+    heading:"Labour Day,",
+    emoji:"🛠️⚒️🌟",
+    overlay:`<div class="holiday-overlay" id="holiday-overlay">🛠️⚒️🌟🛠️⚒️🌟🛠️⚒️🌟🛠️⚒️🌟🛠️⚒️🌟🛠️⚒️🌟</div>`,
+    css:``
+  };
+  else if(matchDate(vesak)) holiday={
+    name:'Vesak Day',
+    label:"Happy Vesak Day 🪷",
+    heading:"Vesak Day,",
+    emoji:"🪷☸️🕊️",
+    overlay:`<div class="holiday-overlay" id="holiday-overlay">🪷☸️🕊️🪷☸️🕊️🪷☸️🕊️🪷☸️🕊️🪷☸️🕊️🪷☸️🕊️</div>`,
+    css:`
+      body { background: linear-gradient(135deg, #0d2e1a 0%, #1a5c34 40%, #0d2e1a 100%) !important; }
+      .main-title { color: #ffe4b5 !important; text-shadow: 0 0 20px #ffd700 !important; }
+      .day-label { color: #ffe4b5 !important; }
+    `
+  };
+  else if(matchDate(hrp)) holiday={
+    name:'Hari Raya Puasa',
+    label:"Selamat Hari Raya 🌙",
+    heading:"Hari Raya!",
+    emoji:"🌙⭐🌴🕌🌙⭐",
+    overlay:`<div class="holiday-overlay" id="holiday-overlay">🌙⭐🕌🌴🌙⭐🕌🌴🌙⭐🕌🌴🌙⭐🕌🌴🌙⭐🕌🌴</div>`,
+    css:`
+      body { background: linear-gradient(135deg, #0a1e0f 0%, #1a4020 40%, #0a1e0f 100%) !important; }
+      .main-title { color: #ffd700 !important; text-shadow: 0 0 20px #ffd700 !important; }
+      .day-label { color: #ffd700 !important; }
+    `
+  };
+  else if(matchDate(hrh)) holiday={
+    name:'Hari Raya Haji',
+    label:"Selamat Hari Raya Haji 🌙",
+    heading:"Hari Raya Haji!",
+    emoji:"🌙⭐🕌☪️",
+    overlay:`<div class="holiday-overlay" id="holiday-overlay">🌙⭐🕌☪️🌙⭐🕌☪️🌙⭐🕌☪️🌙⭐🕌☪️🌙⭐🕌☪️</div>`,
+    css:`
+      body { background: linear-gradient(135deg, #0a1e0f 0%, #1a4020 40%, #0a1e0f 100%) !important; }
+      .main-title { color: #ffd700 !important; text-shadow: 0 0 20px #ffd700 !important; }
+      .day-label { color: #ffd700 !important; }
+    `
+  };
+  else if(month===8 && date===9) holiday={
+    name:"National Day",
+    label:"Happy National Day 🦁🇸🇬",
+    heading:"National Day!",
+    emoji:"🦁🇸🇬❤️🦁🇸🇬",
+    overlay:`<div class="holiday-overlay" id="holiday-overlay">🦁🇸🇬❤️🦁🇸🇬❤️🦁🇸🇬❤️🦁🇸🇬❤️🦁🇸🇬❤️🦁🇸🇬❤️</div>`,
+    css:`
+      body { background: linear-gradient(135deg, #8b0000 0%, #cc0000 40%, #8b0000 100%) !important; }
+      .main-title { color: #ffffff !important; text-shadow: 0 0 20px #ff4444, 0 0 40px #cc0000 !important; }
+      .day-label { color: #ffd700 !important; }
+      .love-card { border: 2px solid #cc0000 !important; }
+    `
+  };
+  else if(matchDate(diwali)) holiday={
+    name:'Deepavali',
+    label:"Happy Deepavali 🪔✨",
+    heading:"Deepavali!",
+    emoji:"🪔✨🌸🪔✨🌸",
+    overlay:`<div class="holiday-overlay" id="holiday-overlay">🪔✨🌸🎊🪔✨🌸🎊🪔✨🌸🎊🪔✨🌸🎊🪔✨🌸🎊</div>`,
+    css:`
+      body { background: linear-gradient(135deg, #1a0a00 0%, #3d1a00 40%, #1a0a00 100%) !important; }
+      .main-title { color: #ffd700 !important; text-shadow: 0 0 20px #ff8800, 0 0 40px #ff4400 !important; }
+      .day-label { color: #ff8800 !important; }
+    `
+  };
+  else if(month===12 && date===25) holiday={
+    name:'Christmas',
+    label:"Merry Christmas 🎄✨",
+    heading:"Christmas!",
+    emoji:"🎄⛄🎅🎄⛄🎅",
+    overlay:`<div class="holiday-overlay" id="holiday-overlay">🎄⛄🎅🦌🎄⛄🎅🦌🎄⛄🎅🦌🎄⛄🎅🦌🎄⛄🎅🦌</div>`,
+    css:`
+      body { background: linear-gradient(135deg, #0d2e0d 0%, #1a5c1a 40%, #0d2e0d 100%) !important; }
+      .main-title { color: #ffd700 !important; text-shadow: 0 0 20px #ffd700, 0 0 40px #ff6600 !important; }
+      .day-label { color: #ff4444 !important; }
+      .love-card { border: 2px solid #cc0000 !important; }
+    `
+  };
+
+  if(holiday){
+    // Inject CSS
+    if(holiday.css){
+      const style=document.createElement('style');
+      style.textContent=`.holiday-mode${holiday.css}`;
+      document.head.appendChild(style);
+      document.body.classList.add('holiday-mode');
+    }
+    // Inject overlay ticker
+    if(holiday.overlay){
+      const div=document.createElement('div');
+      div.innerHTML=holiday.overlay;
+      document.body.insertAdjacentElement('afterbegin',div.firstChild);
+    }
+    // Override day label + heading
+    const labelEl=document.getElementById('day-label-el');
+    const nameEl=document.getElementById('day-name-el');
+    if(labelEl) labelEl.textContent=holiday.label;
+    if(nameEl) nameEl.textContent=holiday.heading;
+    // Override page title
+    document.getElementById('page-title') && (document.getElementById('page-title').textContent=`${holiday.emoji} Happy Bao 🧡 ${holiday.emoji}`);
+
+    // Replace love note with a holiday-themed one
+    window._holidayNote = holiday;
+  }
+})();
+
 // ===================== LOVE NOTES =====================
 // One random note shown per page visit — stays fixed until they reload.
 const LOVE_NOTES=[
@@ -1346,10 +1578,144 @@ const LOVE_NOTES=[
     l2:`I just love being with you. In the big moments and the small ones. Especially the small ones, actually. The ones where we're just eating something warm and everything feels right.`,
     l3:`I lub you a whole lot, my nommable little dumpling. Now go play 🎮✨`
   },
+  {
+    l1:`Bao 🌙 You know that feeling when you're half asleep and everything is warm and soft and quiet? That's what being with you feels like, always. Even when we're nowhere near sleepy.`,
+    l2:`I think that's my favourite kind of comfort — the kind that just exists around you, naturally, without trying. You're my favourite place to be. 🧡`,
+    l3:`I lub you deeply and completely. Now wake up and go play 🎮✨`
+  },
+  {
+    l1:`Hi Bao 🥟 I was thinking today about how you will defend a food opinion with your whole chest and I find it genuinely adorable and extremely compelling at the same time.`,
+    l2:`Like yes, soft broccoli is superior. Yes, bean sprouts are a crime. I believe all of it. I would follow you into any food argument and stand beside you forever.`,
+    l3:`I lub you so much, my wonderful, opinionated, nommable Bao 💕🎮`
+  },
+  {
+    l1:`Dear Bao 🌸 Some days I catch myself thinking about all the little things you do — the way you tuck yourself in, the sounds you make when food is good, the way you get properly excited about something nice.`,
+    l2:`And I think: I want to be around for all of those moments. Every single one. The mundane ones especially. Those are my favourite. 🍜`,
+    l3:`I lub you more than I can adequately express. Go play the game, my person 🎮💕`
+  },
+  {
+    l1:`Bao! 🧡 Quick check-in from your Dudu: have you eaten? Have you had water? Are you wearing something comfortable? Good. You deserve all of that and more.`,
+    l2:`I hope today treats you kindly. I hope something unexpectedly delicious finds its way to you — a great bite, a warm moment, a tiny joy you didn't plan for. 🍡`,
+    l3:`I lub you. A lot. A truly embarrassing amount. Now go play 🎮✨`
+  },
+  {
+    l1:`Hey Bao 🌷 I was thinking about the first time you let me hold your hand and how that felt like the whole world got a little bit softer and a little bit better all at once.`,
+    l2:`I still feel that, by the way. Every time. You have this effect on me and I don't think it's going anywhere and I am completely fine with that. More than fine. 💛`,
+    l3:`I lub you so, so much. Go catch some hearts for me 🎮💕`
+  },
+  {
+    l1:`Bao 🥟 Genuine appreciation post: you are the kind of person who texts back thoughtfully, remembers small things, and cares in quiet ways that mean the most.`,
+    l2:`The world needs more people like you. I am very lucky that one of those people is also my favourite person to eat noodles with. You are wonderful. Just absolutely wonderful. 🍜`,
+    l3:`I lub you lots. Go play the game I built for you 🎮✨`
+  },
+  {
+    l1:`Good morning / afternoon / evening, Bao! ☀️🌙 Wherever this note finds you, I hope the day has been kind and the food has been good.`,
+    l2:`I just wanted to say that you make my ordinary days feel extraordinary. Not in a dramatic way — just in a very warm, very real, very lovely way. 🧡`,
+    l3:`I lub you deeply. Now go beat your high score 🎮🏆`
+  },
+  {
+    l1:`Bao 🌸 Did you know there are approximately zero people in the world with nommable cheeks as excellent as yours? Studies confirm. I have conducted them personally.`,
+    l2:`The data is irrefutable. You are the most nommable, the most wonderful, and the most loved. These are facts. I stand by all of them with full scientific confidence. 🐻‍❄️`,
+    l3:`I lub you enormously. Go play while I prepare more research 🎮💕`
+  },
+  {
+    l1:`Hey Bao 💛 I love how you have a whole internal rating system for every dish you eat. Like there is a full assessment happening behind those eyes and I respect it deeply.`,
+    l2:`Texture: must be right. Temperature: must be right. Unwanted elements: must be absent. I have learned so much from you and I will carry this knowledge forever. 🍜✨`,
+    l3:`I lub you, my beautifully particular, wonderfully nommable Bao. Now go play 🎮🥟`
+  },
+  {
+    l1:`Bao! 🧡 I just want you to know that somewhere out there, your Dudu is thinking about you, rooting for you, and quietly hoping your day has at least one moment of pure, uncomplicated joy.`,
+    l2:`You deserve that. You deserve a lot of those. You deserve all of it — the good food, the warm evenings, the soft moments, and the kind of happiness that sneaks up on you. 🌸`,
+    l3:`I lub you. Thank you for being you. Now go play 🎮💕`
+  },
+  {
+    l1:`Bao 🥟 I keep thinking about how you always know exactly what you want to eat and exactly how you want it cooked. That level of self-knowledge is genuinely inspiring.`,
+    l2:`Some people wander through life uncertain about noodle soup preferences. Not you. You know. And I love that about you. Never change. Well — except maybe try one new thing occasionally. With me. 🍜`,
+    l3:`I lub you heaps. Now go play, my decisive little dumpling 🎮✨`
+  },
+  {
+    l1:`Dear Bao 💕 I hope you know that the way you exist in the world — the way you care, the way you feel things fully, the way you laugh — all of it is a gift.`,
+    l2:`Not just to me, though especially to me. To everyone who gets to know you. You make the room better. You make my life better. You're just genuinely, quietly extraordinary. 🌸`,
+    l3:`I lub you so very much. Go play the game I made because I wanted you to smile 🎮💕`
+  },
+  {
+    l1:`Hi Bao 🌤️ Random Tuesday (or whatever day this is) check-in to say: I miss you when we're apart in the dumbest little ways.`,
+    l2:`Like I'll see something and immediately want to show you. Or eat something good and wish you were there to share it. You're my default person and that is a very lovely thing to be. 🧡`,
+    l3:`I lub you. Okay, enough feelings. Go catch those hearts 🎮✨`
+  },
+  {
+    l1:`Bao 🌙 Here is a short list of things I like about you: your laugh, your cheeks, your food opinions, your warmth, your particular way of being in the world, and also everything else.`,
+    l2:`That's the full list. I tried to narrow it down but I couldn't, so the list is everything. You are everything. I hope that's okay. I think it's okay. 💛`,
+    l3:`I lub you an enormous amount. Now please go play before I get too sappy 🎮💕`
+  },
 ];
 
 (function(){
-  const n=LOVE_NOTES[Math.floor(Math.random()*LOVE_NOTES.length)];
+  // Holiday-specific love notes
+  const HOLIDAY_NOTES={
+    'Chinese New Year':{
+      l1:`新年快乐, Bao! 🧧🐉 It's Chinese New Year and I hope this year brings you everything wonderful — good health, great food, and endless happiness.`,
+      l2:`May this new year be full of the softest moments, the most delicious nomnoms (extra lucky foods obviously 🥟🍊), and all the good fortune you deserve.`,
+      l3:`I lub you so much, my precious Bao. 恭喜发财！Now go play and collect good luck 🎮🏮`
+    },
+    'National Day':{
+      l1:`Happy National Day, Bao! 🦁🇸🇬 Today we celebrate this little red dot we call home — the place where your favourite noodles live, and where you live, which makes it extra special.`,
+      l2:`I love that Singapore is part of our story. Ding Te Le in Kovan, the hawker centres, the MRT rides — all of it. Our little island did good by giving me you. 🍜`,
+      l3:`I lub you, my Singaporean Bao 🧡 Happy birthday, Singapore! Now go play 🎮❤️`
+    },
+    'Christmas':{
+      l1:`Merry Christmas, Bao! 🎄✨ I hope today is cosy and warm and full of good food and even better company. You are my favourite Christmas gift, just so you know.`,
+      l2:`I wish you a day full of joy, the exact amount of family you want (no more, no less), delicious food that hits perfectly, and zero unwanted garnishes. 🎅🍜`,
+      l3:`I lub you so very much. Have the loveliest Christmas, my nommable little dumpling 🎮🎁💕`
+    },
+    "Valentine's Day":{
+      l1:`Happy Valentine's Day, Bao 💕 I know it's a bit cheesy but I am delighted to be cheesy about this: you are genuinely my favourite person and I am so glad you're mine.`,
+      l2:`You make love feel easy and warm and good. Not complicated. Not scary. Just — really lovely. Like a warm bowl of noodles that's exactly the right temperature. 🍜💕`,
+      l3:`I lub you more than words can hold. Today and every day. Now go play, my Valentine 🎮💝`
+    },
+    'Deepavali':{
+      l1:`Happy Deepavali, Bao! 🪔✨ The festival of lights — and you are honestly one of the brightest things in my life, so this feels very fitting.`,
+      l2:`May today bring you light, warmth, sweetness, and all the good things this beautiful festival represents. You deserve every bit of it. 🌸🎊`,
+      l3:`I lub you, my luminous, wonderful Bao 🧡 Happy Deepavali! Now go play 🎮🪔`
+    },
+    'Hari Raya Puasa':{
+      l1:`Selamat Hari Raya, Bao! 🌙⭐ Wishing you a day full of warmth, togetherness, and all the amazing food that comes with this beautiful celebration.`,
+      l2:`May this day bring you joy, peace, and the loveliest moments with the people you love. You deserve all of that and more. 🕌🌴`,
+      l3:`I lub you, my wonderful Bao 🧡 Selamat Hari Raya! Now go play 🎮✨`
+    },
+    'Hari Raya Haji':{
+      l1:`Selamat Hari Raya Haji, Bao! 🌙☪️ Wishing you a meaningful and beautiful day filled with reflection, gratitude, and warmth.`,
+      l2:`May this day bring you peace and joy, and remind you how cherished you are — not just by me, but by everyone lucky enough to know you. 🕌`,
+      l3:`I lub you deeply. Selamat Hari Raya Haji! Now go play 🎮🌙`
+    },
+    'New Year':{
+      l1:`Happy New Year, Bao! 🎊🥂 A whole new year — full of possibilities, adventures, good food, and hopefully a whole lot of us doing fun things together.`,
+      l2:`I hope this year is kind to you. I hope it gives you growth and joy and the most delicious moments. And I hope I get to be in a lot of them. 🌟`,
+      l3:`I lub you so much. Here's to another year of you existing and being wonderful 🎮🎉`
+    },
+    'Vesak Day':{
+      l1:`Happy Vesak Day, Bao 🪷☸️ A day of peace and reflection — may today bring you stillness, warmth, and all the quiet joy you deserve.`,
+      l2:`You carry so much goodness in you, Bao. On a day that celebrates compassion and kindness, I just want you to know: you embody all of that effortlessly. 🌸`,
+      l3:`I lub you, peacefully and completely 🧡 Now go play 🎮🕊️`
+    },
+    'Labour Day':{
+      l1:`Happy Labour Day, Bao! 🛠️ A well-earned day of rest — which means today you are officially required to take it easy and eat something really good.`,
+      l2:`You work hard and you deserve every break you get. Today especially. I hope you spend it comfortably, warmly, and with excellent snacks. 🍡`,
+      l3:`I lub you. Rest up, my hardworking Bao. Then go play 🎮✨`
+    },
+    'Good Friday':{
+      l1:`Good Friday, Bao 🌿 A quiet and reflective day — I hope it's peaceful for you, full of stillness and warmth.`,
+      l2:`Whatever today looks like for you, I hope there's something gentle and good in it. A warm moment, a nice bite, a feeling of calm. 🕊️`,
+      l3:`I lub you, always 🧡 Take it easy today 🌿`
+    },
+  };
+
+  let n;
+  if(window._holidayNote && HOLIDAY_NOTES[window._holidayNote.name]){
+    n=HOLIDAY_NOTES[window._holidayNote.name];
+  } else {
+    n=LOVE_NOTES[Math.floor(Math.random()*LOVE_NOTES.length)];
+  }
   document.getElementById('note-line1').textContent=n.l1;
   document.getElementById('note-line2').textContent=n.l2;
   document.getElementById('note-line3').textContent=n.l3;
@@ -4984,6 +5350,9 @@ const PD_PET_DEFS = [
   {id:'pd_pet_snail',   rarity:'common',   emoji:'🐌', name:'Sludge',      bjSkill:'push',    bjVal:5,  desc:'Ties (push) heal 5 HP instead of nothing', sound:'pet_heal'},
   {id:'pd_pet_parrot',  rarity:'common',   emoji:'🦜', name:'Polly',       bjSkill:'xp',      bjVal:0,  desc:'Win streaks: each consecutive win heals +1 HP extra', sound:'pet_heal'},
   {id:'pd_pet_fish',    rarity:'common',   emoji:'🐠', name:'Bubbles',     bjSkill:'dmgredu', bjVal:2,  desc:'All boss attacks deal 2 less damage',  sound:'pet_shield'},
+  {id:'pd_pet_hamster', rarity:'common',   emoji:'🐹', name:'Cheeks',      bjSkill:'coins',   bjVal:0,  desc:'Push rounds give +1 coin instead of nothing', sound:'pet_coin'},
+  {id:'pd_pet_duck',    rarity:'common',   emoji:'🦆', name:'Quackers',    bjSkill:'heal',    bjVal:2,  desc:'Heals 2 HP on a push (tie)',            sound:'pet_heal'},
+  {id:'pd_pet_bunny',   rarity:'common',   emoji:'🐰', name:'Cottontail',  bjSkill:'lucky',   bjVal:3,  desc:'3% chance to draw a perfect card (exactly what you need)', sound:'pet_lucky'},
 
   // ── UNCOMMON (6 pets, meaningfully different) ────────────────────────────
   {id:'pd_pet_fox',     rarity:'uncommon', emoji:'🦊', name:'Foxy',        bjSkill:'damage',  bjVal:4,  desc:'+4 bonus damage on every win',         sound:'pet_atk'},
@@ -4992,6 +5361,9 @@ const PD_PET_DEFS = [
   {id:'pd_pet_otter',   rarity:'uncommon', emoji:'🦦', name:'Bubbles',     bjSkill:'lucky',   bjVal:8,  desc:'8% chance of a free card re-draw',     sound:'pet_lucky'},
   {id:'pd_pet_koala',   rarity:'uncommon', emoji:'🐨', name:'Gumleaf',     bjSkill:'coins',   bjVal:2,  desc:'+2 coins on every win',                sound:'pet_coin'},
   {id:'pd_pet_raccoon', rarity:'uncommon', emoji:'🦝', name:'Bandit',      bjSkill:'steal',   bjVal:0,  desc:'On win: boss loses 3 extra HP (armour pierce)', sound:'pet_atk'},
+  {id:'pd_pet_flamingo',rarity:'uncommon', emoji:'🦩', name:'Rosie',       bjSkill:'heal',    bjVal:4,  desc:'Heals 4 HP on win + 4 HP on blackjack (21)', sound:'pet_heal'},
+  {id:'pd_pet_bee',     rarity:'uncommon', emoji:'🐝', name:'Buzzy',       bjSkill:'coins',   bjVal:1,  desc:'+1 coin per win AND +2 coins on blackjack', sound:'pet_coin'},
+  {id:'pd_pet_wolf',    rarity:'uncommon', emoji:'🐺', name:'Howler',      bjSkill:'damage',  bjVal:3,  desc:'+3 damage on win, +6 on 3+ win streak', sound:'pet_atk'},
 
   // ── RARE (6 pets, each unique mechanic) ─────────────────────────────────
   {id:'pd_pet_dragon',  rarity:'rare',     emoji:'🐲', name:'Longlong',    bjSkill:'damage',  bjVal:7,  desc:'+7 bonus damage on win',               sound:'pet_atk'},
@@ -5000,6 +5372,8 @@ const PD_PET_DEFS = [
   {id:'pd_pet_deer',    rarity:'rare',     emoji:'🦌', name:'Deerling',    bjSkill:'lucky',   bjVal:12, desc:'12% free re-draw + draw gives +2 HP if card ≤6', sound:'pet_lucky'},
   {id:'pd_pet_tiger',   rarity:'rare',     emoji:'🐯', name:'Tigeroo',     bjSkill:'coins',   bjVal:5,  desc:'+5 coins on win + double coins on blackjack (21)', sound:'pet_coin'},
   {id:'pd_pet_octopus', rarity:'rare',     emoji:'🐙', name:'Inky',        bjSkill:'peek',    bjVal:0,  desc:'On deal: 25% chance to peek dealer\'s hidden card', sound:'pet_lucky'},
+  {id:'pd_pet_shark',   rarity:'rare',     emoji:'🦈', name:'Finn',        bjSkill:'damage',  bjVal:5,  desc:'+5 damage on win; on boss attack, 20% chance to negate it', sound:'pet_atk'},
+  {id:'pd_pet_elephant',rarity:'rare',     emoji:'🐘', name:'Dumpling',    bjSkill:'shield',  bjVal:20, desc:'20% block; when blocked, heal 4 HP',   sound:'pet_shield'},
 
   // ── EPIC (5 pets, powerful and distinct) ─────────────────────────────────
   {id:'pd_pet_phoenix', rarity:'epic',     emoji:'🔥', name:'Blaze',       bjSkill:'revive',  bjVal:35, desc:'Revive once at 35 HP when you would die',  sound:'pet_ult'},
@@ -5007,6 +5381,8 @@ const PD_PET_DEFS = [
   {id:'pd_pet_dolphin', rarity:'epic',     emoji:'🐬', name:'Flipper',     bjSkill:'heal',    bjVal:14, desc:'Heals 14 HP on win + bonus 8 HP on blackjack', sound:'pet_heal'},
   {id:'pd_pet_gorilla', rarity:'epic',     emoji:'🦍', name:'Kong',        bjSkill:'damage',  bjVal:13, desc:'+13 damage on win. On boss hit: rage (+5 dmg next hand)', sound:'pet_atk'},
   {id:'pd_pet_narwhal', rarity:'epic',     emoji:'🦑', name:'Narwhal',     bjSkill:'ult',     bjVal:0,  desc:'Ultimate cost reduced by 1 win AND refunds 1 charge on win after ult', sound:'pet_ult'},
+  {id:'pd_pet_hippo',   rarity:'epic',     emoji:'🦛', name:'Chomp',       bjSkill:'damage',  bjVal:10, desc:'+10 damage on win; if HP below 50%, +20 damage instead', sound:'pet_atk'},
+  {id:'pd_pet_puffin',  rarity:'epic',     emoji:'🐧', name:'Puffin',      bjSkill:'shield',  bjVal:28, desc:'28% block + all blocked attacks restore 5 HP', sound:'pet_shield'},
 
   // ── LEGENDARY (4 pets — each a completely different game-changer) ────────
   {id:'pd_pet_minibao', rarity:'legendary',emoji:'🥟', name:'Mini Bao',    bjSkill:'ultimate',bjVal:0, desc:'Every ability triggers twice: double heal, double damage, double block', sound:'pet_ult'},
@@ -6257,6 +6633,9 @@ const GACHA_POOL = [
   {id:'pet_duck',    type:'pet', rarity:'common', name:'🦆 Quackers',   emoji:'🦆', desc:'Nudges hearts within 12px toward the basket centre.',            petSkill:'heartsnag'},
   {id:'pet_ladybug', type:'pet', rarity:'common', name:'🐞 Dotty',      emoji:'🐞', desc:'+1 bonus XP per heart caught.',                                  petSkill:'coinchance'},
   {id:'pet_fish',    type:'pet', rarity:'common', name:'🐠 Bubbles',    emoji:'🐠', desc:'Bad items are 8% smaller and harder to accidentally catch.',      petSkill:'frogluck'},
+  {id:'pet_hamster', type:'pet', rarity:'common', name:'🐹 Nibbles',    emoji:'🐹', desc:'Every 15 hearts caught: +1 bonus coin automatically.',            petSkill:'coinchance'},
+  {id:'pet_crab',    type:'pet', rarity:'common', name:'🦀 Snappy',     emoji:'🦀', desc:'5% chance a missed heart bounces back up for another catch.',    petSkill:'heartsnag'},
+  {id:'pet_snail',   type:'pet', rarity:'common', name:'🐌 Sludge',     emoji:'🐌', desc:'Bad items spawn 8% less frequently.',                            petSkill:'frogluck'},
 
   // ── UNCOMMON (7 pets — clearly distinct, moderate power) ─────────────────
   {id:'pet_star',    type:'pet', rarity:'uncommon', name:'⭐ Starling',   emoji:'⭐', desc:'Restores 1 life every 40 hearts caught.',                       petSkill:'regen40'},
@@ -6266,6 +6645,9 @@ const GACHA_POOL = [
   {id:'pet_butterfly',type:'pet',rarity:'uncommon', name:'🦋 Flutter',    emoji:'🦋', desc:'Once every 20 hearts, spawns a bonus free heart at the top.',   petSkill:'beecoin'},
   {id:'pet_flamingo',type:'pet', rarity:'uncommon', name:'🦩 Rosie',      emoji:'🦩', desc:'Catching 3 hearts in a row grants a 3-second magnet burst.',    petSkill:'heartsnag'},
   {id:'pet_raccoon', type:'pet', rarity:'uncommon', name:'🦝 Bandit',     emoji:'🦝', desc:'5% chance any bad item turns into a coin when it lands.',       petSkill:'frogluck'},
+  {id:'pet_otter',   type:'pet', rarity:'uncommon', name:'🦦 Pippin',     emoji:'🦦', desc:'Every 30 hearts: +2 lives recovered (max lives cap applies).',  petSkill:'regen40'},
+  {id:'pet_koala',   type:'pet', rarity:'uncommon', name:'🐨 Gumleaf',    emoji:'🐨', desc:'Coin drops are worth +1 extra every time.',                     petSkill:'beecoin'},
+  {id:'pet_parrot',  type:'pet', rarity:'uncommon', name:'🦜 Polly',      emoji:'🦜', desc:'Repeats last equipped power-up effect once when it expires.',   petSkill:'heartsnag'},
 
   // ── RARE (7 pets — each a meaningful, unique mechanic) ───────────────────
   {id:'pet_dragon',  type:'pet', rarity:'rare', name:'🐲 Longlong',   emoji:'🐲', desc:'Spawns 1 bonus heart every 18 seconds.',                          petSkill:'heartspawn'},
@@ -6275,6 +6657,8 @@ const GACHA_POOL = [
   {id:'pet_mushroom',type:'pet', rarity:'rare', name:'🍄 Shroomie',   emoji:'🍄', desc:'Every 25 catches: all on-screen bad items vanish instantly.',      petSkill:'clearbad'},
   {id:'pet_octopus', type:'pet', rarity:'rare', name:'🐙 Inky',       emoji:'🐙', desc:'Score doubles for 5 seconds every 30 hearts (score only, not coins).', petSkill:'scoredouble'},
   {id:'pet_shark',   type:'pet', rarity:'rare', name:'🦈 Finn',       emoji:'🦈', desc:'+2 coins every time you catch a bad item with a shield.',          petSkill:'streakboost'},
+  {id:'pet_tiger',   type:'pet', rarity:'rare', name:'🐯 Tigeroo',    emoji:'🐯', desc:'Every 15 hearts: 4-second speed burst — basket moves 25% faster.', petSkill:'streakboost'},
+  {id:'pet_snake',   type:'pet', rarity:'rare', name:'🐍 Hissy',      emoji:'🐍', desc:'Bad items deflected sideways instead of costing a life (once every 20s).', petSkill:'frogluck'},
 
   // ── EPIC (6 pets — powerful, each does something different) ──────────────
   {id:'pet_dino',    type:'pet', rarity:'epic', name:'🦕 Nomnom Jr.', emoji:'🦕', desc:'Every 20 hearts: clears all bad items + spawns 1 bonus heart.',   petSkill:'clearbad'},
@@ -6283,6 +6667,8 @@ const GACHA_POOL = [
   {id:'pet_dolphin', type:'pet', rarity:'epic', name:'🐬 Flipper',    emoji:'🐬', desc:'Every 30 hearts: grants a Lucky Break shield automatically.',      petSkill:'luckyregen'},
   {id:'pet_narwhal', type:'pet', rarity:'epic', name:'🦑 Narwhal',    emoji:'🦑', desc:'Every 15 hearts: 6-second XP surge (2× XP).',                     petSkill:'xpburst'},
   {id:'pet_elepha',  type:'pet', rarity:'epic', name:'🐘 Dumpling',   emoji:'🐘', desc:'Streak resets to 4 (not 0) when hit. Stacks with other guards.',   petSkill:'streakguard'},
+  {id:'pet_gorilla', type:'pet', rarity:'epic', name:'🦍 Kong',       emoji:'🦍', desc:'Every 25 hearts: basket widens by 20% for 8 seconds.',            petSkill:'clearbad'},
+  {id:'pet_hippo',   type:'pet', rarity:'epic', name:'🦛 Chomp',      emoji:'🦛', desc:'Coin drops doubled for 10 seconds every 35 hearts.',              petSkill:'luckyregen'},
 
   // ── COIN BONUSES ──────────────────────────────────────────────────────────
   {id:'bon_coins20', type:'bonus',rarity:'uncommon', name:'💰 Coin Bag',   emoji:'💰', desc:'+20 coins now', instant:true, fn:(p)=>{p.coins+=20;p.coinsEarned+=20;}},
