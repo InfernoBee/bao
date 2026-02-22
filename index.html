@@ -856,24 +856,19 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
       <!-- PLAY SUB-TAB -->
       <div id="pd-subtab-play-content">
 
-      <!-- Betting Panel (shown before game starts) -->
-      <div id="pd-bet-panel" style="background:linear-gradient(160deg,#1a0800,#2a1200);border-radius:18px;padding:1.2rem 1rem;margin-bottom:.7rem;text-align:center;border:2px solid var(--gold);">
-        <div style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold);margin-bottom:.3rem;">🎲 Place Your Bet</div>
-        <div style="font-size:.7rem;color:rgba(255,255,255,.6);font-style:italic;margin-bottom:.7rem;">Win = earn your bet · Lose = lose your bet</div>
-        <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:.6rem;">
-          <button onclick="pdAdjustBet(-5)" style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--gold);background:rgba(255,255,255,.06);color:var(--gold);font-size:1rem;cursor:pointer;">−</button>
-          <div style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);min-width:60px;" id="pd-bet-amount">5</div>
-          <button onclick="pdAdjustBet(5)" style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--gold);background:rgba(255,255,255,.06);color:var(--gold);font-size:1rem;cursor:pointer;">+</button>
+      <!-- Coin reward info (no upfront bet — earn per hand) -->
+      <div id="pd-bet-panel" style="background:linear-gradient(160deg,#1a0800,#2a1200);border-radius:18px;padding:1rem 1rem .8rem;margin-bottom:.7rem;text-align:center;border:2px solid var(--gold);">
+        <div style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold);margin-bottom:.25rem;">🪙 Coin Stakes</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.75);line-height:1.7;">
+          Win a hand → <strong style="color:#4ade80">+3 coins</strong><br>
+          Blackjack (21 on deal) → <strong style="color:#4ade80">+6 coins</strong><br>
+          Lose a hand → <strong style="color:#f87171">−2 coins</strong><br>
+          Bust → <strong style="color:#f87171">−1 coin</strong><br>
+          Beat a boss → <strong style="color:#ffd700">+10 coins</strong><br>
+          Complete full run → <strong style="color:#ffd700">+20 bonus</strong>
         </div>
-        <div style="display:flex;gap:5px;justify-content:center;margin-bottom:.6rem;">
-          <button onclick="pdSetBet(5)" style="padding:.25rem .6rem;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);font-size:.65rem;cursor:pointer;">5</button>
-          <button onclick="pdSetBet(10)" style="padding:.25rem .6rem;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);font-size:.65rem;cursor:pointer;">10</button>
-          <button onclick="pdSetBet(25)" style="padding:.25rem .6rem;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);font-size:.65rem;cursor:pointer;">25</button>
-          <button onclick="pdSetBet(50)" style="padding:.25rem .6rem;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);font-size:.65rem;cursor:pointer;">50</button>
-        </div>
-        <div style="font-size:.6rem;color:rgba(255,255,255,.4);margin-bottom:.1rem;" id="pd-bet-limit-info">Max bet: 50 coins (scales with level)</div>
-        <div style="font-size:.6rem;color:rgba(255,200,100,.5);margin-bottom:.6rem;">Minimum bet: 5 coins to play</div>
-        <div id="pd-bet-error" style="font-size:.7rem;color:#f87171;min-height:1em;margin-bottom:.3rem;"></div>
+        <div style="font-size:.58rem;color:rgba(255,255,255,.4);margin-top:.4rem;font-style:italic;">Going negative? You're in debt — win hands to recover. Coins are never locked behind having a positive balance.</div>
+        <div id="pd-bet-error" style="font-size:.7rem;color:#f87171;min-height:.8em;margin-top:.3rem;"></div>
       </div>
 
       <!-- Character Select -->
@@ -895,8 +890,8 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
           <button class="pd-char-btn" onclick="pdSelectChar('bubu')" id="pd-btn-bubu"
             style="flex:1;border:2px solid #a78bfa;border-radius:14px;padding:.55rem .2rem;background:rgba(167,139,250,.1);cursor:pointer;font-family:'Playfair Display',serif;font-size:.72rem;color:var(--deep);transition:all .2s;">
             <div id="pd-portrait-bubu" style="display:flex;justify-content:center;margin-bottom:.2rem;"></div>
-            <div style="font-weight:bold;">Bubu</div>
-            <div style="font-size:.58rem;opacity:.68;line-height:1.3;margin-top:.15rem;">Peek Card<br>Fortune Paw</div>
+            <div id="pd-bubu-label" style="font-weight:bold;">Bubu</div>
+            <div id="pd-bubu-skills" style="font-size:.58rem;opacity:.68;line-height:1.3;margin-top:.15rem;">Peek Card<br>Fortune Paw</div>
           </button>
         </div>
       </div>
@@ -4099,11 +4094,12 @@ let pdState = {};
 
 // ── Init & Portrait Population ────────────────────────────────────────────
 (function pdInitPortraits(){
-  const ids=['bao','dudu','bubu'];
-  ids.forEach(id=>{
+  ['bao','dudu'].forEach(id=>{
     const el=document.getElementById('pd-portrait-'+id);
     if(el) el.innerHTML=getCharPortraitHTML(id,36);
   });
+  // Bubu: show portrait only if unlocked, else show lock icon
+  refreshBubuCard();
 })();
 
 // ── Card Engine ───────────────────────────────────────────────────────────
@@ -4163,21 +4159,14 @@ function pdRenderCards(){
 // ── Select Character ──────────────────────────────────────────────────────
 function pdSelectChar(charId){
   if(pdState.running) return;
-  // Check bet
-  if((P.coins||0) < pdCurrentBet){
-    document.getElementById('pd-bet-error').textContent = `Not enough coins! You have ${P.coins||0} 🪙`;
+  // Check Bubu is unlocked
+  if(charId==='bubu' && !P.bubuUnlocked){
+    document.getElementById('pd-bet-error').textContent='🔒 Bubu is locked! Unlock her via the 🎰 Lucky Slot Machine.';
     return;
   }
-  if(pdCurrentBet < 5){
-    document.getElementById('pd-bet-error').textContent = 'Minimum bet is 5 coins!';
-    return;
-  }
-  // Deduct bet
-  P.coins -= pdCurrentBet;
-  saveP();
-  pdUpdateCoinDisplay();
+  document.getElementById('pd-bet-error').textContent='';
   P.pdPetReviveUsed = false; // reset revive for new game
-  
+
   const char=PD_CHARS[charId];
   pdState={
     char:charId, charDef:char, running:true,
@@ -4191,7 +4180,7 @@ function pdSelectChar(charId){
     streakBonus:0, streakCount:0,
     phase:'deal', round:1,
     acquiredBuffs:[],
-    betAmount: pdCurrentBet,
+    handsWon:0, blackjacks:0, bossesBeaten:0,
     bonusCoins: 0,
     // Buff flags
     bufWinHeal:0, bufBossWeak:0, bufBlackjackAmp:0, bufPushHeal:0, bufLorMeeDmg:0,
@@ -4404,7 +4393,13 @@ function pdResolve(result, dealerBust=false){
   if(result==='win'){
     s.ultWins++;
     s.streakCount++;
+    s.handsWon=(s.handsWon||0)+1;
     const nat21=pdHandTotal(s.playerCards)===21&&s.playerCards.length===2;
+    // Per-hand coin reward
+    const handCoins = nat21 ? 6 : 3;
+    P.coins=(P.coins||0)+handCoins; P.coinsEarned=(P.coinsEarned||0)+handCoins;
+    if(nat21){ s.blackjacks=(s.blackjacks||0)+1; }
+    saveP(); pdUpdateCoinDisplay();
     dmgDealt=20+s.streakBonus+(s.bufBlackjackAmp&&nat21?20:0)+(dealerBust&&s.bufDealerPenalty?s.bufDealerPenalty:0)+(s.bufLorMeeDmg||0);
     if(s.doubleDmg) dmgDealt*=2;
     // Pet damage bonus
@@ -4437,6 +4432,10 @@ function pdResolve(result, dealerBust=false){
     s.streakBonus=pdState.bufMegaStreak?s.streakBonus:0;
     s.streakCount=0;
     dmgTaken=Math.max(0,boss.atk-(s.bufBossWeak||0));
+    // Coin loss on hand loss — can go negative (debt), no cap
+    const coinLoss = result==='bust' ? 1 : 2;
+    P.coins=(P.coins||0)-coinLoss;
+    saveP(); pdUpdateCoinDisplay(); updateWalletDisplays();
     if(boss.special==='freeze'&&Math.random()<.3){s.ab1Cd+=2;s.ab2Cd+=2;msg+=' ❄️ Abilities frozen!';}
     // Pet block chance
     const petBlock = Math.random() < pdPetBlockChance();
@@ -4451,7 +4450,7 @@ function pdResolve(result, dealerBust=false){
     s.shield=false;
     pdAudio.play('lose');
     pdFloatMsg(result==='bust'?'💥 Bust!':'💔 Ouch!');
-    msg=(result==='bust'?'Bust! ':'')+`Took ${(s.shield||petBlock)?0:dmgTaken} dmg.`+msg;
+    msg=(result==='bust'?'Bust! ':'')+`Took ${(!s.shield&&!petBlock)?dmgTaken:0} dmg. -${coinLoss}🪙`+msg;
   } else { // push
     if(s.bufPushHeal) s.hp=Math.min(s.maxHp,s.hp+s.bufPushHeal);
     pdMsg('Push! 🤝 A tie — no damage.');
@@ -4639,6 +4638,11 @@ function pdShowRewards(){
   const boss=PD_BOSSES[s.bossIdx];
   const tier=boss.tier<=1?1:boss.tier<=3?2:3;
   const pool=PD_REWARD_POOL[tier].filter(r=>!s.acquiredBuffs.includes(r.id));
+  // Per-boss coin reward
+  const bossCoins = 10;
+  P.coins=(P.coins||0)+bossCoins; P.coinsEarned=(P.coinsEarned||0)+bossCoins;
+  s.bossesBeaten=(s.bossesBeaten||0)+1;
+  saveP(); pdUpdateCoinDisplay(); updateWalletDisplays();
   // Pick 3 random distinct rewards
   const shuffled=[...pool].sort(()=>Math.random()-.5).slice(0,Math.min(3,pool.length));
 
@@ -4783,25 +4787,25 @@ function pdEndGame(won){
   const bufList=s.acquiredBuffs;
   document.getElementById('pd-acquired-buffs').textContent=bufList.length
     ?'Buffs earned: '+bufList.map(id=>{const r=Object.values(PD_REWARD_POOL).flat().find(x=>x.id===id);return r?r.icon+r.name:'';}).filter(Boolean).join(', '):'';
-  // Bet-based coin rewards
-  const betAmt = s.betAmount || 5;
+  // Per-run bonus coins
   const petCoins = s.bonusCoins || 0;
-  let coinsEarned = 0;
+  let coinsEarned = petCoins;
+  let breakdown = [];
   if(won){
-    // Win: earn back bet + same amount + pet bonus (capped at 2× bet to prevent runaway)
-    coinsEarned = Math.min(betAmt * 2, betAmt + petCoins + 5);
-  } else {
-    // Lose: small consolation (20% of bet back)
-    coinsEarned = Math.max(1, Math.floor(betAmt * 0.2));
+    coinsEarned += 20; // full run bonus
+    breakdown.push('🏆 +20 run bonus');
   }
-  P.coins=(P.coins||0)+coinsEarned;
-  P.coinsEarned=(P.coinsEarned||0)+coinsEarned;
-  saveP();
-  pdUpdateCoinDisplay();
-  updateWalletDisplays();
+  if(coinsEarned>0){
+    P.coins=(P.coins||0)+coinsEarned;
+    P.coinsEarned=(P.coinsEarned||0)+coinsEarned;
+    saveP();
+    pdUpdateCoinDisplay();
+    updateWalletDisplays();
+  }
+  const handsMsg = `Hands won: ${s.handsWon||0} · Blackjacks: ${s.blackjacks||0}`;
   document.getElementById('pd-coins-earned-msg').textContent=won
-    ?`💰 +${coinsEarned} coins earned! (bet: ${betAmt}) Visit the Shop tab for the Casino!`
-    :`💰 +${coinsEarned} consolation coins (bet ${betAmt} lost)`;
+    ?`${handsMsg}\n💰 +${coinsEarned} bonus coins! (${breakdown.join(', ')||'pet bonuses'})`
+    :`${handsMsg}${coinsEarned>0?`\n💰 +${coinsEarned} pet coins`:''}`;
   // Hide the old inline slot — it's now in the Shop sub-tab
   document.getElementById('pd-slot-wrap').style.display='none';
   pdAudio.play(won?'ult':'lose');
@@ -4924,7 +4928,14 @@ function pdUpdateCoinDisplay(){
   const cd=document.getElementById('pd-coins-display');
   const dd=document.getElementById('pd-diamonds-display');
   const pb=document.getElementById('pd-pet-badge');
-  if(cd) cd.textContent=P.coins||0;
+  if(cd){
+    const coins=P.coins||0;
+    cd.textContent=coins;
+    cd.style.color=coins<0?'#f87171':'';  // red when in debt
+    // also update the parent label if it wraps coins in gold text
+    const parent=cd.closest('[style*="gold"]');
+    if(parent) parent.style.color=coins<0?'#f87171':'var(--gold)';
+  }
   if(dd) dd.textContent=P.diamonds||0;
   if(pb){
     if(P.pdEquippedPet){
@@ -4964,62 +4975,46 @@ function pdSetBet(amt){
 
 // ===================== PET DEFINITIONS FOR BLACKJACK =====================
 const PD_PET_DEFS = [
-  // COMMON — subtle bonuses
-  {id:'pd_pet_cat',     rarity:'common',   emoji:'🐱', name:'Whiskers',    bjSkill:'heal',   bjVal:3,  desc:'Heals 3 HP on win',        sound:'pet_heal'},
-  {id:'pd_pet_chick',   rarity:'common',   emoji:'🐥', name:'Peepster',    bjSkill:'coins',  bjVal:1,  desc:'+1 bonus coin on win',     sound:'pet_coin'},
-  {id:'pd_pet_frog',    rarity:'common',   emoji:'🐸', name:'Hopkins',     bjSkill:'heal',   bjVal:2,  desc:'Heals 2 HP on win',        sound:'pet_heal'},
-  {id:'pd_pet_bunny',   rarity:'common',   emoji:'🐰', name:'Cottontail',  bjSkill:'coins',  bjVal:1,  desc:'+1 bonus coin on win',     sound:'pet_coin'},
-  {id:'pd_pet_hamster', rarity:'common',   emoji:'🐹', name:'Cheekums',    bjSkill:'heal',   bjVal:2,  desc:'Heals 2 HP on win',        sound:'pet_heal'},
-  {id:'pd_pet_turtle',  rarity:'common',   emoji:'🐢', name:'Shellbert',   bjSkill:'shield', bjVal:8,  desc:'8% block chance',          sound:'pet_shield'},
-  {id:'pd_pet_duck',    rarity:'common',   emoji:'🦆', name:'Quackers',    bjSkill:'coins',  bjVal:1,  desc:'+1 bonus coin on win',     sound:'pet_coin'},
-  {id:'pd_pet_ladybug', rarity:'common',   emoji:'🐞', name:'Dotty',       bjSkill:'lucky',  bjVal:3,  desc:'3% chance free re-draw',   sound:'pet_lucky'},
-  // UNCOMMON — decent bonuses
-  {id:'pd_pet_fox',     rarity:'uncommon', emoji:'🦊', name:'Foxy',        bjSkill:'damage', bjVal:3,  desc:'+3 bonus damage on win',   sound:'pet_atk'},
-  {id:'pd_pet_penguin', rarity:'uncommon', emoji:'🐧', name:'Waddles',     bjSkill:'shield', bjVal:15, desc:'15% block chance',         sound:'pet_shield'},
-  {id:'pd_pet_bee',     rarity:'uncommon', emoji:'🐝', name:'Buzzy',       bjSkill:'coins',  bjVal:2,  desc:'+2 bonus coins on win',    sound:'pet_coin'},
-  {id:'pd_pet_owl',     rarity:'uncommon', emoji:'🦉', name:'Hootsworth',  bjSkill:'damage', bjVal:4,  desc:'+4 bonus damage on win',   sound:'pet_atk'},
-  {id:'pd_pet_crab',    rarity:'uncommon', emoji:'🦀', name:'Snappy',      bjSkill:'heal',   bjVal:5,  desc:'Heals 5 HP on win',        sound:'pet_heal'},
-  {id:'pd_pet_otter',   rarity:'uncommon', emoji:'🦦', name:'Bubbles',     bjSkill:'lucky',  bjVal:6,  desc:'6% chance free re-draw',   sound:'pet_lucky'},
-  // RARE — strong bonuses
-  {id:'pd_pet_dragon',  rarity:'rare',     emoji:'🐲', name:'Longlong',    bjSkill:'damage', bjVal:6,  desc:'+6 bonus damage on win',   sound:'pet_atk'},
-  {id:'pd_pet_panda',   rarity:'rare',     emoji:'🐼', name:'Mochi',       bjSkill:'heal',   bjVal:8,  desc:'Heals 8 HP on win',        sound:'pet_heal'},
-  {id:'pd_pet_unicorn', rarity:'rare',     emoji:'🦄', name:'Sparkle',     bjSkill:'shield', bjVal:22, desc:'22% block chance',         sound:'pet_shield'},
-  {id:'pd_pet_wolf',    rarity:'rare',     emoji:'🐺', name:'Howler',      bjSkill:'damage', bjVal:7,  desc:'+7 bonus damage + 3% lifesteal', sound:'pet_atk'},
-  {id:'pd_pet_deer',    rarity:'rare',     emoji:'🦌', name:'Deerling',    bjSkill:'lucky',  bjVal:10, desc:'10% free re-draw chance',  sound:'pet_lucky'},
-  {id:'pd_pet_tiger',   rarity:'rare',     emoji:'🐯', name:'Tigeroo',     bjSkill:'coins',  bjVal:4,  desc:'+4 bonus coins on win',    sound:'pet_coin'},
-  // EPIC — powerful abilities
-  {id:'pd_pet_phoenix', rarity:'epic',     emoji:'🔥', name:'Blaze',       bjSkill:'revive', bjVal:30, desc:'Revive once with 30 HP!',  sound:'pet_ult'},
-  {id:'pd_pet_dino',    rarity:'epic',     emoji:'🦕', name:'Nomnom Jr.',  bjSkill:'damage', bjVal:10, desc:'+10 bonus damage on win',  sound:'pet_atk'},
-  {id:'pd_pet_lion',    rarity:'epic',     emoji:'🦁', name:'Simba',       bjSkill:'shield', bjVal:30, desc:'30% block + reflect 5 dmg',sound:'pet_shield'},
-  {id:'pd_pet_dolphin', rarity:'epic',     emoji:'🐬', name:'Flipper',     bjSkill:'heal',   bjVal:12, desc:'Heals 12 HP on win',       sound:'pet_heal'},
-  {id:'pd_pet_narwhal', rarity:'epic',     emoji:'🦑', name:'Narwhal',     bjSkill:'lucky',  bjVal:15, desc:'15% free re-draw + heal 5',sound:'pet_lucky'},
-  // LEGENDARY — game-changing (super rare)
-  {id:'pd_pet_minibao', rarity:'legendary',emoji:'🥟', name:'Mini Bao',    bjSkill:'ultimate',bjVal:0, desc:'All abilities: heal 8, +8 dmg, 25% block, +3 coins', sound:'pet_ult'},
-  {id:'pd_pet_lildudu', rarity:'legendary',emoji:'🐻', name:'Lil Dudu',    bjSkill:'ultimate',bjVal:0, desc:'Rage mode: 2× damage for 3 hands after boss hit',     sound:'pet_ult'},
-  {id:'pd_pet_royaldragon',rarity:'legendary',emoji:'🔱',name:'Royal Dragon',bjSkill:'ultimate',bjVal:0,desc:'Dragon fire: 15 dmg on win + 20% block + heal 5',    sound:'pet_ult'},
-  // NEW COMMON PETS
-  {id:'pd_pet_snail',   rarity:'common',   emoji:'🐌', name:'Sludge',      bjSkill:'shield', bjVal:6,  desc:'6% block chance',          sound:'pet_shield'},
-  {id:'pd_pet_mouse',   rarity:'common',   emoji:'🐭', name:'Nibbles',     bjSkill:'coins',  bjVal:1,  desc:'+1 coin on win',           sound:'pet_coin'},
-  {id:'pd_pet_parrot',  rarity:'common',   emoji:'🦜', name:'Polly',       bjSkill:'heal',   bjVal:2,  desc:'Heals 2 HP on win',        sound:'pet_heal'},
-  {id:'pd_pet_hedgehog',rarity:'common',   emoji:'🦔', name:'Spikes',      bjSkill:'shield', bjVal:7,  desc:'7% block + 1 reflect dmg', sound:'pet_shield'},
-  {id:'pd_pet_fish',    rarity:'common',   emoji:'🐠', name:'Bubbles',     bjSkill:'lucky',  bjVal:4,  desc:'4% free re-draw chance',   sound:'pet_lucky'},
-  // NEW UNCOMMON PETS
-  {id:'pd_pet_koala',   rarity:'uncommon', emoji:'🐨', name:'Eucalyptus',  bjSkill:'heal',   bjVal:6,  desc:'Heals 6 HP on win',        sound:'pet_heal'},
-  {id:'pd_pet_flamingo',rarity:'uncommon', emoji:'🦩', name:'Rosie',       bjSkill:'coins',  bjVal:3,  desc:'+3 coins on win',          sound:'pet_coin'},
-  {id:'pd_pet_sloth',   rarity:'uncommon', emoji:'🦥', name:'Lazy',        bjSkill:'shield', bjVal:18, desc:'18% block chance',         sound:'pet_shield'},
-  {id:'pd_pet_raccoon', rarity:'uncommon', emoji:'🦝', name:'Bandit',      bjSkill:'lucky',  bjVal:8,  desc:'8% free re-draw chance',   sound:'pet_lucky'},
-  // NEW RARE PETS
-  {id:'pd_pet_elephant',rarity:'rare',     emoji:'🐘', name:'Peanut',      bjSkill:'heal',   bjVal:10, desc:'Heals 10 HP on win + 5% block', sound:'pet_heal'},
-  {id:'pd_pet_croc',    rarity:'rare',     emoji:'🐊', name:'Chomper',     bjSkill:'damage', bjVal:8,  desc:'+8 bonus damage on win',   sound:'pet_atk'},
-  {id:'pd_pet_octopus', rarity:'rare',     emoji:'🐙', name:'Inky',        bjSkill:'lucky',  bjVal:12, desc:'12% re-draw + heal 3 HP',  sound:'pet_lucky'},
-  {id:'pd_pet_shark',   rarity:'rare',     emoji:'🦈', name:'Finn',        bjSkill:'damage', bjVal:9,  desc:'+9 dmg + 10% lifesteal',   sound:'pet_atk'},
-  // NEW EPIC PETS
-  {id:'pd_pet_whale',   rarity:'epic',     emoji:'🐋', name:'Moby',        bjSkill:'heal',   bjVal:15, desc:'Heals 15 HP on win',       sound:'pet_heal'},
-  {id:'pd_pet_gorilla', rarity:'epic',     emoji:'🦍', name:'Kong',        bjSkill:'damage', bjVal:12, desc:'+12 dmg + stun 1 turn',    sound:'pet_atk'},
-  {id:'pd_pet_snake',   rarity:'epic',     emoji:'🐍', name:'Venom',       bjSkill:'lucky',  bjVal:18, desc:'18% re-draw + +6 dmg',     sound:'pet_lucky'},
-  // NEW LEGENDARY PET
-  {id:'pd_pet_bubu',    rarity:'legendary',emoji:'🐼', name:'Bubu Paw',    bjSkill:'ultimate',bjVal:0, desc:'Fortune paw: guarantee 1 win per boss + heal 20 HP', sound:'pet_ult'},
+  // ── COMMON (8 pets, each a distinct minor perk) ──────────────────────────
+  {id:'pd_pet_cat',     rarity:'common',   emoji:'🐱', name:'Whiskers',    bjSkill:'heal',    bjVal:3,  desc:'Heals 3 HP on every win',              sound:'pet_heal'},
+  {id:'pd_pet_chick',   rarity:'common',   emoji:'🐥', name:'Peepster',    bjSkill:'coins',   bjVal:1,  desc:'+1 coin on every win',                 sound:'pet_coin'},
+  {id:'pd_pet_turtle',  rarity:'common',   emoji:'🐢', name:'Shellbert',   bjSkill:'shield',  bjVal:8,  desc:'8% chance to block incoming damage',   sound:'pet_shield'},
+  {id:'pd_pet_ladybug', rarity:'common',   emoji:'🐞', name:'Dotty',       bjSkill:'lucky',   bjVal:4,  desc:'4% chance of a free card re-draw',     sound:'pet_lucky'},
+  {id:'pd_pet_mouse',   rarity:'common',   emoji:'🐭', name:'Nibbles',     bjSkill:'ult',     bjVal:0,  desc:'Ultimate charges 1 win faster',        sound:'pet_ult'},
+  {id:'pd_pet_snail',   rarity:'common',   emoji:'🐌', name:'Sludge',      bjSkill:'push',    bjVal:5,  desc:'Ties (push) heal 5 HP instead of nothing', sound:'pet_heal'},
+  {id:'pd_pet_parrot',  rarity:'common',   emoji:'🦜', name:'Polly',       bjSkill:'xp',      bjVal:0,  desc:'Win streaks: each consecutive win heals +1 HP extra', sound:'pet_heal'},
+  {id:'pd_pet_fish',    rarity:'common',   emoji:'🐠', name:'Bubbles',     bjSkill:'dmgredu', bjVal:2,  desc:'All boss attacks deal 2 less damage',  sound:'pet_shield'},
+
+  // ── UNCOMMON (6 pets, meaningfully different) ────────────────────────────
+  {id:'pd_pet_fox',     rarity:'uncommon', emoji:'🦊', name:'Foxy',        bjSkill:'damage',  bjVal:4,  desc:'+4 bonus damage on every win',         sound:'pet_atk'},
+  {id:'pd_pet_penguin', rarity:'uncommon', emoji:'🐧', name:'Waddles',     bjSkill:'shield',  bjVal:16, desc:'16% chance to block incoming damage',  sound:'pet_shield'},
+  {id:'pd_pet_crab',    rarity:'uncommon', emoji:'🦀', name:'Snappy',      bjSkill:'heal',    bjVal:6,  desc:'Heals 6 HP on every win',              sound:'pet_heal'},
+  {id:'pd_pet_otter',   rarity:'uncommon', emoji:'🦦', name:'Bubbles',     bjSkill:'lucky',   bjVal:8,  desc:'8% chance of a free card re-draw',     sound:'pet_lucky'},
+  {id:'pd_pet_koala',   rarity:'uncommon', emoji:'🐨', name:'Gumleaf',     bjSkill:'coins',   bjVal:2,  desc:'+2 coins on every win',                sound:'pet_coin'},
+  {id:'pd_pet_raccoon', rarity:'uncommon', emoji:'🦝', name:'Bandit',      bjSkill:'steal',   bjVal:0,  desc:'On win: boss loses 3 extra HP (armour pierce)', sound:'pet_atk'},
+
+  // ── RARE (6 pets, each unique mechanic) ─────────────────────────────────
+  {id:'pd_pet_dragon',  rarity:'rare',     emoji:'🐲', name:'Longlong',    bjSkill:'damage',  bjVal:7,  desc:'+7 bonus damage on win',               sound:'pet_atk'},
+  {id:'pd_pet_panda',   rarity:'rare',     emoji:'🐼', name:'Mochi',       bjSkill:'heal',    bjVal:9,  desc:'Heals 9 HP on win',                    sound:'pet_heal'},
+  {id:'pd_pet_unicorn', rarity:'rare',     emoji:'🦄', name:'Sparkle',     bjSkill:'shield',  bjVal:24, desc:'24% block chance + reflect 3 damage back', sound:'pet_shield'},
+  {id:'pd_pet_deer',    rarity:'rare',     emoji:'🦌', name:'Deerling',    bjSkill:'lucky',   bjVal:12, desc:'12% free re-draw + draw gives +2 HP if card ≤6', sound:'pet_lucky'},
+  {id:'pd_pet_tiger',   rarity:'rare',     emoji:'🐯', name:'Tigeroo',     bjSkill:'coins',   bjVal:5,  desc:'+5 coins on win + double coins on blackjack (21)', sound:'pet_coin'},
+  {id:'pd_pet_octopus', rarity:'rare',     emoji:'🐙', name:'Inky',        bjSkill:'peek',    bjVal:0,  desc:'On deal: 25% chance to peek dealer\'s hidden card', sound:'pet_lucky'},
+
+  // ── EPIC (5 pets, powerful and distinct) ─────────────────────────────────
+  {id:'pd_pet_phoenix', rarity:'epic',     emoji:'🔥', name:'Blaze',       bjSkill:'revive',  bjVal:35, desc:'Revive once at 35 HP when you would die',  sound:'pet_ult'},
+  {id:'pd_pet_lion',    rarity:'epic',     emoji:'🦁', name:'Simba',       bjSkill:'shield',  bjVal:32, desc:'32% block + when blocked, deal 8 counter dmg', sound:'pet_shield'},
+  {id:'pd_pet_dolphin', rarity:'epic',     emoji:'🐬', name:'Flipper',     bjSkill:'heal',    bjVal:14, desc:'Heals 14 HP on win + bonus 8 HP on blackjack', sound:'pet_heal'},
+  {id:'pd_pet_gorilla', rarity:'epic',     emoji:'🦍', name:'Kong',        bjSkill:'damage',  bjVal:13, desc:'+13 damage on win. On boss hit: rage (+5 dmg next hand)', sound:'pet_atk'},
+  {id:'pd_pet_narwhal', rarity:'epic',     emoji:'🦑', name:'Narwhal',     bjSkill:'ult',     bjVal:0,  desc:'Ultimate cost reduced by 1 win AND refunds 1 charge on win after ult', sound:'pet_ult'},
+
+  // ── LEGENDARY (4 pets — each a completely different game-changer) ────────
+  {id:'pd_pet_minibao', rarity:'legendary',emoji:'🥟', name:'Mini Bao',    bjSkill:'ultimate',bjVal:0, desc:'Every ability triggers twice: double heal, double damage, double block', sound:'pet_ult'},
+  {id:'pd_pet_lildudu', rarity:'legendary',emoji:'🐻', name:'Lil Dudu',    bjSkill:'ultimate',bjVal:0, desc:'After any boss hit: enter Rage for 3 hands (2× all damage dealt)',       sound:'pet_ult'},
+  {id:'pd_pet_royaldragon',rarity:'legendary',emoji:'🔱',name:'Royal Dragon',bjSkill:'ultimate',bjVal:0,desc:'Passive aura: +12 dmg, 18% block, heal 6 HP — all on every win',       sound:'pet_ult'},
+  {id:'pd_pet_bubu',    rarity:'legendary',emoji:'🐼', name:'Bubu Paw',    bjSkill:'ultimate',bjVal:0, desc:'Fortune aura: once per boss, next loss becomes a push instead. Heal 20 HP on boss kill.', sound:'pet_ult'},
 ];
+
 
 // Casino-grade probabilities for pet egg machine
 const PD_PET_EGG_WEIGHTS = {common:55, uncommon:28, rare:12, epic:4, legendary:0.8};
@@ -6253,69 +6248,56 @@ function downloadShareCard(){
 
 // ===================== GACHA SYSTEM =====================
 const GACHA_POOL = [
-  // ── COMMON PETS ──────────────────────────────────────────────────────────────
-  {id:'pet_cat',    type:'pet', rarity:'common',    name:'🐱 Whiskers',   emoji:'🐱', desc:'Purrs softly. Tiny chance to catch nearby hearts.',          petSkill:'heartsnag'},
-  {id:'pet_chick',  type:'pet', rarity:'common',    name:'🐥 Peepster',   emoji:'🐥', desc:'Tiny fluffy buddy. Cheers you on for a small luck boost.',    petSkill:'luck'},
-  {id:'pet_frog',   type:'pet', rarity:'common',    name:'🐸 Hopkins',    emoji:'🐸', desc:'Ribbit! Occasionally slows a falling bad item.',             petSkill:'frogluck'},
-  {id:'pet_bunny',  type:'pet', rarity:'common',    name:'🐰 Cottontail', emoji:'🐰', desc:'Hoppy pal. Boosts coin chance by +5%.',                      petSkill:'coinchance'},
-  {id:'pet_hamster',type:'pet', rarity:'common',    name:'🐹 Cheekums',   emoji:'🐹', desc:'Stores luck in cheeks. Small streak protection.',            petSkill:'luck'},
-  {id:'pet_turtle', type:'pet', rarity:'common',    name:'🐢 Shellbert',  emoji:'🐢', desc:'Slow and steady. Slightly extends buff timers.',             petSkill:'luck'},
-  {id:'pet_duck',   type:'pet', rarity:'common',    name:'🦆 Quackers',   emoji:'🦆', desc:'Quack! Gently nudges hearts toward basket.',                 petSkill:'heartsnag'},
-  {id:'pet_ladybug',type:'pet', rarity:'common',    name:'🐞 Dotty',      emoji:'🐞', desc:'Lucky bug. +1% coin drop chance per heart.',                 petSkill:'coinchance'},
-  // ── UNCOMMON PETS ────────────────────────────────────────────────────────────
-  {id:'pet_star',   type:'pet', rarity:'uncommon',  name:'⭐ Starling',   emoji:'⭐', desc:'Glittery friend. Restores 1 life every 40 hearts.',           petSkill:'regen40'},
-  {id:'pet_fox',    type:'pet', rarity:'uncommon',  name:'🦊 Foxy',       emoji:'🦊', desc:'Clever companion. Spots incoming bad items — shrinks them.',  petSkill:'shrink'},
-  {id:'pet_penguin',type:'pet', rarity:'uncommon',  name:'🐧 Waddles',    emoji:'🐧', desc:'Cool as ice. Bad items fall 8% slower.',                     petSkill:'slowbad'},
-  {id:'pet_bee',    type:'pet', rarity:'uncommon',  name:'🐝 Buzzy',      emoji:'🐝', desc:'Busy bee. +1 coin every 10 hearts caught.',                  petSkill:'beecoin'},
-  {id:'pet_owl',    type:'pet', rarity:'uncommon',  name:'🦉 Hootsworth', emoji:'🦉', desc:'Wise owl. XP gains increased by +10%.',                      petSkill:'xpowl'},
-  {id:'pet_crab',   type:'pet', rarity:'uncommon',  name:'🦀 Snappy',     emoji:'🦀', desc:'Sidestep master. Bad items 12% smaller.',                    petSkill:'shrink'},
-  {id:'pet_otter',  type:'pet', rarity:'uncommon',  name:'🦦 Bubbles',    emoji:'🦦', desc:'Playful otter. Every 15 hearts, a free coin appears.',        petSkill:'beecoin'},
-  // ── RARE PETS ────────────────────────────────────────────────────────────────
-  {id:'pet_dragon', type:'pet', rarity:'rare',      name:'🐲 Longlong',   emoji:'🐲', desc:'Lucky dragon. Spawns 1 bonus heart every 15 seconds.',       petSkill:'heartspawn'},
-  {id:'pet_panda',  type:'pet', rarity:'rare',      name:'🐼 Mochi',      emoji:'🐼', desc:'Squishy panda. Gives a mini magnet for 3s every 20 hearts.', petSkill:'minimagnet'},
-  {id:'pet_uni',    type:'pet', rarity:'rare',      name:'🦄 Sparkle',    emoji:'🦄', desc:'Pure magic. Doubles score once every 30 seconds.',           petSkill:'scoredouble'},
-  {id:'pet_wolf',   type:'pet', rarity:'rare',      name:'🐺 Howler',     emoji:'🐺', desc:'Fierce. Boosts streak by +1 every 25 consecutive hearts.',   petSkill:'streakboost'},
-  {id:'pet_deer',   type:'pet', rarity:'rare',      name:'🦌 Deerling',   emoji:'🦌', desc:'Graceful. +5% chance to turn a bad item into a heart.',      petSkill:'baddtonluck'},
-  {id:'pet_catt',   type:'pet', rarity:'rare',      name:'🐯 Tigeroo',    emoji:'🐯', desc:'Fierce cub. Doubles coin gain for 5s every 25 hearts.',      petSkill:'scoredouble'},
-  {id:'pet_mushroom',type:'pet',rarity:'rare',      name:'🍄 Shroomie',   emoji:'🍄', desc:'Magical. Every 20 catches clears all baddies instantly.',    petSkill:'clearbad'},
-  // ── EPIC PETS ────────────────────────────────────────────────────────────────
-  {id:'pet_dino',   type:'pet', rarity:'epic',      name:'🦕 Nomnom Jr.', emoji:'🦕', desc:'Baby brachiosaurus. Every 20 hearts, all bad items vanish!', petSkill:'clearbad'},
-  {id:'pet_phoenix',type:'pet', rarity:'epic',      name:'🦅 Blaze',      emoji:'🦅', desc:'Fiery guardian. Every 15 hearts, deflects the nearest falling bad item.',  petSkill:'deflect'},
-  {id:'pet_lion',   type:'pet', rarity:'epic',      name:'🦁 Simba',      emoji:'🦁', desc:'Roar! Every bad item you dodge restores 0.5 life.',          petSkill:'dodgerheal'},
-  {id:'pet_dolphin',type:'pet', rarity:'epic',      name:'🐬 Flipper',    emoji:'🐬', desc:'Playful! Grants a Lucky Break shield every 30 hearts.',      petSkill:'luckyregen'},
-  {id:'pet_narwhal',type:'pet', rarity:'epic',      name:'🦑 Narwhal',    emoji:'🦑', desc:'Mystic horn. Every 15 hearts, a free XP surge (5s).',        petSkill:'xpburst'},
-  {id:'pet_elepha', type:'pet', rarity:'epic',      name:'🐘 Dumpling',   emoji:'🐘', desc:'Never forgets. Streak resets to 3 (not 0) when hit.',        petSkill:'streakguard'},
-  // ── UNCOMMON / RARE BONUSES ──────────────────────────────────────────────────
-  {id:'bon_coins20',type:'bonus',rarity:'uncommon', name:'💰 Coin Bag',   emoji:'💰', desc:'+20 coins now',  instant:true, fn:(p)=>{p.coins+=20;p.coinsEarned+=20;}},
-  {id:'bon_coins30',type:'bonus',rarity:'uncommon', name:'💰 Coin Pouch', emoji:'💰', desc:'+30 coins now',  instant:true, fn:(p)=>{p.coins+=30;p.coinsEarned+=30;}},
-  {id:'bon_coins50',type:'bonus',rarity:'rare',     name:'💎 Gem Chest',  emoji:'💎', desc:'+50 coins now',  instant:true, fn:(p)=>{p.coins+=50;p.coinsEarned+=50;}},
-  {id:'bon_coins80',type:'bonus',rarity:'epic',     name:'💰 JACKPOT',    emoji:'💰', desc:'+80 coins now',  instant:true, fn:(p)=>{p.coins+=80;p.coinsEarned+=80;}},
-  // ── LEGENDARY PETS ───────────────────────────────────────────────────────────
-  {id:'pet_baobao', type:'pet', rarity:'legendary', name:'🥟 Mini Bao',   emoji:'🥟', desc:'A tiny Bao ✨ Grants a full Lucky Break + magnet every 25 hearts!', petSkill:'minibao'},
-  {id:'pet_dudu2',  type:'pet', rarity:'legendary', name:'🐻 Lil Dudu',   emoji:'🐻', desc:'Fluffiest boy. Doubles score for 5s every 35 hearts caught.', petSkill:'dudubuff'},
-  {id:'pet_dragon2',type:'pet', rarity:'legendary', name:'🔱 Royal Dragon',emoji:'🔱',desc:'Majestic. Bad items shrink AND fall slower. Always on.',        petSkill:'royalguard'},
-  {id:'char_bubu',  type:'char',rarity:'legendary', name:'🐼 BUBU',        emoji:'🐼', desc:'Unlock Bubu as a playable character! 🎉 (Shopaholic passive)'},
-  // NEW COMMON PETS
-  {id:'pet_snail',  type:'pet', rarity:'common',    name:'🐌 Sludge',     emoji:'🐌', desc:'Slow and chill. Slightly widens basket edges.',              petSkill:'luck'},
-  {id:'pet_mouse',  type:'pet', rarity:'common',    name:'🐭 Nibbles',    emoji:'🐭', desc:'Tiny but brave. +5% coin drop rate.',                        petSkill:'coinchance'},
-  {id:'pet_parrot', type:'pet', rarity:'common',    name:'🦜 Polly',      emoji:'🦜', desc:'Squawk! Announces incoming bad items with a flash.',          petSkill:'frogluck'},
-  {id:'pet_hedgehog',type:'pet',rarity:'common',    name:'🦔 Spikes',     emoji:'🦔', desc:'Prickly pal. Very small chance to deflect a bad item.',       petSkill:'frogluck'},
-  {id:'pet_fish',   type:'pet', rarity:'common',    name:'🐠 Bubbles',    emoji:'🐠', desc:'Bubbly friend. Boosts coin chance by +4%.',                   petSkill:'coinchance'},
-  // NEW UNCOMMON PETS
-  {id:'pet_koala',  type:'pet', rarity:'uncommon',  name:'🐨 Eucalyptus', emoji:'🐨', desc:'Drowsy but helpful. Restores 1 life every 35 hearts.',        petSkill:'regen40'},
-  {id:'pet_flamingo',type:'pet',rarity:'uncommon',  name:'🦩 Rosie',      emoji:'🦩', desc:'Elegant dancer. XP gains +12%.',                             petSkill:'xpowl'},
-  {id:'pet_sloth',  type:'pet', rarity:'uncommon',  name:'🦥 Lazy',       emoji:'🦥', desc:'Takes it easy. Bad items fall 10% slower.',                  petSkill:'slowbad'},
-  {id:'pet_raccoon',type:'pet', rarity:'uncommon',  name:'🦝 Bandit',     emoji:'🦝', desc:'Sneaky! Grabs +1 bonus coin every 12 hearts.',               petSkill:'beecoin'},
-  {id:'pet_butterfly',type:'pet',rarity:'uncommon', name:'🦋 Flutter',    emoji:'🦋', desc:'Gentle flutter nudges stray hearts toward basket.',           petSkill:'heartsnag'},
-  // NEW RARE PETS
-  {id:'pet_elephant',type:'pet',rarity:'rare',      name:'🐘 Peanut',     emoji:'🐘', desc:'Never forgets AND streak resets to 4 instead of 0.',         petSkill:'streakguard'},
-  {id:'pet_octopus',type:'pet', rarity:'rare',      name:'🐙 Inky',       emoji:'🐙', desc:'Eight arms! 8% chance to catch a second nearby heart.',       petSkill:'heartsnag'},
-  {id:'pet_shark',  type:'pet', rarity:'rare',      name:'🦈 Finn',       emoji:'🦈', desc:'Fins up! Doubles coin gain for 5s every 20 hearts.',          petSkill:'scoredouble'},
-  {id:'pet_gorilla',type:'pet', rarity:'rare',      name:'🦍 Kong',       emoji:'🦍', desc:'Mighty! Every 25 hearts, clears all bad items instantly.',    petSkill:'clearbad'},
-  // NEW EPIC PETS
-  {id:'pet_whale',  type:'pet', rarity:'epic',      name:'🐋 Moby',       emoji:'🐋', desc:'Ocean giant. Every 20 hearts spawns 2 bonus hearts.',         petSkill:'heartspawn'},
-  {id:'pet_snake',  type:'pet', rarity:'epic',      name:'🐍 Venom',      emoji:'🐍', desc:'Bad items that fall past the basket give +1 coin instead of hurting.', petSkill:'dodgerheal'},
-  {id:'pet_tiger',  type:'pet', rarity:'epic',      name:'🐯 Stripes',    emoji:'🐯', desc:'Fierce! Streak multiplier kicks in at 3 instead of 5.',       petSkill:'xpburst'},
+  // ── COMMON (8 pets — each a single distinct perk) ────────────────────────
+  {id:'pet_cat',     type:'pet', rarity:'common', name:'🐱 Whiskers',   emoji:'🐱', desc:'Tiny heartsnag: 3% chance to auto-catch a nearby heart.',       petSkill:'heartsnag'},
+  {id:'pet_chick',   type:'pet', rarity:'common', name:'🐥 Peepster',   emoji:'🐥', desc:'+5% coin drop rate on every heart caught.',                     petSkill:'coinchance'},
+  {id:'pet_frog',    type:'pet', rarity:'common', name:'🐸 Hopkins',    emoji:'🐸', desc:'Slows one random bad item by 15% whenever it spawns.',           petSkill:'frogluck'},
+  {id:'pet_bunny',   type:'pet', rarity:'common', name:'🐰 Cottontail', emoji:'🐰', desc:'Streak guard: losing a heart only resets streak to 1, not 0.',   petSkill:'luck'},
+  {id:'pet_turtle',  type:'pet', rarity:'common', name:'🐢 Shellbert',  emoji:'🐢', desc:'All active buff timers last 10% longer.',                        petSkill:'luck'},
+  {id:'pet_duck',    type:'pet', rarity:'common', name:'🦆 Quackers',   emoji:'🦆', desc:'Nudges hearts within 12px toward the basket centre.',            petSkill:'heartsnag'},
+  {id:'pet_ladybug', type:'pet', rarity:'common', name:'🐞 Dotty',      emoji:'🐞', desc:'+1 bonus XP per heart caught.',                                  petSkill:'coinchance'},
+  {id:'pet_fish',    type:'pet', rarity:'common', name:'🐠 Bubbles',    emoji:'🐠', desc:'Bad items are 8% smaller and harder to accidentally catch.',      petSkill:'frogluck'},
+
+  // ── UNCOMMON (7 pets — clearly distinct, moderate power) ─────────────────
+  {id:'pet_star',    type:'pet', rarity:'uncommon', name:'⭐ Starling',   emoji:'⭐', desc:'Restores 1 life every 40 hearts caught.',                       petSkill:'regen40'},
+  {id:'pet_fox',     type:'pet', rarity:'uncommon', name:'🦊 Foxy',       emoji:'🦊', desc:'XP gains boosted by +15%.',                                     petSkill:'xpowl'},
+  {id:'pet_penguin', type:'pet', rarity:'uncommon', name:'🐧 Waddles',    emoji:'🐧', desc:'Bad items fall 10% slower — more time to dodge.',               petSkill:'slowbad'},
+  {id:'pet_bee',     type:'pet', rarity:'uncommon', name:'🐝 Buzzy',      emoji:'🐝', desc:'+1 coin automatically every 10 hearts (no drop RNG).',           petSkill:'beecoin'},
+  {id:'pet_butterfly',type:'pet',rarity:'uncommon', name:'🦋 Flutter',    emoji:'🦋', desc:'Once every 20 hearts, spawns a bonus free heart at the top.',   petSkill:'beecoin'},
+  {id:'pet_flamingo',type:'pet', rarity:'uncommon', name:'🦩 Rosie',      emoji:'🦩', desc:'Catching 3 hearts in a row grants a 3-second magnet burst.',    petSkill:'heartsnag'},
+  {id:'pet_raccoon', type:'pet', rarity:'uncommon', name:'🦝 Bandit',     emoji:'🦝', desc:'5% chance any bad item turns into a coin when it lands.',       petSkill:'frogluck'},
+
+  // ── RARE (7 pets — each a meaningful, unique mechanic) ───────────────────
+  {id:'pet_dragon',  type:'pet', rarity:'rare', name:'🐲 Longlong',   emoji:'🐲', desc:'Spawns 1 bonus heart every 18 seconds.',                          petSkill:'heartspawn'},
+  {id:'pet_panda',   type:'pet', rarity:'rare', name:'🐼 Mochi',      emoji:'🐼', desc:'Mini magnet (3s) activates every 20 hearts caught.',              petSkill:'minimagnet'},
+  {id:'pet_wolf',    type:'pet', rarity:'rare', name:'🐺 Howler',     emoji:'🐺', desc:'Streak climbs +1 faster — every catch counts as 2 toward streak.', petSkill:'streakboost'},
+  {id:'pet_deer',    type:'pet', rarity:'rare', name:'🦌 Deerling',   emoji:'🦌', desc:'6% chance to convert a bad item into a heart on spawn.',           petSkill:'baddtonluck'},
+  {id:'pet_mushroom',type:'pet', rarity:'rare', name:'🍄 Shroomie',   emoji:'🍄', desc:'Every 25 catches: all on-screen bad items vanish instantly.',      petSkill:'clearbad'},
+  {id:'pet_octopus', type:'pet', rarity:'rare', name:'🐙 Inky',       emoji:'🐙', desc:'Score doubles for 5 seconds every 30 hearts (score only, not coins).', petSkill:'scoredouble'},
+  {id:'pet_shark',   type:'pet', rarity:'rare', name:'🦈 Finn',       emoji:'🦈', desc:'+2 coins every time you catch a bad item with a shield.',          petSkill:'streakboost'},
+
+  // ── EPIC (6 pets — powerful, each does something different) ──────────────
+  {id:'pet_dino',    type:'pet', rarity:'epic', name:'🦕 Nomnom Jr.', emoji:'🦕', desc:'Every 20 hearts: clears all bad items + spawns 1 bonus heart.',   petSkill:'clearbad'},
+  {id:'pet_phoenix', type:'pet', rarity:'epic', name:'🦅 Blaze',      emoji:'🦅', desc:'Every 15 hearts: deflects the nearest bad item sideways.',         petSkill:'deflect'},
+  {id:'pet_lion',    type:'pet', rarity:'epic', name:'🦁 Simba',      emoji:'🦁', desc:'Every bad item dodged (falls past basket) heals 0.5 life.',        petSkill:'dodgerheal'},
+  {id:'pet_dolphin', type:'pet', rarity:'epic', name:'🐬 Flipper',    emoji:'🐬', desc:'Every 30 hearts: grants a Lucky Break shield automatically.',      petSkill:'luckyregen'},
+  {id:'pet_narwhal', type:'pet', rarity:'epic', name:'🦑 Narwhal',    emoji:'🦑', desc:'Every 15 hearts: 6-second XP surge (2× XP).',                     petSkill:'xpburst'},
+  {id:'pet_elepha',  type:'pet', rarity:'epic', name:'🐘 Dumpling',   emoji:'🐘', desc:'Streak resets to 4 (not 0) when hit. Stacks with other guards.',   petSkill:'streakguard'},
+
+  // ── COIN BONUSES ──────────────────────────────────────────────────────────
+  {id:'bon_coins20', type:'bonus',rarity:'uncommon', name:'💰 Coin Bag',   emoji:'💰', desc:'+20 coins now', instant:true, fn:(p)=>{p.coins+=20;p.coinsEarned+=20;}},
+  {id:'bon_coins30', type:'bonus',rarity:'uncommon', name:'💰 Coin Pouch', emoji:'💰', desc:'+30 coins now', instant:true, fn:(p)=>{p.coins+=30;p.coinsEarned+=30;}},
+  {id:'bon_coins50', type:'bonus',rarity:'rare',     name:'💎 Gem Chest',  emoji:'💎', desc:'+50 coins now', instant:true, fn:(p)=>{p.coins+=50;p.coinsEarned+=50;}},
+  {id:'bon_coins80', type:'bonus',rarity:'epic',     name:'💰 JACKPOT',    emoji:'💰', desc:'+80 coins now', instant:true, fn:(p)=>{p.coins+=80;p.coinsEarned+=80;}},
+
+  // ── LEGENDARY (7 pets — each a completely different permanent aura) ───────
+  {id:'pet_baobao',  type:'pet', rarity:'legendary', name:'🥟 Mini Bao',    emoji:'🥟', desc:'Every 25 hearts: Lucky Break + magnet (5s) + spawns 2 bonus hearts!', petSkill:'minibao'},
+  {id:'pet_dudu2',   type:'pet', rarity:'legendary', name:'🐻 Lil Dudu',    emoji:'🐻', desc:'Every 35 hearts: 6-second burst of 3× score AND 3× coins.',            petSkill:'dudubuff'},
+  {id:'pet_dragon2', type:'pet', rarity:'legendary', name:'🔱 Royal Dragon', emoji:'🔱',desc:'Permanent passive: bad items 20% smaller + fall 12% slower. Always on.',petSkill:'royalguard'},
+  {id:'pet_phoenix2',type:'pet', rarity:'legendary', name:'🦅 Phoenix Lord', emoji:'🦅',desc:'Revive once at full life when you hit 0. Then: +1 life every 50 hearts.',petSkill:'legendrevive'},
+  {id:'pet_whale2',  type:'pet', rarity:'legendary', name:'🐋 Moby Dick',   emoji:'🐋', desc:'Permanent magnet. Every missed heart gives +1 coin instead of costing a life (once per 8s).', petSkill:'legendmagnet'},
+  {id:'pet_unicorn2',type:'pet', rarity:'legendary', name:'🦄 Stardust',    emoji:'🦄', desc:'Every 20 hearts: 8-second window of 4× score. Streak never drops below 5.', petSkill:'legendscore'},
+  {id:'char_bubu',   type:'char',rarity:'legendary', name:'🐼 BUBU',         emoji:'🐼', desc:'Unlock Bubu as a playable character! 🎉 (Shopaholic passive)'},
 ];
 const GACHA_WEIGHTS = {common:55,uncommon:28,rare:12,epic:4,legendary:1};
 const GACHA_RARITIES = ['common','uncommon','rare','epic','legendary'];
@@ -6379,6 +6361,26 @@ function refreshBubuCard(){
   } else {
     if(opt1){ opt1.disabled=true; opt1.textContent='🔒 ??? — Mystery Character (unlock via Capsule Machine)'; }
     if(opt2){ opt2.disabled=true; opt2.textContent='🔒 ??? — Mystery Character (unlock via Capsule Machine)'; }
+  }
+  // Lock/unlock Bubu in Potato Dealer character select
+  const pdBubuBtn=document.getElementById('pd-btn-bubu');
+  const pdBubuLabel=document.getElementById('pd-bubu-label');
+  const pdBubuSkills=document.getElementById('pd-bubu-skills');
+  const pdBubuPortrait=document.getElementById('pd-portrait-bubu');
+  if(pdBubuBtn){
+    if(P.bubuUnlocked){
+      pdBubuBtn.style.opacity='1';
+      pdBubuBtn.style.cursor='pointer';
+      if(pdBubuLabel) pdBubuLabel.textContent='Bubu';
+      if(pdBubuSkills) pdBubuSkills.textContent='Peek Card\nFortune Paw';
+      if(pdBubuPortrait){ pdBubuPortrait.style.display='flex'; pdBubuPortrait.innerHTML=getCharPortraitHTML('bubu',36); }
+    } else {
+      pdBubuBtn.style.opacity='0.45';
+      pdBubuBtn.style.cursor='default';
+      if(pdBubuLabel) pdBubuLabel.innerHTML='🔒 ???';
+      if(pdBubuSkills) pdBubuSkills.innerHTML='Unlock via<br>Slot Machine 🎰';
+      if(pdBubuPortrait){ pdBubuPortrait.style.display='flex'; pdBubuPortrait.innerHTML='<div style="width:36px;height:36px;border-radius:50%;background:rgba(167,139,250,.2);border:2px dashed rgba(167,139,250,.5);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">🔒</div>'; }
+    }
   }
 }
 
