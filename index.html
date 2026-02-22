@@ -129,6 +129,7 @@ body{background:var(--cream);font-family:'Lora',serif;color:var(--deep);min-heig
 
 /* PANELS */
 .panel{position:relative;z-index:1;margin:0 1.2rem 2rem;background:white;border-radius:20px;padding:1.3rem;box-shadow:0 6px 24px rgba(61,43,31,.08);}
+.hidden{display:none !important;}
 .panel.hidden{display:none;}
 .panel h3{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--deep);margin-bottom:.85rem;}
 .stat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:.45rem;font-size:.82rem;}
@@ -481,14 +482,13 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
   <!-- TABS -->
   <div class="tabs">
     <button class="tab-btn active" onclick="showTab('game')">💕 Heart Catcher</button>
-    <button class="tab-btn" onclick="showTab('valorant')">🥔 Potato Shooter</button>
+    <button class="tab-btn" onclick="showTab('blackjack')">🥔 Potato Dealer</button>
     <button class="tab-btn" onclick="showTab('c4')">🔴 Bao Connector</button>
     <button class="tab-btn" onclick="showTab('stats')">📊 Stats</button>
-    <button class="tab-btn" onclick="showTab('shop')">🛒 Shop</button>
   </div>
 
   <!-- GAME TAB -->
-  <div id="tab-game">
+  <div id="tab-game" class="hidden">
   <div class="section-label">
     Catch the Hearts 💕
     <small>pick your character · level up · unlock tiered buffs · shop!</small>
@@ -546,61 +546,9 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
       </div>
       <p id="game-msg">Catch hearts, avoid the ✖️ ones!</p>
     </div>
-  </div>
-  </div><!-- end tab-game -->
 
-  <!-- STATS TAB -->
-  <div id="tab-stats" class="panel hidden" style="border-top:4px solid var(--gold);">
-    <h3>📊 Bao's Stats</h3>
-    <!-- High score hero card -->
-    <div style="background:linear-gradient(135deg,var(--deep) 0%,#5C3D2A 100%);border-radius:16px;padding:1.1rem 1.2rem;margin-bottom:1rem;text-align:center;box-shadow:0 4px 18px rgba(61,43,31,.18);">
-      <div style="font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);opacity:.8;margin-bottom:.25rem;">✨ Personal Best ✨</div>
-      <div style="font-family:'Playfair Display',serif;font-size:2.8rem;color:var(--cream);line-height:1;" id="st-hs-hero">0</div>
-      <div style="font-size:.68rem;color:var(--peach);font-style:italic;margin-top:.3rem;">saved on this device 💾</div>
-    </div>
-    <div class="stat-row"><span class="stat-label">🏆 High Score</span><span class="stat-val" id="st-hs">0</span></div>
-    <div class="stat-row"><span class="stat-label">⭐ Highest Level</span><span class="stat-val" id="st-lv">1</span></div>
-    <div class="stat-row"><span class="stat-label">💕 Total Hearts Caught</span><span class="stat-val" id="st-hc">0</span></div>
-    <div class="stat-row"><span class="stat-label">🎮 Games Played</span><span class="stat-val" id="st-gp">0</span></div>
-    <div class="stat-row"><span class="stat-label">🔥 Best Streak</span><span class="stat-val" id="st-st">0</span></div>
-    <div class="stat-row"><span class="stat-label">💰 Total Coins Earned</span><span class="stat-val" id="st-ce">0</span></div>
-    <div class="stat-row"><span class="stat-label">💎 Diamonds</span><span class="stat-val" id="st-dm" style="color:#a78bfa;">0</span></div>
-    <div class="stat-row"><span class="stat-label">🛒 Items Purchased</span><span class="stat-val" id="st-ip">0</span></div>
-    <div class="stat-row"><span class="stat-label">✨ Buffs Picked</span><span class="stat-val" id="st-bp">0</span></div>
-    <div class="stat-row"><span class="stat-label">⚡ Best XP / Game</span><span class="stat-val" id="st-xp">0</span></div>
-    <div class="stat-row"><span class="stat-label">👑 Legendary Buffs Rolled</span><span class="stat-val" id="st-leg">0</span></div>
-    <div class="stat-row"><span class="stat-label">🥟 Bao Games</span><span class="stat-val" id="st-bg">0</span></div>
-    <div class="stat-row"><span class="stat-label">🐻 Dudu Games</span><span class="stat-val" id="st-dg">0</span></div>
-    <div class="stat-row"><span class="stat-label">🥔 Nomnom Life Procs (Bao)</span><span class="stat-val" id="st-ss">0</span></div>
-    <div class="stat-row"><span class="stat-label">⚔️ Bosses Defeated</span><span class="stat-val" id="st-bd">0</span></div>
-    <div class="stat-row"><span class="stat-label">💥 Angry Aura Procs</span><span class="stat-val" id="st-aa">0</span></div>
-    <div class="prog-section">
-      <h4>📈 Progression Milestones</h4>
-      <div class="prog-row">
-        <div class="prog-label"><span>Hearts Caught</span><span id="prog-hc-val">0 / 100</span></div>
-        <div class="prog-bg"><div class="prog-fill" id="prog-hc" style="width:0%;background:var(--rose)"></div></div>
-      </div>
-      <div class="prog-row">
-        <div class="prog-label"><span>Games Played</span><span id="prog-gp-val">0 / 20</span></div>
-        <div class="prog-bg"><div class="prog-fill" id="prog-gp" style="width:0%;background:var(--peach)"></div></div>
-      </div>
-      <div class="prog-row">
-        <div class="prog-label"><span>Coins Earned (lifetime)</span><span id="prog-ce-val">0 / 500</span></div>
-        <div class="prog-bg"><div class="prog-fill" id="prog-ce" style="width:0%;background:var(--gold)"></div></div>
-      </div>
-      <div class="prog-row">
-        <div class="prog-label"><span>Best Streak</span><span id="prog-st-val">0 / 20</span></div>
-        <div class="prog-bg"><div class="prog-fill" id="prog-st" style="width:0%;background:#B56FCC"></div></div>
-      </div>
-    </div>
-    <div class="unlocks-section">
-      <h4>🔓 Level Titles</h4>
-      <div id="unlocks-list"></div>
-    </div>
-  </div>
-
-  <!-- SHOP TAB -->
-  <div id="tab-shop" class="panel hidden" style="border-top:4px solid var(--gold);">
+  <!-- SHOP (embedded in Heart Catcher tab) -->
+  <div id="tab-game-shop" style="margin:0 1.2rem 2rem;background:white;border-radius:20px;padding:1.3rem;box-shadow:0 6px 24px rgba(61,43,31,.08);border-top:4px solid var(--gold);">
     <div class="shop-header">
       <h3>🛒 Bao's Shop</h3>
       <div class="wallet">💰 <span id="shop-wallet">0</span> &nbsp;💎 <span id="shop-diamond-wallet" style="color:#a78bfa;">0</span></div>
@@ -681,6 +629,57 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
     <div class="shop-grid" id="shop-grid"></div>
     <!-- pagination -->
     <div id="shop-pages" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:.8rem;flex-wrap:wrap;"></div>
+  </div>
+    </div><!-- end tab-game -->
+
+  <!-- STATS TAB -->
+  <div id="tab-stats" class="panel hidden" style="border-top:4px solid var(--gold);">
+    <h3>📊 Bao's Stats</h3>
+    <!-- High score hero card -->
+    <div style="background:linear-gradient(135deg,var(--deep) 0%,#5C3D2A 100%);border-radius:16px;padding:1.1rem 1.2rem;margin-bottom:1rem;text-align:center;box-shadow:0 4px 18px rgba(61,43,31,.18);">
+      <div style="font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);opacity:.8;margin-bottom:.25rem;">✨ Personal Best ✨</div>
+      <div style="font-family:'Playfair Display',serif;font-size:2.8rem;color:var(--cream);line-height:1;" id="st-hs-hero">0</div>
+      <div style="font-size:.68rem;color:var(--peach);font-style:italic;margin-top:.3rem;">saved on this device 💾</div>
+    </div>
+    <div class="stat-row"><span class="stat-label">🏆 High Score</span><span class="stat-val" id="st-hs">0</span></div>
+    <div class="stat-row"><span class="stat-label">⭐ Highest Level</span><span class="stat-val" id="st-lv">1</span></div>
+    <div class="stat-row"><span class="stat-label">💕 Total Hearts Caught</span><span class="stat-val" id="st-hc">0</span></div>
+    <div class="stat-row"><span class="stat-label">🎮 Games Played</span><span class="stat-val" id="st-gp">0</span></div>
+    <div class="stat-row"><span class="stat-label">🔥 Best Streak</span><span class="stat-val" id="st-st">0</span></div>
+    <div class="stat-row"><span class="stat-label">💰 Total Coins Earned</span><span class="stat-val" id="st-ce">0</span></div>
+    <div class="stat-row"><span class="stat-label">💎 Diamonds</span><span class="stat-val" id="st-dm" style="color:#a78bfa;">0</span></div>
+    <div class="stat-row"><span class="stat-label">🛒 Items Purchased</span><span class="stat-val" id="st-ip">0</span></div>
+    <div class="stat-row"><span class="stat-label">✨ Buffs Picked</span><span class="stat-val" id="st-bp">0</span></div>
+    <div class="stat-row"><span class="stat-label">⚡ Best XP / Game</span><span class="stat-val" id="st-xp">0</span></div>
+    <div class="stat-row"><span class="stat-label">👑 Legendary Buffs Rolled</span><span class="stat-val" id="st-leg">0</span></div>
+    <div class="stat-row"><span class="stat-label">🥟 Bao Games</span><span class="stat-val" id="st-bg">0</span></div>
+    <div class="stat-row"><span class="stat-label">🐻 Dudu Games</span><span class="stat-val" id="st-dg">0</span></div>
+    <div class="stat-row"><span class="stat-label">🥔 Nomnom Life Procs (Bao)</span><span class="stat-val" id="st-ss">0</span></div>
+    <div class="stat-row"><span class="stat-label">⚔️ Bosses Defeated</span><span class="stat-val" id="st-bd">0</span></div>
+    <div class="stat-row"><span class="stat-label">💥 Angry Aura Procs</span><span class="stat-val" id="st-aa">0</span></div>
+    <div class="prog-section">
+      <h4>📈 Progression Milestones</h4>
+      <div class="prog-row">
+        <div class="prog-label"><span>Hearts Caught</span><span id="prog-hc-val">0 / 100</span></div>
+        <div class="prog-bg"><div class="prog-fill" id="prog-hc" style="width:0%;background:var(--rose)"></div></div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label"><span>Games Played</span><span id="prog-gp-val">0 / 20</span></div>
+        <div class="prog-bg"><div class="prog-fill" id="prog-gp" style="width:0%;background:var(--peach)"></div></div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label"><span>Coins Earned (lifetime)</span><span id="prog-ce-val">0 / 500</span></div>
+        <div class="prog-bg"><div class="prog-fill" id="prog-ce" style="width:0%;background:var(--gold)"></div></div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label"><span>Best Streak</span><span id="prog-st-val">0 / 20</span></div>
+        <div class="prog-bg"><div class="prog-fill" id="prog-st" style="width:0%;background:#B56FCC"></div></div>
+      </div>
+    </div>
+    <div class="unlocks-section">
+      <h4>🔓 Level Titles</h4>
+      <div id="unlocks-list"></div>
+    </div>
   </div>
 
 <!-- COMBO FLASH -->
@@ -772,70 +771,338 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
   <div id="gacha-anim-sparks" style="position:fixed;inset:0;pointer-events:none;overflow:hidden;"></div>
 </div>
 
-  <!-- POTATO SHOOTER TAB -->
-  <div id="tab-valorant" class="hidden">
-    <div style="margin:0 1.2rem 1.2rem;">
-      <div style="text-align:center;padding:.7rem 0 .4rem;">
-        <div style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--deep);">🥔 Potato Shooter</div>
-        <small style="font-family:'Lora',serif;font-style:italic;font-size:.75rem;color:var(--gold);">Choose an agent · use their unique skills · survive the waves!</small>
+  <!-- POTATO DEALER TAB -->
+  <div id="tab-blackjack" class="hidden">
+    <style>
+      /* POTATO DEALER STYLES */
+      .pd-card{width:42px;height:60px;border-radius:8px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;font-size:.7rem;font-weight:bold;box-shadow:0 3px 10px rgba(0,0,0,.25);cursor:default;transition:transform .25s ease,box-shadow .25s ease;position:relative;overflow:hidden;}
+      .pd-card.red{background:linear-gradient(145deg,#fff8f0,#ffe8d0);border:2px solid #e05c2a;color:#c0391a;}
+      .pd-card.black{background:linear-gradient(145deg,#f8f2e8,#ede3d0);border:2px solid #3d2b1f;color:#3d2b1f;}
+      .pd-card.hidden-card{background:repeating-linear-gradient(45deg,#6b4226,#6b4226 5px,#8a5c3e 5px,#8a5c3e 10px);border:2px solid #4a2c16;}
+      .pd-card .suit{font-size:1.1rem;line-height:1;}
+      .pd-card .rank{font-size:.7rem;line-height:1;font-family:'Playfair Display',serif;}
+      @keyframes pdDeal{from{transform:translateY(-80px) rotate(-15deg) scale(.5);opacity:0}to{transform:translateY(0) rotate(0deg) scale(1);opacity:1}}
+      @keyframes pdFlip{0%{transform:rotateY(90deg) scale(.8)}100%{transform:rotateY(0deg) scale(1)}}
+      @keyframes pdBossShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+      @keyframes pdBossHurt{0%{filter:brightness(1)}50%{filter:brightness(2) hue-rotate(20deg)}100%{filter:brightness(1)}}
+      @keyframes pdPlayerWin{0%{transform:scale(1)}50%{transform:scale(1.15) rotate(3deg)}100%{transform:scale(1)}}
+      @keyframes pdRewardReveal{from{transform:scale(.5) rotate(-10deg);opacity:0}to{transform:scale(1) rotate(0deg);opacity:1}}
+      .pd-card.dealing{animation:pdDeal .35s cubic-bezier(.25,.46,.45,.94) forwards;}
+      .pd-card.flipping{animation:pdFlip .3s ease forwards;}
+      .boss-shake{animation:pdBossShake .4s ease;}
+      .boss-hurt{animation:pdBossHurt .4s ease;}
+      .player-win-anim{animation:pdPlayerWin .5s ease;}
+      .pd-reward-card{animation:pdRewardReveal .4s ease forwards;border-radius:16px;padding:1rem .8rem;background:white;box-shadow:0 6px 24px rgba(61,43,31,.12);border:2px solid var(--peach);cursor:pointer;text-align:center;transition:transform .15s ease,box-shadow .15s ease;}
+      .pd-reward-card:hover{transform:translateY(-4px);box-shadow:0 10px 32px rgba(61,43,31,.2);}
+      .pd-reward-card.selected{border-color:var(--gold);background:linear-gradient(135deg,#fff9ec,#fffdf5);}
+      .pd-ability-btn{border-radius:12px;padding:.4rem .3rem;font-family:'Playfair Display',serif;font-size:.62rem;color:var(--deep);cursor:pointer;transition:opacity .2s,transform .1s;text-align:center;}
+      .pd-ability-btn:active{transform:scale(.95);}
+      .pd-slot-reel{width:52px;height:52px;border-radius:12px;border:2px solid var(--gold);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:bold;color:white;transition:transform .1s;box-shadow:0 2px 10px rgba(0,0,0,.4);}
+      @keyframes pdSlotSpin{0%{transform:translateY(-40px) scale(.5);opacity:0}60%{transform:translateY(4px) scale(1.1)}100%{transform:translateY(0) scale(1);opacity:1}}
+      .pd-slot-reel.spinning{animation:pdSlotSpin .15s ease-out forwards;}
+      /* Pet animations for blackjack */
+      @keyframes pdPetBounce{0%{transform:translateY(0) scale(1)}30%{transform:translateY(-12px) scale(1.15)}60%{transform:translateY(2px) scale(.95)}100%{transform:translateY(0) scale(1)}}
+      @keyframes pdPetGlow{0%{filter:brightness(1) drop-shadow(0 0 0 transparent)}50%{filter:brightness(1.3) drop-shadow(0 0 12px var(--pet-glow,#ffd700))}100%{filter:brightness(1) drop-shadow(0 0 0 transparent)}}
+      @keyframes pdPetShield{0%{transform:scale(0) rotate(-10deg);opacity:0}50%{transform:scale(1.2) rotate(5deg);opacity:1}100%{transform:scale(1) rotate(0deg);opacity:1}}
+      @keyframes pdPetAttack{0%{transform:translateX(0)}30%{transform:translateX(15px) scale(1.1)}60%{transform:translateX(-5px)}100%{transform:translateX(0)}}
+      @keyframes pdPetHeal{0%{opacity:0;transform:translateY(8px)}50%{opacity:1;transform:translateY(-6px)}100%{opacity:0;transform:translateY(-18px)}}
+      .pd-pet-bounce{animation:pdPetBounce .4s ease;}
+      .pd-pet-glow{animation:pdPetGlow .6s ease;}
+      .pd-pet-shield{animation:pdPetShield .4s ease forwards;}
+      .pd-pet-attack{animation:pdPetAttack .35s ease;}
+      .pd-pet-heal{animation:pdPetHeal .7s ease forwards;position:absolute;pointer-events:none;font-size:.9rem;}
+      .pd-pet-card{border-radius:12px;padding:.6rem;cursor:pointer;border:1.5px solid;text-align:center;transition:transform .15s,box-shadow .15s;}
+      .pd-pet-card:hover{transform:translateY(-2px);}
+      .pd-pet-card.equipped{box-shadow:0 0 12px rgba(212,168,83,.4);}
+      .pd-pet-card .pet-emoji{font-size:1.5rem;}
+      .pd-pet-card .pet-name{font-family:'Playfair Display',serif;font-size:.75rem;margin-top:.2rem;}
+      .pd-pet-card .pet-skill{font-size:.6rem;opacity:.65;font-style:italic;margin-top:.1rem;line-height:1.3;}
+    </style>
+    <div style="margin:0 1.2rem 1.5rem;">
+      <!-- Header -->
+      <div style="text-align:center;padding:.6rem 0 .3rem;">
+        <div style="font-family:'Playfair Display',serif;font-size:1.35rem;color:var(--deep);">🥔 Potato Dealer</div>
+        <small style="font-family:'Lora',serif;font-style:italic;font-size:.72rem;color:var(--gold);">Blackjack with potatoes · beat the bosses · claim your rewards!</small>
       </div>
 
-      <!-- Agent Select -->
-      <div id="ps-agent-select" style="display:block;">
-        <div style="font-family:'Playfair Display',serif;font-size:.9rem;color:var(--deep);margin-bottom:.5rem;text-align:center;">Choose Your Agent</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:.8rem;">
-          <button class="ps-agent-btn" onclick="psSelectAgent('sage')" style="flex:1;min-width:90px;border:2px solid #4cd9a0;border-radius:14px;padding:.5rem .3rem;background:rgba(76,217,160,.1);cursor:pointer;font-family:'Playfair Display',serif;">
-            <div style="font-size:1.2rem;">🌿</div>
-            <div style="font-size:.75rem;color:#4cd9a0;font-weight:bold;">Sage</div>
-            <div style="font-size:.6rem;color:rgba(61,43,31,.7);line-height:1.3;">Heal · Wall · Revive</div>
+      <!-- Coin Display -->
+      <div id="pd-coin-bar" style="display:flex;align-items:center;justify-content:center;gap:12px;padding:.4rem .8rem;margin:.3rem 0 .5rem;background:linear-gradient(135deg,rgba(212,168,83,.12),rgba(212,168,83,.04));border-radius:14px;border:1.5px solid rgba(212,168,83,.3);">
+        <div style="font-family:'Playfair Display',serif;font-size:.9rem;color:var(--gold);">💰 <span id="pd-coins-display">0</span> coins</div>
+        <div style="width:1px;height:16px;background:rgba(212,168,83,.3);"></div>
+        <div style="font-family:'Playfair Display',serif;font-size:.9rem;color:#a78bfa;">💎 <span id="pd-diamonds-display">0</span></div>
+        <div style="width:1px;height:16px;background:rgba(212,168,83,.3);"></div>
+        <div style="font-size:.7rem;color:var(--deep);opacity:.6;" id="pd-pet-badge">No pet</div>
+      </div>
+
+      <!-- Sub-tabs -->
+      <div style="display:flex;gap:5px;margin-bottom:.7rem;">
+        <button class="tab-btn active" onclick="pdSubTab('play')" id="pd-subtab-play" style="flex:1;font-size:.78rem;">🃏 Play</button>
+        <button class="tab-btn" onclick="pdSubTab('shop')" id="pd-subtab-shop" style="flex:1;font-size:.78rem;">🎰 Shop</button>
+        <button class="tab-btn" onclick="pdSubTab('pets')" id="pd-subtab-pets" style="flex:1;font-size:.78rem;">🐾 Pets</button>
+      </div>
+
+      <!-- PLAY SUB-TAB -->
+      <div id="pd-subtab-play-content">
+
+      <!-- Betting Panel (shown before game starts) -->
+      <div id="pd-bet-panel" style="background:linear-gradient(160deg,#1a0800,#2a1200);border-radius:18px;padding:1.2rem 1rem;margin-bottom:.7rem;text-align:center;border:2px solid var(--gold);">
+        <div style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold);margin-bottom:.3rem;">🎲 Place Your Bet</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.6);font-style:italic;margin-bottom:.7rem;">Win = earn your bet · Lose = lose your bet</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:.6rem;">
+          <button onclick="pdAdjustBet(-5)" style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--gold);background:rgba(255,255,255,.06);color:var(--gold);font-size:1rem;cursor:pointer;">−</button>
+          <div style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);min-width:60px;" id="pd-bet-amount">5</div>
+          <button onclick="pdAdjustBet(5)" style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--gold);background:rgba(255,255,255,.06);color:var(--gold);font-size:1rem;cursor:pointer;">+</button>
+        </div>
+        <div style="display:flex;gap:5px;justify-content:center;margin-bottom:.6rem;">
+          <button onclick="pdSetBet(5)" style="padding:.25rem .6rem;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);font-size:.65rem;cursor:pointer;">5</button>
+          <button onclick="pdSetBet(10)" style="padding:.25rem .6rem;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);font-size:.65rem;cursor:pointer;">10</button>
+          <button onclick="pdSetBet(25)" style="padding:.25rem .6rem;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);font-size:.65rem;cursor:pointer;">25</button>
+          <button onclick="pdSetBet(50)" style="padding:.25rem .6rem;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);font-size:.65rem;cursor:pointer;">50</button>
+        </div>
+        <div style="font-size:.6rem;color:rgba(255,255,255,.4);margin-bottom:.1rem;" id="pd-bet-limit-info">Max bet: 50 coins (scales with level)</div>
+        <div style="font-size:.6rem;color:rgba(255,200,100,.5);margin-bottom:.6rem;">Minimum bet: 5 coins to play</div>
+        <div id="pd-bet-error" style="font-size:.7rem;color:#f87171;min-height:1em;margin-bottom:.3rem;"></div>
+      </div>
+
+      <!-- Character Select -->
+      <div id="pd-char-select" style="margin:.6rem 0 .7rem;">
+        <div style="font-family:'Playfair Display',serif;font-size:.82rem;color:var(--deep);text-align:center;margin-bottom:.45rem;opacity:.75;">Choose your hero</div>
+        <div style="display:flex;gap:7px;">
+          <button class="pd-char-btn" onclick="pdSelectChar('bao')" id="pd-btn-bao"
+            style="flex:1;border:2px solid var(--peach);border-radius:14px;padding:.55rem .2rem;background:rgba(255,183,147,.1);cursor:pointer;font-family:'Playfair Display',serif;font-size:.72rem;color:var(--deep);transition:all .2s;">
+            <div id="pd-portrait-bao" style="display:flex;justify-content:center;margin-bottom:.2rem;"></div>
+            <div style="font-weight:bold;">Bao</div>
+            <div style="font-size:.58rem;opacity:.68;line-height:1.3;margin-top:.15rem;">Potato Shield<br>Double Luck</div>
           </button>
-          <button class="ps-agent-btn" onclick="psSelectAgent('phoenix')" style="flex:1;min-width:90px;border:2px solid #ff8c42;border-radius:14px;padding:.5rem .3rem;background:rgba(255,140,66,.1);cursor:pointer;font-family:'Playfair Display',serif;">
-            <div style="font-size:1.2rem;">🔥</div>
-            <div style="font-size:.75rem;color:#ff8c42;font-weight:bold;">Phoenix</div>
-            <div style="font-size:.6rem;color:rgba(61,43,31,.7);line-height:1.3;">Blaze · Curveball · Run It Back</div>
+          <button class="pd-char-btn" onclick="pdSelectChar('dudu')" id="pd-btn-dudu"
+            style="flex:1;border:2px solid #f4a261;border-radius:14px;padding:.55rem .2rem;background:rgba(244,162,97,.1);cursor:pointer;font-family:'Playfair Display',serif;font-size:.72rem;color:var(--deep);transition:all .2s;">
+            <div id="pd-portrait-dudu" style="display:flex;justify-content:center;margin-bottom:.2rem;"></div>
+            <div style="font-weight:bold;">Dudu</div>
+            <div style="font-size:.58rem;opacity:.68;line-height:1.3;margin-top:.15rem;">Rage Draw<br>Angry Aura</div>
           </button>
-          <button class="ps-agent-btn" onclick="psSelectAgent('jett')" style="flex:1;min-width:90px;border:2px solid #7ec8f0;border-radius:14px;padding:.5rem .3rem;background:rgba(126,200,240,.1);cursor:pointer;font-family:'Playfair Display',serif;">
-            <div style="font-size:1.2rem;">💨</div>
-            <div style="font-size:.75rem;color:#7ec8f0;font-weight:bold;">Jett</div>
-            <div style="font-size:.6rem;color:rgba(61,43,31,.7);line-height:1.3;">Drift · Updraft · Bladestorm</div>
-          </button>
-          <button class="ps-agent-btn" onclick="psSelectAgent('reyna')" style="flex:1;min-width:90px;border:2px solid #b97ef5;border-radius:14px;padding:.5rem .3rem;background:rgba(185,126,245,.1);cursor:pointer;font-family:'Playfair Display',serif;">
-            <div style="font-size:1.2rem;">👁️</div>
-            <div style="font-size:.75rem;color:#b97ef5;font-weight:bold;">Reyna</div>
-            <div style="font-size:.6rem;color:rgba(61,43,31,.7);line-height:1.3;">Devour · Dismiss · Empress</div>
+          <button class="pd-char-btn" onclick="pdSelectChar('bubu')" id="pd-btn-bubu"
+            style="flex:1;border:2px solid #a78bfa;border-radius:14px;padding:.55rem .2rem;background:rgba(167,139,250,.1);cursor:pointer;font-family:'Playfair Display',serif;font-size:.72rem;color:var(--deep);transition:all .2s;">
+            <div id="pd-portrait-bubu" style="display:flex;justify-content:center;margin-bottom:.2rem;"></div>
+            <div style="font-weight:bold;">Bubu</div>
+            <div style="font-size:.58rem;opacity:.68;line-height:1.3;margin-top:.15rem;">Peek Card<br>Fortune Paw</div>
           </button>
         </div>
       </div>
 
       <!-- Game Area -->
-      <div id="ps-wrap" style="background:var(--deep);border-radius:24px;padding:.8rem;box-shadow:0 10px 40px rgba(61,43,31,.25);display:none;">
-        <!-- HUD -->
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;">
-          <div style="color:var(--cream);font-size:.78rem;font-family:'Playfair Display',serif;">
-            <span id="ps-agent-badge" style="font-size:.9rem;"></span> <span style="color:var(--gold);" id="ps-score-el">0</span>
+      <div id="pd-game-area" style="display:none;">
+        <!-- HP Bars -->
+        <div style="background:white;border-radius:16px;padding:.75rem 1rem;margin-bottom:.6rem;box-shadow:0 3px 12px rgba(61,43,31,.07);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;">
+            <div style="display:flex;align-items:center;gap:.4rem;">
+              <div id="pd-hero-portrait" style="flex-shrink:0;"></div>
+              <div style="font-family:'Playfair Display',serif;font-size:.78rem;color:var(--deep);" id="pd-hero-name">Bao</div>
+            </div>
+            <div style="font-size:.7rem;color:var(--gold);font-family:'Playfair Display',serif;" id="pd-wave-info">Boss 1/5 · Round 1</div>
+            <div style="display:flex;align-items:center;gap:.4rem;">
+              <div style="font-family:'Playfair Display',serif;font-size:.78rem;color:var(--deep);" id="pd-boss-name">👹</div>
+              <div id="pd-boss-sprite" style="font-size:1.6rem;cursor:default;transition:transform .1s;">🧅</div>
+            </div>
           </div>
-          <div style="color:var(--peach);font-size:.78rem;font-family:'Playfair Display',serif;">Wave <span id="ps-wave-el">1</span></div>
-          <div style="color:#ff8e8e;font-size:.78rem;font-family:'Playfair Display',serif;">HP <span id="ps-hp-el">100</span></div>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:.3rem;">
+            <div style="font-size:.58rem;color:var(--deep);opacity:.55;width:20px;">HP</div>
+            <div style="flex:1;background:#f0e8e0;border-radius:6px;height:9px;overflow:hidden;">
+              <div id="pd-hero-hp-bar" style="height:100%;background:linear-gradient(90deg,#f4a261,var(--peach));border-radius:6px;transition:width .4s ease;width:100%;"></div>
+            </div>
+            <div style="font-size:.62rem;color:var(--deep);min-width:38px;text-align:right;" id="pd-hero-hp-text">100/100</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <div style="font-size:.58rem;color:var(--deep);opacity:.55;width:20px;">👹</div>
+            <div style="flex:1;background:#f0e8e0;border-radius:6px;height:9px;overflow:hidden;">
+              <div id="pd-boss-hp-bar" style="height:100%;background:linear-gradient(90deg,#800000,#c0391a);border-radius:6px;transition:width .4s ease;width:100%;"></div>
+            </div>
+            <div style="font-size:.62rem;color:var(--deep);min-width:38px;text-align:right;" id="pd-boss-hp-text">80/80</div>
+          </div>
         </div>
-        <!-- Bars -->
-        <div style="display:flex;gap:5px;margin-bottom:.5rem;">
-          <div style="flex:2;"><div style="font-size:.55rem;color:rgba(253,246,236,.4);margin-bottom:2px;">HP</div><div style="background:rgba(255,255,255,.1);border-radius:4px;height:6px;overflow:hidden;"><div id="ps-hp-bar" style="height:100%;border-radius:4px;background:linear-gradient(90deg,#ff6b6b,#ff8e8e);width:100%;transition:width .3s;"></div></div></div>
-          <div style="flex:1;"><div style="font-size:.55rem;color:rgba(253,246,236,.4);margin-bottom:2px;" id="ps-q-label">Q</div><div style="background:rgba(255,255,255,.1);border-radius:4px;height:6px;overflow:hidden;"><div id="ps-q-bar" style="height:100%;border-radius:4px;background:linear-gradient(90deg,#4cd9a0,#fff);width:100%;transition:width .3s;"></div></div></div>
-          <div style="flex:1;"><div style="font-size:.55rem;color:rgba(253,246,236,.4);margin-bottom:2px;" id="ps-e-label">E</div><div style="background:rgba(255,255,255,.1);border-radius:4px;height:6px;overflow:hidden;"><div id="ps-e-bar" style="height:100%;border-radius:4px;background:linear-gradient(90deg,#7ec8f0,#fff);width:100%;transition:width .3s;"></div></div></div>
-          <div style="flex:1;"><div style="font-size:.55rem;color:rgba(253,246,236,.4);margin-bottom:2px;">ULT</div><div style="background:rgba(255,255,255,.1);border-radius:4px;height:6px;overflow:hidden;"><div id="ps-ult-bar" style="height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold),#fff);width:0%;transition:width .3s;"></div></div></div>
+
+        <!-- Ability Bar -->
+        <div style="display:flex;gap:5px;margin-bottom:.6rem;">
+          <button id="pd-ab1-btn" onclick="pdUseAbility(1)" class="pd-ability-btn" style="flex:1;border:2px solid var(--peach);background:white;">
+            <div id="pd-ab1-icon" style="font-size:1rem;">🥔</div>
+            <div id="pd-ab1-name" style="font-weight:bold;font-size:.6rem;">Shield</div>
+            <div id="pd-ab1-cd" style="font-size:.55rem;opacity:.6;">Ready</div>
+            <div id="pd-ab1-desc" style="font-size:.48rem;opacity:.5;font-family:'Lora',serif;font-style:italic;margin-top:.1rem;line-height:1.2;display:none;"></div>
+          </button>
+          <button id="pd-ab2-btn" onclick="pdUseAbility(2)" class="pd-ability-btn" style="flex:1;border:2px solid #f4a261;background:white;">
+            <div id="pd-ab2-icon" style="font-size:1rem;">💥</div>
+            <div id="pd-ab2-name" style="font-weight:bold;font-size:.6rem;">Double</div>
+            <div id="pd-ab2-cd" style="font-size:.55rem;opacity:.6;">Ready</div>
+            <div id="pd-ab2-desc" style="font-size:.48rem;opacity:.5;font-family:'Lora',serif;font-style:italic;margin-top:.1rem;line-height:1.2;display:none;"></div>
+          </button>
+          <button id="pd-ult-btn" onclick="pdUseAbility('ult')" class="pd-ability-btn" style="flex:1.3;border:2px solid var(--gold);background:linear-gradient(135deg,rgba(212,168,83,.12),rgba(212,168,83,.04));">
+            <div id="pd-ult-icon" style="font-size:1rem;">✨</div>
+            <div id="pd-ult-name" style="font-weight:bold;font-size:.6rem;">Ultimate</div>
+            <div id="pd-ult-cd" style="font-size:.55rem;opacity:.6;">0/3</div>
+            <div id="pd-ult-desc" style="font-size:.48rem;opacity:.5;font-family:'Lora',serif;font-style:italic;margin-top:.1rem;line-height:1.2;display:none;"></div>
+          </button>
+          <div style="flex:1;border:2px solid rgba(61,43,31,.15);border-radius:12px;padding:.4rem .2rem;background:rgba(212,168,83,.05);text-align:center;">
+            <div style="font-size:.7rem;">🛡️</div>
+            <div style="font-size:.58rem;font-family:'Playfair Display',serif;color:var(--deep);">Buffs</div>
+            <div id="pd-active-buffs" style="font-size:.55rem;color:var(--gold);opacity:.8;">—</div>
+          </div>
         </div>
-        <canvas id="ps-canvas" style="display:block;width:100%;border-radius:14px;touch-action:none;cursor:crosshair;"></canvas>
-        <!-- Skill Buttons -->
-        <div style="display:flex;gap:5px;margin-top:.5rem;">
-          <button id="ps-q-btn" onclick="psUseSkill('q')" style="flex:1;border:none;border-radius:10px;padding:.45rem .2rem;font-family:'Playfair Display',serif;font-size:.7rem;cursor:pointer;transition:all .2s;"></button>
-          <button id="ps-e-btn" onclick="psUseSkill('e')" style="flex:1;border:none;border-radius:10px;padding:.45rem .2rem;font-family:'Playfair Display',serif;font-size:.7rem;cursor:pointer;transition:all .2s;"></button>
-          <button id="ps-ult-btn" onclick="psUseSkill('ult')" style="flex:1;border:none;border-radius:10px;padding:.45rem .2rem;font-family:'Playfair Display',serif;font-size:.7rem;cursor:pointer;transition:all .2s;"></button>
-          <button onclick="psRestart()" style="flex:1;border:none;border-radius:10px;padding:.45rem .2rem;font-family:'Playfair Display',serif;font-size:.7rem;background:var(--peach);color:var(--deep);cursor:pointer;">🔄</button>
+
+        <!-- Card Table -->
+        <div style="background:linear-gradient(160deg,#1a4a2a,#0d3320);border-radius:20px;padding:.9rem .9rem 1rem;margin-bottom:.6rem;min-height:215px;position:relative;">
+          <!-- Dealer -->
+          <div style="margin-bottom:.7rem;">
+            <div style="font-size:.62rem;color:rgba(255,255,255,.55);margin-bottom:.3rem;font-family:'Lora',serif;font-style:italic;">
+              Dealer's hand — <span id="pd-dealer-total" style="color:rgba(255,220,150,.9);">?</span>
+            </div>
+            <div id="pd-dealer-cards" style="display:flex;gap:5px;flex-wrap:wrap;min-height:60px;align-items:center;"></div>
+          </div>
+          <div style="border-top:1px solid rgba(255,255,255,.1);margin:.4rem 0 .5rem;"></div>
+          <!-- Player -->
+          <div>
+            <div style="font-size:.62rem;color:rgba(255,255,255,.55);margin-bottom:.3rem;font-family:'Lora',serif;font-style:italic;">
+              Your hand — <span id="pd-player-total" style="color:rgba(255,220,150,.9);">0</span>
+            </div>
+            <div id="pd-player-cards" style="display:flex;gap:5px;flex-wrap:wrap;min-height:60px;align-items:center;"></div>
+          </div>
+          <!-- Floating message -->
+          <div id="pd-float-msg" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Playfair Display',serif;font-size:1.1rem;color:#ffd700;text-shadow:0 2px 8px rgba(0,0,0,.5);pointer-events:none;"></div>
         </div>
-        <div id="ps-skill-tip" style="text-align:center;font-size:.6rem;color:rgba(253,246,236,.4);font-family:'Lora',serif;font-style:italic;margin-top:.3rem;min-height:1em;"></div>
-        <div id="ps-overlay" style="display:none;text-align:center;padding:1rem 0;color:var(--cream);">
-          <div id="ps-msg" style="font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:.5rem;"></div>
-          <button onclick="psShowAgentSelect()" class="game-btn" style="margin:0 auto;">Change Agent 🔫</button>
+
+        <!-- Action Buttons -->
+        <div style="display:flex;gap:7px;margin-bottom:.55rem;">
+          <button id="pd-hit-btn" onclick="pdHit()"
+            style="flex:1;padding:.6rem;border:none;border-radius:14px;background:var(--deep);color:var(--cream);font-family:'Playfair Display',serif;font-size:.88rem;cursor:pointer;transition:transform .1s,opacity .2s;">
+            Hit 🥔
+          </button>
+          <button id="pd-stand-btn" onclick="pdStand()"
+            style="flex:1;padding:.6rem;border:none;border-radius:14px;background:#3a6b47;color:white;font-family:'Playfair Display',serif;font-size:.88rem;cursor:pointer;transition:transform .1s,opacity .2s;">
+            Stand ✋
+          </button>
+          <button id="pd-deal-btn" onclick="pdDeal()" style="display:none;flex:1;padding:.6rem;border:none;border-radius:14px;background:linear-gradient(135deg,var(--gold),#e8c068);color:var(--deep);font-family:'Playfair Display',serif;font-size:.88rem;cursor:pointer;">
+            Next 🥔
+          </button>
+        </div>
+
+        <!-- Message Bar -->
+        <div id="pd-msg" style="text-align:center;font-family:'Lora',serif;font-style:italic;font-size:.82rem;color:var(--deep);min-height:1.3rem;padding:.3rem .6rem;background:white;border-radius:11px;box-shadow:0 2px 8px rgba(61,43,31,.06);"></div>
+      </div>
+
+      <!-- Reward Screen -->
+      <div id="pd-reward-screen" style="display:none;padding:.5rem 0 1rem;">
+        <div style="text-align:center;margin-bottom:.8rem;">
+          <div style="font-size:1.8rem;" id="pd-reward-emoji">🏆</div>
+          <div style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--deep);margin:.3rem 0 .1rem;" id="pd-reward-title">Boss Defeated!</div>
+          <div style="font-family:'Lora',serif;font-style:italic;font-size:.75rem;color:var(--gold);" id="pd-reward-subtitle">Choose your reward</div>
+        </div>
+        <div id="pd-reward-choices" style="display:flex;flex-direction:column;gap:.55rem;"></div>
+        <button id="pd-continue-btn" onclick="pdContinueAfterReward()" style="display:none;width:100%;margin-top:.8rem;padding:.65rem;border:none;border-radius:14px;background:var(--deep);color:var(--cream);font-family:'Playfair Display',serif;font-size:.9rem;cursor:pointer;">
+          Continue ➡️
+        </button>
+      </div>
+
+      <!-- End Screen -->
+      <div id="pd-end-screen" style="display:none;text-align:center;padding:1.5rem 1rem;">
+        <div style="font-size:2.8rem;" id="pd-end-emoji">🏆</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--deep);margin:.5rem 0 .2rem;" id="pd-end-title">Victory!</div>
+        <div style="font-family:'Lora',serif;font-style:italic;font-size:.78rem;color:var(--deep);opacity:.7;margin-bottom:1rem;" id="pd-end-msg">You beat all the bosses!</div>
+        <div id="pd-acquired-buffs" style="margin-bottom:.8rem;font-size:.75rem;color:var(--deep);opacity:.7;"></div>
+        <div id="pd-coins-earned-msg" style="margin-bottom:.6rem;font-size:.8rem;color:var(--gold);font-family:'Playfair Display',serif;font-weight:bold;"></div>
+        <!-- Slot Machine -->
+        <div id="pd-slot-wrap" style="display:none;border:2px solid var(--gold);border-radius:18px;padding:1rem .8rem;margin-bottom:1rem;background:linear-gradient(160deg,#1a0800,#0d0400);">
+          <div style="font-family:'Playfair Display',serif;color:var(--gold);font-size:.95rem;margin-bottom:.5rem;">🎰 Lucky Slot Machine</div>
+          <div style="font-size:.65rem;color:rgba(255,255,255,.6);font-family:'Lora',serif;font-style:italic;margin-bottom:.7rem;">Win the jackpot to unlock a pet or special reward!</div>
+          <div style="display:flex;justify-content:center;gap:8px;margin-bottom:.7rem;">
+            <div class="pd-slot-reel" id="pd-slot-r1">🥔</div>
+            <div class="pd-slot-reel" id="pd-slot-r2">🥔</div>
+            <div class="pd-slot-reel" id="pd-slot-r3">🥔</div>
+          </div>
+          <div id="pd-slot-result" style="font-size:.72rem;color:rgba(255,255,255,.8);font-family:'Lora',serif;min-height:1.1rem;margin-bottom:.5rem;"></div>
+          <div style="font-size:.6rem;color:rgba(255,255,255,.4);margin-bottom:.6rem;">Cost: 5 🪙 coins per pull</div>
+          <button onclick="pdSlotPull()" id="pd-slot-btn" style="padding:.55rem 1.4rem;border:none;border-radius:12px;background:linear-gradient(135deg,var(--gold),#e8c068);color:var(--deep);font-family:'Playfair Display',serif;font-size:.82rem;cursor:pointer;font-weight:bold;">Pull! 🎰</button>
+          <div style="font-size:.58rem;color:rgba(255,255,255,.35);margin-top:.45rem;font-style:italic;">Match 3 symbols = jackpot · 3×🌟 = legendary!</div>
+        </div>
+        <button onclick="pdRestartGame()" style="padding:.7rem 1.8rem;border:none;border-radius:14px;background:var(--deep);color:var(--cream);font-family:'Playfair Display',serif;font-size:.9rem;cursor:pointer;">Play Again 🥔</button>
+      </div>
+    </div>
+    </div><!-- end pd-subtab-play-content -->
+
+    <!-- SHOP SUB-TAB (Slot Machine + Casino) -->
+    <div id="pd-subtab-shop-content" style="display:none;">
+      <div style="background:linear-gradient(160deg,#0a0418,#180838);border-radius:20px;padding:1.2rem 1rem;border:2px solid rgba(123,104,238,.3);margin-bottom:.8rem;">
+        <div style="text-align:center;font-family:'Playfair Display',serif;font-size:1.1rem;color:#a78bfa;margin-bottom:.2rem;">🎰 Casino</div>
+        <div style="text-align:center;font-size:.68rem;color:rgba(167,139,250,.5);font-style:italic;margin-bottom:.8rem;">Spin for coins, pets & legendary rewards!</div>
+        
+        <!-- Slot Machine -->
+        <div style="border:2px solid var(--gold);border-radius:18px;padding:1rem .8rem;margin-bottom:.8rem;background:linear-gradient(160deg,#1a0800,#0d0400);">
+          <div style="font-family:'Playfair Display',serif;color:var(--gold);font-size:.95rem;margin-bottom:.3rem;text-align:center;">🎰 Lucky Slot Machine</div>
+          <div style="font-size:.62rem;color:rgba(255,255,255,.5);text-align:center;margin-bottom:.6rem;">Match 3 symbols for jackpot! 🌟🌟🌟 = LEGENDARY PET</div>
+          <div style="display:flex;justify-content:center;gap:8px;margin-bottom:.6rem;">
+            <div class="pd-slot-reel" id="pd-shop-slot-r1">🥔</div>
+            <div class="pd-slot-reel" id="pd-shop-slot-r2">🥔</div>
+            <div class="pd-slot-reel" id="pd-shop-slot-r3">🥔</div>
+          </div>
+          <div id="pd-shop-slot-result" style="font-size:.72rem;color:rgba(255,255,255,.8);font-family:'Lora',serif;min-height:1.1rem;margin-bottom:.5rem;text-align:center;"></div>
+          <div style="display:flex;gap:6px;justify-content:center;margin-bottom:.5rem;">
+            <button onclick="pdShopSlotPull(5)" id="pd-shop-slot-btn5" style="padding:.5rem 1rem;border:none;border-radius:12px;background:linear-gradient(135deg,var(--gold),#e8c068);color:var(--deep);font-family:'Playfair Display',serif;font-size:.78rem;cursor:pointer;font-weight:bold;">Spin 5🪙</button>
+            <button onclick="pdShopSlotPull(15)" id="pd-shop-slot-btn15" style="padding:.5rem 1rem;border:none;border-radius:12px;background:linear-gradient(135deg,#7B68EE,#CE93D8);color:#fff;font-family:'Playfair Display',serif;font-size:.78rem;cursor:pointer;font-weight:bold;">Super 15🪙</button>
+          </div>
+          <div style="font-size:.55rem;color:rgba(255,255,255,.3);text-align:center;line-height:1.5;">
+            🥔🥔🥔 = refund · 🌸🌸🌸 = +10 · 🍟🍟🍟 = +20 · 💥💥💥 = +50<br>
+            ⭐⭐⭐ = Epic Pet · 🌟🌟🌟 = LEGENDARY PET (0.08% chance!)<br>
+            Super Spin: 3× better legendary odds!
+          </div>
+        </div>
+
+        <!-- Pet Egg Machine -->
+        <div style="border:2px solid rgba(206,147,216,.4);border-radius:18px;padding:1rem .8rem;background:linear-gradient(160deg,#1a0520,#0a0218);">
+          <div style="font-family:'Playfair Display',serif;color:#CE93D8;font-size:.95rem;margin-bottom:.3rem;text-align:center;">🥚 Pet Egg Machine</div>
+          <div style="font-size:.62rem;color:rgba(206,147,216,.5);text-align:center;margin-bottom:.6rem;">Hatch a random pet! Casino-grade rarities 🎲</div>
+          <div style="text-align:center;margin-bottom:.5rem;">
+            <div id="pd-egg-display" style="font-size:3rem;animation:pulse 1.5s ease-in-out infinite;">🥚</div>
+          </div>
+          <div id="pd-egg-result" style="font-size:.75rem;color:rgba(255,255,255,.8);text-align:center;min-height:1.2rem;margin-bottom:.5rem;"></div>
+          <div style="display:flex;gap:6px;justify-content:center;margin-bottom:.4rem;">
+            <button onclick="pdEggPull()" id="pd-egg-btn" style="padding:.55rem 1.2rem;border:none;border-radius:12px;background:linear-gradient(135deg,#CE93D8,#9C27B0);color:#fff;font-family:'Playfair Display',serif;font-size:.82rem;cursor:pointer;">Hatch! 25🪙</button>
+          </div>
+          <div style="font-size:.54rem;color:rgba(206,147,216,.35);text-align:center;line-height:1.5;">
+            Common: 55% · Uncommon: 28% · Rare: 12%<br>
+            Epic: 4% · Legendary: 0.8% · Pity at 50 hatches
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PETS SUB-TAB -->
+    <div id="pd-subtab-pets-content" style="display:none;">
+      <div style="background:white;border-radius:20px;padding:1.2rem;box-shadow:0 6px 24px rgba(61,43,31,.08);">
+        <div style="text-align:center;margin-bottom:.8rem;">
+          <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--deep);">🐾 Your Pets</div>
+          <div style="font-size:.7rem;color:var(--deep);opacity:.6;font-style:italic;">Equip a pet for blackjack ability bonuses!</div>
+        </div>
+        
+        <!-- Equipped Pet Display -->
+        <div id="pd-equipped-pet-display" style="border:2px solid var(--gold);border-radius:16px;padding:.8rem;margin-bottom:.8rem;text-align:center;background:linear-gradient(135deg,rgba(212,168,83,.06),rgba(212,168,83,.02));">
+          <div style="font-size:.65rem;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.3rem;">Equipped Pet</div>
+          <div id="pd-equipped-pet-info" style="font-size:.85rem;color:var(--deep);">None equipped — tap a pet below!</div>
+          <div id="pd-equipped-pet-ability" style="font-size:.68rem;color:var(--deep);opacity:.6;font-style:italic;margin-top:.2rem;"></div>
+        </div>
+
+        <!-- Pet Grid -->
+        <div id="pd-pet-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div style="grid-column:1/-1;text-align:center;font-style:italic;opacity:.5;font-size:.8rem;padding:1rem;">No pets yet! Try the Casino 🎰</div>
+        </div>
+
+        <!-- Blackjack Pet Abilities Legend -->
+        <div style="margin-top:.8rem;border-top:1px solid rgba(61,43,31,.1);padding-top:.7rem;">
+          <div style="font-family:'Playfair Display',serif;font-size:.8rem;color:var(--deep);margin-bottom:.4rem;">📖 Pet Abilities in Blackjack</div>
+          <div style="font-size:.62rem;color:var(--deep);opacity:.6;line-height:1.7;">
+            🐱 <b>Heal</b> — Restore HP when you win a hand<br>
+            🛡️ <b>Shield</b> — Chance to block boss damage<br>
+            ⚔️ <b>Damage</b> — Bonus damage on winning hands<br>
+            🍀 <b>Lucky</b> — Improved card draws<br>
+            💰 <b>Coins</b> — Earn bonus coins from wins<br>
+            ✨ <b>Ultimate</b> — Legendary-only mega abilities
+          </div>
         </div>
       </div>
     </div>
@@ -856,7 +1123,7 @@ footer{position:relative;z-index:1;text-align:center;padding:0 1rem 3rem;font-si
         <select id="c4-char-dropdown" onchange="c4SelectChar(this.value)" style="width:100%;padding:.65rem 1rem;border-radius:14px;border:2px solid var(--peach);background:white;font-family:'Playfair Display',serif;font-size:.9rem;color:var(--deep);cursor:pointer;appearance:none;-webkit-appearance:none;box-shadow:0 3px 12px rgba(61,43,31,.07);">
           <option value="bao">Bao — Nomnom Healer (heal 6 HP/4 turns)</option>
           <option value="dudu">Dudu — Angry Aura (streak deals 2× damage)</option>
-          <option value="bubu" id="c4-bubu-option" disabled>🔒 ??? — Mystery Character (unlock via Capsule Machine)</option>
+          <option value="bubu" id="c4-bubu-option" disabled>🔒 ??? — Mystery Character (win 5 rounds in a row!)</option>
         </select>
         <div style="pointer-events:none;position:absolute;right:1rem;top:50%;transform:translateY(-50%);font-size:.8rem;opacity:.5;">▼</div>
       </div>
@@ -3524,442 +3791,1420 @@ canvas.addEventListener('touchstart',e=>{if(running)moveBasket(e.touches[0].clie
 
 // ===================== TABS =====================
 function showTab(tab){
-  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',['game','valorant','c4','stats','shop'][i]===tab));
-  document.getElementById('tab-game').style.display=tab==='game'?'block':'none';
-  document.getElementById('tab-valorant').classList.toggle('hidden',tab!=='valorant');
-  document.getElementById('tab-c4').classList.toggle('hidden',tab!=='c4');
-  document.getElementById('tab-stats').classList.toggle('hidden',tab!=='stats');
-  document.getElementById('tab-shop').classList.toggle('hidden',tab!=='shop');
+  const tabs=['game','blackjack','c4','stats'];
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',tabs[i]===tab));
+  ['tab-game','tab-blackjack','tab-c4','tab-stats'].forEach(id=>{
+    document.getElementById(id).classList.add('hidden');
+  });
+  document.getElementById('tab-'+tab).classList.remove('hidden');
   if(tab==='stats') updateStatsPanel();
-  if(tab==='shop') renderShop();
+  if(tab==='game') renderShop();
+  if(tab==='blackjack'){ if(typeof pdUpdateCoinDisplay==='function') pdUpdateCoinDisplay(); }
 }
 
-// ===================== POTATO SHOOTER GAME =====================
-let psRunning=false, psRAF=null, psState={}, psAgent=null;
 
-const PS_AGENTS={
-  sage:{
-    name:'Sage',icon:'🌿',color:'#4cd9a0',
-    maxHp:150, // extra HP
-    q:{name:'Healing Orb',icon:'💚',desc:'Restore 40 HP',cost:3,max:3,charges:3,
-       action(s){s.hp=Math.min(s.maxHp,s.hp+40);psMsg('💚 Healed!',2000);}},
-    e:{name:'Slow Orb',icon:'🔵',desc:'Slow all enemies for 4s',cost:0,cooldown:10,cd:0,
-       action(s){s.enemies.forEach(e=>e.slow=180);psMsg('🔵 Enemies Slowed!',1500);}},
-    ult:{name:'Resurrection',icon:'✨',desc:'Full HP restore + invincible 3s',orbsNeeded:7,
-       action(s){s.hp=s.maxHp;s.invincible=180;psMsg('✨ Resurrection! Invincible!',2500);}}
+
+
+
+// ===================== POTATO DEALER (Blackjack RPG) =====================
+// ===================== POTATO DEALER (Blackjack RPG) =====================
+
+// ── Sound Engine ──────────────────────────────────────────────────────────
+const pdAudio = (function(){
+  let ctx = null;
+  function getCtx(){ if(!ctx) try{ctx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){} return ctx; }
+  function play(type){
+    const c=getCtx(); if(!c) return;
+    const o=c.createOscillator(), g=c.createGain();
+    o.connect(g); g.connect(c.destination);
+    const t=c.currentTime;
+    if(type==='deal'){
+      o.type='triangle'; o.frequency.setValueAtTime(520,t); o.frequency.exponentialRampToValueAtTime(280,t+.12);
+      g.gain.setValueAtTime(.18,t); g.gain.exponentialRampToValueAtTime(.001,t+.13);
+      o.start(t); o.stop(t+.14);
+    } else if(type==='win'){
+      ['triangle','sine'].forEach((tp,i)=>{
+        const o2=c.createOscillator(),g2=c.createGain();
+        o2.connect(g2);g2.connect(c.destination);
+        o2.type=tp;
+        [440,554,660,880].forEach((f,j)=>{ o2.frequency.setValueAtTime(f,t+j*.09+i*.03); });
+        g2.gain.setValueAtTime(.12,t); g2.gain.exponentialRampToValueAtTime(.001,t+.5);
+        o2.start(t); o2.stop(t+.52);
+      });
+    } else if(type==='lose'){
+      o.type='sawtooth'; o.frequency.setValueAtTime(300,t); o.frequency.exponentialRampToValueAtTime(120,t+.3);
+      g.gain.setValueAtTime(.15,t); g.gain.exponentialRampToValueAtTime(.001,t+.32);
+      o.start(t); o.stop(t+.34);
+    } else if(type==='ability'){
+      o.type='sine'; o.frequency.setValueAtTime(660,t); o.frequency.setValueAtTime(880,t+.05); o.frequency.setValueAtTime(1100,t+.1);
+      g.gain.setValueAtTime(.14,t); g.gain.exponentialRampToValueAtTime(.001,t+.18);
+      o.start(t); o.stop(t+.2);
+    } else if(type==='ability_shield'){
+      // Heavy thud + low rumble — defensive wall
+      o.type='square'; o.frequency.setValueAtTime(220,t); o.frequency.exponentialRampToValueAtTime(140,t+.1);
+      g.gain.setValueAtTime(.22,t); g.gain.exponentialRampToValueAtTime(.001,t+.25);
+      o.start(t); o.stop(t+.28);
+      const o2=c.createOscillator(),g2=c.createGain(); o2.connect(g2);g2.connect(c.destination);
+      o2.type='triangle'; o2.frequency.setValueAtTime(440,t+.05); o2.frequency.exponentialRampToValueAtTime(660,t+.18);
+      g2.gain.setValueAtTime(.1,t+.05); g2.gain.exponentialRampToValueAtTime(.001,t+.22); o2.start(t+.05);o2.stop(t+.24);
+    } else if(type==='ability_double'){
+      // Crisp double-ping — burst of luck
+      [660,1320].forEach((f,i)=>{ const o2=c.createOscillator(),g2=c.createGain(); o2.connect(g2);g2.connect(c.destination); o2.type='triangle'; o2.frequency.value=f; g2.gain.setValueAtTime(.16,t+i*.07); g2.gain.exponentialRampToValueAtTime(.001,t+i*.07+.15); o2.start(t+i*.07);o2.stop(t+i*.07+.17); });
+    } else if(type==='ability_rage'){
+      // Growling snarl — anger surge
+      o.type='sawtooth'; o.frequency.setValueAtTime(150,t); o.frequency.exponentialRampToValueAtTime(280,t+.15);
+      g.gain.setValueAtTime(.2,t); g.gain.exponentialRampToValueAtTime(.001,t+.22);
+      o.start(t); o.stop(t+.24);
+    } else if(type==='ability_streak'){
+      // Rising flame — power stacking
+      [330,440,550,660,770].forEach((f,i)=>{ const o2=c.createOscillator(),g2=c.createGain(); o2.connect(g2);g2.connect(c.destination); o2.type='sawtooth'; o2.frequency.value=f; g2.gain.setValueAtTime(.1,t+i*.04); g2.gain.exponentialRampToValueAtTime(.001,t+i*.04+.1); o2.start(t+i*.04);o2.stop(t+i*.04+.12); });
+    } else if(type==='ability_peek'){
+      // Soft whisper swish — sneaky reveal
+      o.type='sine'; o.frequency.setValueAtTime(1200,t); o.frequency.exponentialRampToValueAtTime(600,t+.2);
+      g.gain.setValueAtTime(.1,t); g.gain.exponentialRampToValueAtTime(.001,t+.22);
+      o.start(t); o.stop(t+.24);
+    } else if(type==='ability_lucky'){
+      // Sparkling twinkle — luck magic
+      [880,1108,1320,1760].forEach((f,i)=>{ const o2=c.createOscillator(),g2=c.createGain(); o2.connect(g2);g2.connect(c.destination); o2.type='triangle'; o2.frequency.value=f; g2.gain.setValueAtTime(.12,t+i*.06); g2.gain.exponentialRampToValueAtTime(.001,t+i*.06+.12); o2.start(t+i*.06);o2.stop(t+i*.06+.14); });
+    } else if(type==='ult'){
+      [1,1.26,1.5,2].forEach((r,i)=>{ const o2=c.createOscillator(),g2=c.createGain(); o2.connect(g2);g2.connect(c.destination); o2.type='sine'; o2.frequency.setValueAtTime(440*r,t+i*.08); g2.gain.setValueAtTime(.16,t+i*.08); g2.gain.exponentialRampToValueAtTime(.001,t+i*.08+.25); o2.start(t+i*.08);o2.stop(t+i*.08+.27); });
+    } else if(type==='boss_hurt'){
+      o.type='square'; o.frequency.setValueAtTime(180,t); o.frequency.exponentialRampToValueAtTime(80,t+.2);
+      g.gain.setValueAtTime(.2,t); g.gain.exponentialRampToValueAtTime(.001,t+.22);
+      o.start(t); o.stop(t+.24);
+    } else if(type==='reward'){
+      [523,659,784,1047].forEach((f,i)=>{ const o2=c.createOscillator(),g2=c.createGain(); o2.connect(g2);g2.connect(c.destination); o2.type='triangle'; o2.frequency.value=f; g2.gain.setValueAtTime(.13,t+i*.1); g2.gain.exponentialRampToValueAtTime(.001,t+i*.1+.2); o2.start(t+i*.1);o2.stop(t+i*.1+.22); });
+    } else if(type==='flip'){
+      o.type='triangle'; o.frequency.setValueAtTime(800,t); o.frequency.exponentialRampToValueAtTime(400,t+.08);
+      g.gain.setValueAtTime(.1,t); g.gain.exponentialRampToValueAtTime(.001,t+.09);
+      o.start(t); o.stop(t+.1);
+    }
+  }
+  return { play };
+})();
+
+// ── Character Definitions ─────────────────────────────────────────────────
+const PD_CHARS = {
+  bao: {
+    name:'Bao', color:'var(--peach)', hp:120,
+    abilities:[
+      {id:'shield', name:'Potato Shield', icon:'🥔', desc:'Block next dealer attack (0 dmg)', cooldown:3},
+      {id:'double',  name:'Double Luck',    icon:'💥', desc:'Win = 2× damage dealt',           cooldown:2},
+    ],
+    ult:{id:'nomnom', name:'Nomnom Feast', icon:'🍟', desc:'Heal 40 HP + 2 free cards', cost:3}
   },
-  phoenix:{
-    name:'Phoenix',icon:'🔥',color:'#ff8c42',
-    maxHp:100,
-    q:{name:'Blaze',icon:'🔥',desc:'Fire wall burns enemies',cost:3,max:3,charges:3,
-       action(s){s.walls.push({x:s.px-60,y:s.py-10,w:120,h:20,life:180,dmg:2,col:'rgba(255,100,20,.7)'});psMsg('🔥 Blaze!',1500);}},
-    e:{name:'Curveball',icon:'⭐',desc:'Flash — stuns all enemies 2s',cost:0,cooldown:12,cd:0,
-       action(s){s.enemies.forEach(e=>e.stun=120);s.flash=40;psMsg('⭐ Curveball! Stunned!',1500);}},
-    ult:{name:'Run It Back',icon:'♨️',desc:'Place marker — respawn here with 50 HP',orbsNeeded:8,
-       action(s){s.marker={x:s.px,y:s.py};psMsg('♨️ Marker Set! Die to respawn!',2500);}}
+  dudu: {
+    name:'Dudu', color:'#f4a261', hp:100,
+    abilities:[
+      {id:'rage',   name:'Rage Draw',   icon:'😡', desc:'Force dealer to draw extra card', cooldown:2},
+      {id:'streak', name:'Angry Aura',  icon:'🔥', desc:'Each win adds +6 bonus damage (stacks)', cooldown:0},
+    ],
+    ult:{id:'bearrage', name:'Bear Rage', icon:'🐾', desc:'Deal 35 direct + 2× streak bonus', cost:3}
   },
-  jett:{
-    name:'Jett',icon:'💨',color:'#7ec8f0',
-    maxHp:100,
-    q:{name:'Updraft',icon:'🌪️',desc:'Dash toward aim point',cost:2,max:2,charges:2,
-       action(s){const dx=s.aim.x-s.px,dy=s.aim.y-s.py,d=Math.sqrt(dx*dx+dy*dy)||1;
-                 s.px=Math.max(20,Math.min(s.W-20,s.px+dx/d*80));
-                 s.py=Math.max(20,Math.min(s.H-20,s.py+dy/d*80));
-                 psMsg('💨 Updraft!',1000);}},
-    e:{name:'Tailwind',icon:'💨',desc:'Speed boost 4s — move faster',cost:0,cooldown:8,cd:0,
-       action(s){s.speedBoost=240;psMsg('💨 Tailwind! Speed up!',1500);}},
-    ult:{name:'Bladestorm',icon:'🗡️',desc:'5 daggers that one-shot enemies',orbsNeeded:7,
-       action(s){s.daggers=5;psMsg('🗡️ Bladestorm! 5 daggers!',2500);}}
-  },
-  reyna:{
-    name:'Reyna',icon:'👁️',color:'#b97ef5',
-    maxHp:100,
-    q:{name:'Devour',icon:'💜',desc:'Consume soul orb — heal 40 HP',cost:0,charges:0,max:0,
-       action(s){if(s.souls>0){s.souls--;s.hp=Math.min(s.maxHp,s.hp+40);psMsg('💜 Devour! +40 HP!',1500);}else psMsg('💜 No souls to devour!',1000);}},
-    e:{name:'Dismiss',icon:'🔮',desc:'Become invincible for 1.5s',cost:0,cooldown:15,cd:0,
-       action(s){s.invincible=90;psMsg('🔮 Dismissed! Invincible!',1500);}},
-    ult:{name:'Empress',icon:'👑',desc:'Frenzy: 2× fire rate, auto-heal kills 10s',orbsNeeded:6,
-       action(s){s.empress=600;psMsg('👑 Empress Mode! FRENZY!',3000);}}
+  bubu: {
+    name:'Bubu', color:'#a78bfa', hp:110,
+    abilities:[
+      {id:'peek',  name:'Peek Card',   icon:'👁️', desc:"See dealer's hidden card",       cooldown:2},
+      {id:'lucky', name:'Lucky Star',  icon:'⭐', desc:'Replace worst card in your hand', cooldown:3},
+    ],
+    ult:{id:'fortune', name:'Fortune Paw', icon:'🌟', desc:'Guarantee next win + heal 30 HP', cost:3}
   }
 };
 
-function psShowAgentSelect(){
-  document.getElementById('ps-agent-select').style.display='block';
-  document.getElementById('ps-wrap').style.display='none';
-  psRunning=false;
-  if(psRAF) cancelAnimationFrame(psRAF);
-}
-
-function psSelectAgent(agentId){
-  psAgent=agentId;
-  document.getElementById('ps-agent-select').style.display='none';
-  document.getElementById('ps-wrap').style.display='block';
-  psInit();
-}
-
-function psInit(){
-  if(!psAgent) return;
-  psRunning=false;
-  if(psRAF) cancelAnimationFrame(psRAF);
-
-  const canvas=document.getElementById('ps-canvas');
-  const agent=PS_AGENTS[psAgent];
-  const W=canvas.offsetWidth||300;
-  const H=Math.round(Math.min(320,window.innerHeight*0.42));
-  canvas.width=W; canvas.height=H;
-
-  // Deep copy agent abilities with fresh state
-  const q=Object.assign({},agent.q);
-  const e=Object.assign({},agent.e);
-  const ult=Object.assign({},agent.ult);
-  if(q.charges!==undefined) q.cur=q.charges;
-
-  psState={
-    W,H,
-    px:W/2,py:H*0.6,
-    aim:{x:W/2,y:H*0.3},
-    hp:agent.maxHp,maxHp:agent.maxHp,
-    score:0,wave:1,
-    bullets:[],enemies:[],orbs:[], walls:[],
-    fireTimer:0,fireRate:15,
-    waveTimer:0,waveCount:0,waveMax:5,
-    q,e,ult,
-    ultOrbs:0,
-    souls:0,      // Reyna
-    speedBoost:0, // Jett
-    daggers:0,    // Jett ult
-    invincible:0,
-    empress:0,    // Reyna ult
-    flash:0,
-    marker:null,  // Phoenix ult
-    dead:false,
-    gameOver:false,
-    walls:[]
-  };
-
-  document.getElementById('ps-overlay').style.display='none';
-  document.getElementById('ps-skill-tip').textContent='';
-  document.getElementById('ps-agent-badge').textContent=agent.icon+' '+agent.name;
-  psUpdateSkillButtons();
-  psSetupInput(canvas);
-  psRunning=true;
-  psLoop();
-}
-
-function psUpdateSkillButtons(){
-  if(!psAgent) return;
-  const s=psState, a=PS_AGENTS[psAgent];
-  // Q button
-  const qBtn=document.getElementById('ps-q-btn');
-  const eBtn=document.getElementById('ps-e-btn');
-  const ultBtn=document.getElementById('ps-ult-btn');
-  const qLabel=document.getElementById('ps-q-label');
-  const eLabel=document.getElementById('ps-e-label');
-
-  const qReady = psAgent==='reyna' ? s.souls>0 : s.q.cur>0;
-  const eReady = s.e.cd===0;
-  const ultReady = s.ultOrbs>=a.ult.orbsNeeded;
-
-  qBtn.textContent=s.q.icon+' '+s.q.name;
-  qBtn.style.background=qReady?`rgba(${hexToRgb(a.color)},.25)`:'rgba(255,255,255,.06)';
-  qBtn.style.color=qReady?a.color:'rgba(253,246,236,.3)';
-  qBtn.style.cursor=qReady?'pointer':'not-allowed';
-
-  eBtn.textContent=s.e.icon+' '+s.e.name+(s.e.cd>0?' ('+Math.ceil(s.e.cd/60)+'s)':'');
-  eBtn.style.background=eReady?'rgba(126,200,240,.2)':'rgba(255,255,255,.06)';
-  eBtn.style.color=eReady?'#7ec8f0':'rgba(253,246,236,.3)';
-  eBtn.style.cursor=eReady?'pointer':'not-allowed';
-
-  ultBtn.textContent=a.ult.icon+' ULT '+(ultReady?'READY!':'('+s.ultOrbs+'/'+a.ult.orbsNeeded+')');
-  ultBtn.style.background=ultReady?'rgba(212,168,83,.3)':'rgba(255,255,255,.06)';
-  ultBtn.style.color=ultReady?'var(--gold)':'rgba(253,246,236,.3)';
-  ultBtn.style.cursor=ultReady?'pointer':'not-allowed';
-
-  if(qLabel) qLabel.textContent='Q'+(s.q.cur!==undefined?'('+s.q.cur+')':'');
-}
-
-function hexToRgb(hex){
-  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
-  return r+','+g+','+b;
-}
-
-function psUseSkill(skill){
-  if(!psRunning||psState.dead) return;
-  const s=psState, a=PS_AGENTS[psAgent];
-  if(skill==='q'){
-    if(psAgent==='reyna'){a.q.action(s);}
-    else if(s.q.cur>0){s.q.cur--;a.q.action(s);}
-    else{psMsg(s.q.icon+' Out of charges!',1000);}
-  } else if(skill==='e'){
-    if(s.e.cd>0){psMsg(s.e.icon+' Cooldown: '+Math.ceil(s.e.cd/60)+'s',1000);return;}
-    a.e.action(s);s.e.cd=s.e.cooldown*60;
-  } else if(skill==='ult'){
-    if(s.ultOrbs>=a.ult.orbsNeeded){s.ultOrbs=0;a.ult.action(s);}
-    else psMsg('Need '+a.ult.orbsNeeded+' orbs for ULT!',1000);
+// ── Bosses (themed around Amber's world) ─────────────────────────────────
+const PD_BOSSES = [
+  {
+    name:'Udon Worm', sprite:'🪱', hp:80, atk:12, tier:1,
+    desc:'A slimy worm-like noodle that Amber refuses to eat.',
+    taunt:"Slurp slurp~ I'm unavoidable!",
+    special: null
+  },
+  {
+    name:'Onion King', sprite:'🧅', hp:110, atk:18, tier:2,
+    desc:"The king of everything Amber picks out of her food.",
+    taunt:"You can't escape my layers!",
+    special:'tears' // makes player "cry" (skip one card reveal)
+  },
+  {
+    name:'Bean Sprout Boss', sprite:'🌱', hp:140, atk:22, tier:3,
+    desc:"Stringy, slimy, and absolutely not wanted.",
+    taunt:"I grow stronger the more you hate me!",
+    special:'double_draw' // dealer draws 2 cards sometimes
+  },
+  {
+    name:'Weekend Enemy', sprite:'😤', hp:170, atk:27, tier:4,
+    desc:"The force that makes weekends feel too short. Based on The Weeknd ironically.",
+    taunt:"Blinding Lights won't save you now!",
+    special:'freeze' // occasionally freezes an ability cooldown
+  },
+  {
+    name:'Dark Sour Sam', sprite:'😈', hp:210, atk:32, tier:5,
+    desc:"The ultimate boss. Everything Amber dislikes given form.",
+    taunt:"No maroon walls can protect you here!",
+    special:'mirror' // 50% chance to mirror damage back
   }
-  psUpdateSkillButtons();
+];
+
+// ── Reward Pool ───────────────────────────────────────────────────────────
+// Tier 1 (after boss 1), Tier 2 (bosses 2-3), Tier 3 (bosses 4-5)
+const PD_REWARD_POOL = {
+  1: [
+    {id:'extra_hp_sm',   name:'Potato Snack',      icon:'🥔', desc:'Restore 20 HP right now.', type:'instant', val:20},
+    {id:'shield_charge', name:'Extra Spud Shield',  icon:'🛡️', desc:'Next Potato Shield has 2 charges.', type:'passive'},
+    {id:'start_bonus',   name:'Head Start',         icon:'🎴', desc:'Start each hand with 1 extra card drawn free.', type:'passive'},
+    {id:'win_heal',      name:'Victory Snack',       icon:'🌸', desc:'Heal 5 HP every time you win a hand.', type:'passive'},
+    {id:'reduced_cd_1',  name:'Quick Hands',         icon:'⚡', desc:'Ability 1 cooldown reduced by 1.', type:'passive'},
+    {id:'lucky_draw',    name:'Lucky Potato',        icon:'✨', desc:'Once per hand, re-draw 1 card automatically if over 18.', type:'passive'},
+  ],
+  2: [
+    {id:'extra_hp_md',   name:'Baked Potato',       icon:'🍠', desc:'Restore 35 HP right now.', type:'instant', val:35},
+    {id:'double_cd',     name:'Power Surge',         icon:'💪', desc:'Ability 2 cooldown reduced by 1.', type:'passive'},
+    {id:'streak_amp',    name:'Maroon Fire',         icon:'❤️', desc:'Streak bonus damage +4 per win.', type:'passive'},
+    {id:'boss_weak',     name:'Boss Buster',         icon:'🎯', desc:'All boss attacks deal 4 less damage.', type:'passive'},
+    {id:'ult_charge',    name:'Power Potato',        icon:'⚡', desc:'Ult charges faster (cost -1 win).', type:'passive'},
+    {id:'blackjack_amp', name:'Natural 21',          icon:'🃏', desc:'Blackjack (21 on deal) deals +20 bonus damage.', type:'passive'},
+    {id:'push_heal',     name:'Tie Break',           icon:'🤝', desc:'Push (tie) hands now heal 8 HP.', type:'passive'},
+  ],
+  3: [
+    {id:'extra_hp_lg',   name:'Grandma\'s Si Ji Dou',icon:'🫛', desc:'Restore 45 HP now + permanently heal 6 HP every win.', type:'hybrid', val:45, passiveId:'siji_sustain'},
+    {id:'mirror_shield', name:'Spud Mirror',         icon:'🪞', desc:'When shielded, reflect 12 dmg back at boss.', type:'passive'},
+    {id:'mega_streak',   name:'Sheng Jian Bao',     icon:'🥟', desc:'Streak bonus is permanent across boss fights.', type:'passive'},
+    {id:'dealer_penalty',name:'Yew Kee Power',      icon:'🦆', desc:'Dealer busts = deal 15 extra damage.', type:'passive'},
+    {id:'full_restore',  name:'Lor Mee Surge',       icon:'🍜', desc:'Restore 30 HP now + permanently deal +10 bonus dmg on wins.', type:'hybrid', val:30, passiveId:'lormee_power'},
+    {id:'ult_refund',    name:'Fortune Cat',         icon:'🐱', desc:'Using ult restores 1 ult charge on win.', type:'passive'},
+  ]
+};
+
+// ── Game State ────────────────────────────────────────────────────────────
+let pdState = {};
+
+// ── Init & Portrait Population ────────────────────────────────────────────
+(function pdInitPortraits(){
+  const ids=['bao','dudu','bubu'];
+  ids.forEach(id=>{
+    const el=document.getElementById('pd-portrait-'+id);
+    if(el) el.innerHTML=getCharPortraitHTML(id,36);
+  });
+})();
+
+// ── Card Engine ───────────────────────────────────────────────────────────
+const PD_SUITS=['♠','♥','♦','♣'];
+const PD_RANKS=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+// Potato-themed rank display
+const PD_POTATO_RANKS={'A':'🥔','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'8','9':'9','10':'10','J':'J','Q':'Q','K':'K'};
+
+function pdDeck(){
+  const d=[];
+  for(const s of PD_SUITS) for(const r of PD_RANKS) d.push({suit:s,rank:r,hidden:false});
+  for(let i=d.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[d[i],d[j]]=[d[j],d[i]];}
+  return d;
 }
 
-function psMsg(text,dur){
-  const el=document.getElementById('ps-skill-tip');
+function pdCardVal(rank){
+  if(['J','Q','K'].includes(rank)) return 10;
+  if(rank==='A') return 11;
+  return parseInt(rank);
+}
+
+function pdHandTotal(cards){
+  let t=0,a=0;
+  for(const c of cards){ t+=pdCardVal(c.rank); if(c.rank==='A')a++; }
+  while(t>21&&a>0){t-=10;a--;}
+  return t;
+}
+
+function pdCardHTML(card, delay=0){
+  if(card.hidden){
+    return `<div class="pd-card hidden-card dealing" style="animation-delay:${delay}ms;" title="Hidden">
+      <div style="font-size:1.4rem;">🥔</div>
+    </div>`;
+  }
+  const isRed=card.suit==='♥'||card.suit==='♦';
+  const cls=isRed?'red':'black';
+  const rankDisplay=card.rank==='A'?'🥔':card.rank;
+  return `<div class="pd-card ${cls} dealing" style="animation-delay:${delay}ms;" title="${card.rank}${card.suit}">
+    <div class="rank">${rankDisplay}</div>
+    <div class="suit">${card.suit}</div>
+  </div>`;
+}
+
+function pdRenderCards(){
+  const s=pdState;
+  const dc=document.getElementById('pd-dealer-cards');
+  const pc=document.getElementById('pd-player-cards');
+  if(!dc||!pc) return;
+  dc.innerHTML=s.dealerCards.map((c,i)=>pdCardHTML(c,i*80)).join('');
+  pc.innerHTML=s.playerCards.map((c,i)=>pdCardHTML(c,i*80+200)).join('');
+  const pt=pdHandTotal(s.playerCards);
+  document.getElementById('pd-player-total').textContent=pt;
+  const visD=s.dealerCards.filter(c=>!c.hidden);
+  document.getElementById('pd-dealer-total').textContent=visD.length?pdHandTotal(visD)+'':'?';
+}
+
+// ── Select Character ──────────────────────────────────────────────────────
+function pdSelectChar(charId){
+  if(pdState.running) return;
+  // Check bet
+  if((P.coins||0) < pdCurrentBet){
+    document.getElementById('pd-bet-error').textContent = `Not enough coins! You have ${P.coins||0} 🪙`;
+    return;
+  }
+  if(pdCurrentBet < 5){
+    document.getElementById('pd-bet-error').textContent = 'Minimum bet is 5 coins!';
+    return;
+  }
+  // Deduct bet
+  P.coins -= pdCurrentBet;
+  saveP();
+  pdUpdateCoinDisplay();
+  P.pdPetReviveUsed = false; // reset revive for new game
+  
+  const char=PD_CHARS[charId];
+  pdState={
+    char:charId, charDef:char, running:true,
+    hp:char.hp, maxHp:char.hp,
+    bossIdx:0,
+    bossHp:PD_BOSSES[0].hp, bossMaxHp:PD_BOSSES[0].hp,
+    deck:pdDeck(),
+    playerCards:[], dealerCards:[],
+    ab1Cd:0, ab2Cd:0, ultWins:0, ultCost:char.ult.cost,
+    shield:false, doubleDmg:false, rageDraw:false, fortuneNext:false, freeCards:0,
+    streakBonus:0, streakCount:0,
+    phase:'deal', round:1,
+    acquiredBuffs:[],
+    betAmount: pdCurrentBet,
+    bonusCoins: 0,
+    // Buff flags
+    bufWinHeal:0, bufBossWeak:0, bufBlackjackAmp:0, bufPushHeal:0, bufLorMeeDmg:0,
+    bufMirrorShield:false, bufMegaStreak:false, bufDealerPenalty:0,
+    bufUltRefund:false, bufLuckyDraw:false, bufStartBonus:false,
+    selectedReward:null,
+  };
+  document.getElementById('pd-bet-panel').style.display='none';
+  document.querySelectorAll('.pd-char-btn').forEach(b=>b.style.opacity='.45');
+  document.getElementById('pd-btn-'+charId).style.opacity='1';
+  document.getElementById('pd-hero-name').textContent=char.name;
+  document.getElementById('pd-hero-portrait').innerHTML=getCharPortraitHTML(charId,30);
+  pdUpdateBoss();
+  pdUpdateAbilityBtns();
+  document.getElementById('pd-game-area').style.display='block';
+  document.getElementById('pd-reward-screen').style.display='none';
+  document.getElementById('pd-end-screen').style.display='none';
+  pdDeal();
+}
+
+// ── Boss UI ───────────────────────────────────────────────────────────────
+function pdUpdateBoss(){
+  const boss=PD_BOSSES[pdState.bossIdx];
+  document.getElementById('pd-boss-name').textContent=boss.name;
+  document.getElementById('pd-boss-sprite').textContent=boss.sprite;
+  pdUpdateHpBars();
+  pdUpdateWaveInfo();
+}
+
+function pdUpdateHpBars(){
+  const s=pdState;
+  const hPct=Math.max(0,s.hp/s.maxHp*100);
+  const bPct=Math.max(0,s.bossHp/s.bossMaxHp*100);
+  document.getElementById('pd-hero-hp-bar').style.width=hPct+'%';
+  document.getElementById('pd-hero-hp-text').textContent=Math.max(0,s.hp)+'/'+s.maxHp;
+  document.getElementById('pd-boss-hp-bar').style.width=bPct+'%';
+  document.getElementById('pd-boss-hp-text').textContent=Math.max(0,s.bossHp)+'/'+s.bossMaxHp;
+}
+
+function pdUpdateWaveInfo(){
+  const s=pdState;
+  document.getElementById('pd-wave-info').textContent=`Boss ${s.bossIdx+1}/${PD_BOSSES.length} · Round ${s.round}`;
+}
+
+function pdBossShakeAnim(){
+  const el=document.getElementById('pd-boss-sprite');
+  el.classList.remove('boss-shake','boss-hurt');
+  void el.offsetWidth;
+  el.classList.add('boss-shake','boss-hurt');
+  setTimeout(()=>el.classList.remove('boss-shake','boss-hurt'),500);
+  pdAudio.play('boss_hurt');
+}
+
+function pdPlayerWinAnim(){
+  const el=document.getElementById('pd-hero-portrait');
+  el.classList.remove('player-win-anim');
+  void el.offsetWidth;
+  el.classList.add('player-win-anim');
+  setTimeout(()=>el.classList.remove('player-win-anim'),600);
+}
+
+// ── Float Message ─────────────────────────────────────────────────────────
+function pdFloatMsg(text, duration=900){
+  const el=document.getElementById('pd-float-msg');
+  if(!el) return;
   el.textContent=text;
-  clearTimeout(el._t);
-  el._t=setTimeout(()=>el.textContent='',dur);
+  el.style.display='block';
+  el.style.opacity='1';
+  setTimeout(()=>{
+    el.style.transition='opacity .4s';
+    el.style.opacity='0';
+    setTimeout(()=>{el.style.display='none';el.style.transition='';},400);
+  },duration);
 }
 
-function psSetupInput(canvas){
-  canvas._psMoveHandler=canvas._psMoveHandler||function(e){
-    const r=canvas.getBoundingClientRect();
-    const cx=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
-    const cy=(e.touches?e.touches[0].clientY:e.clientY)-r.top;
-    const sx=canvas.width/r.width, sy=canvas.height/r.height;
-    if(!psRunning||psState.dead) return;
-    psState.aim={x:cx*sx,y:cy*sy};
-    // Move player toward aim (not instant — Valorant feel)
-    const s=psState;
-    const dx=s.aim.x-s.px, dy=s.aim.y-s.py;
-    const d=Math.sqrt(dx*dx+dy*dy)||1;
-    const spd=s.speedBoost>0?4.5:2.8;
-    if(d>30){s.px+=dx/d*spd;s.py+=dy/d*spd;}
-    s.px=Math.max(18,Math.min(s.W-18,s.px));
-    s.py=Math.max(18,Math.min(s.H-18,s.py));
-  };
-  canvas.addEventListener('mousemove',canvas._psMoveHandler);
-  canvas.addEventListener('touchmove',canvas._psMoveHandler,{passive:true});
-  canvas.addEventListener('touchstart',canvas._psMoveHandler,{passive:true});
+function pdMsg(text){ const el=document.getElementById('pd-msg'); if(el) el.textContent=text; }
+
+// ── Deal ──────────────────────────────────────────────────────────────────
+function pdDeal(){
+  const s=pdState;
+  s.phase='play';
+  s.shield=false; s.doubleDmg=false; s.rageDraw=false;
+  if(s.deck.length<8) s.deck=pdDeck();
+
+  s.playerCards=[pdDraw(),pdDraw()];
+  if(s.bufStartBonus){
+    const bonusCard=pdDraw();
+    const testTotal=pdHandTotal([...s.playerCards,bonusCard]);
+    // Only add bonus card if it won't bust — discard silently if it would
+    if(testTotal<=21) s.playerCards.push(bonusCard);
+  }
+  for(let i=0;i<s.freeCards;i++) s.playerCards.push(pdDraw());
+  s.freeCards=0;
+  s.dealerCards=[pdDraw(),{...pdDraw(),hidden:true}];
+
+  // Ability cooldown tick
+  if(s.ab1Cd>0) s.ab1Cd--;
+  if(s.ab2Cd>0) s.ab2Cd--;
+
+  pdRenderCards();
+  pdUpdateAbilityBtns();
+  pdShowActionBtns(true);
+  document.getElementById('pd-deal-btn').style.display='none';
+
+  // Lucky draw passive: if dealt >18, replace one card
+  if(s.bufLuckyDraw&&pdHandTotal(s.playerCards)>18){
+    setTimeout(()=>{
+      const idx=s.playerCards.findIndex(c=>pdCardVal(c.rank)>5);
+      if(idx>=0){ s.playerCards[idx]=pdDraw(); pdRenderCards(); pdMsg('⭐ Lucky Draw activated!'); }
+    },600);
+  }
+
+  const pt=pdHandTotal(s.playerCards);
+  if(pt===21){
+    pdAudio.play('win');
+    pdFloatMsg('🥔 POTATO 21! 🥔');
+    pdMsg('Potato 21! Natural win!');
+    setTimeout(()=>pdStand(),400);
+    return;
+  }
+  pdAudio.play('deal');
+  pdMsg('Hit or Stand?');
 }
 
-function psLoop(){
-  if(!psRunning) return;
-  const s=psState;
-  const canvas=document.getElementById('ps-canvas');
-  const ctx=canvas.getContext('2d');
-  const a=PS_AGENTS[psAgent];
-
-  // --- Update cooldowns & timers ---
-  if(s.e.cd>0) s.e.cd--;
-  if(s.invincible>0) s.invincible--;
-  if(s.speedBoost>0) s.speedBoost--;
-  if(s.flash>0) s.flash--;
-  if(s.empress>0) s.empress--;
-
-  // --- Spawn enemies ---
-  s.waveTimer++;
-  const spawnInterval=Math.max(40,120-s.wave*8);
-  if(s.waveTimer>=spawnInterval && s.waveCount<s.waveMax+s.wave*2){
-    const side=Math.floor(Math.random()*4);
-    let ex,ey;
-    if(side===0){ex=Math.random()*s.W;ey=-20;}
-    else if(side===1){ex=s.W+20;ey=Math.random()*s.H;}
-    else if(side===2){ex=Math.random()*s.W;ey=s.H+20;}
-    else{ex=-20;ey=Math.random()*s.H;}
-    const isElite=s.wave>3&&Math.random()<0.2;
-    s.enemies.push({x:ex,y:ey,hp:isElite?60:30,maxHp:isElite?60:30,
-                    spd:isElite?1.1:0.9+s.wave*0.05,
-                    r:isElite?14:10,
-                    slow:0,stun:0,col:isElite?'#ff4444':'#cc2222',elite:isElite});
-    s.waveCount++;
-    s.waveTimer=0;
-  }
-
-  // Check wave clear
-  if(s.waveCount>=(s.waveMax+s.wave*2) && s.enemies.length===0){
-    s.wave++;s.waveCount=0;s.waveMax=5;
-    psMsg('🔥 Wave '+(s.wave)+' incoming!',2000);
-    if(s.wave%3===0 && psAgent==='sage' && s.q.cur<s.q.max) s.q.cur++;
-    if(s.wave%3===0 && (psAgent==='jett'||psAgent==='phoenix') && s.q.cur<s.q.max) s.q.cur++;
-  }
-
-  // --- Move enemies ---
-  s.enemies.forEach(e=>{
-    if(e.stun>0){e.stun--;return;}
-    if(e.slow>0) e.slow--;
-    const spd=e.slow>0?e.spd*0.35:e.spd;
-    const dx=s.px-e.x,dy=s.py-e.y,d=Math.sqrt(dx*dx+dy*dy)||1;
-    e.x+=dx/d*spd;e.y+=dy/d*spd;
-    // Wall damage
-    s.walls.forEach(w=>{if(e.x>w.x&&e.x<w.x+w.w&&e.y>w.y&&e.y<w.y+w.h)e.hp-=w.dmg;});
-    // Dagger one-shot (Jett ult)
-    if(s.daggers>0&&d<(e.r+14)){e.hp=-999;s.daggers--;s.score+=20;}
-    // Player collision
-    if(d<(e.r+16)&&s.invincible===0){
-      const dmg=e.elite?2:1;
-      s.hp=Math.max(0,s.hp-dmg);
-      if(psAgent==='reyna'&&s.empress>0) s.hp=Math.min(s.maxHp,s.hp+5); // Empress auto-heal
-    }
-  });
-
-  // Remove dead enemies, spawn soul orbs for Reyna
-  s.enemies=s.enemies.filter(e=>{
-    if(e.hp<=0){
-      s.score+=10;
-      s.ultOrbs=Math.min(PS_AGENTS[psAgent].ult.orbsNeeded,s.ultOrbs+1);
-      if(psAgent==='reyna'){s.souls=Math.min(3,s.souls+1);}
-      // Drop orb pickup
-      s.orbs.push({x:e.x,y:e.y,life:200});
-      return false;
-    }
-    return true;
-  });
-
-  // Collect soul orbs (visual)
-  s.orbs=s.orbs.filter(o=>{o.life--;return o.life>0;});
-
-  // --- Auto-fire ---
-  const fr=s.empress>0?Math.floor(s.fireRate/2):s.fireRate;
-  s.fireTimer++;
-  if(s.fireTimer>=fr && s.enemies.length>0){
-    s.fireTimer=0;
-    // Find nearest enemy
-    let nearest=null,bestD=99999;
-    s.enemies.forEach(e=>{const dx=e.x-s.px,dy=e.y-s.py,d=dx*dx+dy*dy;if(d<bestD){bestD=d;nearest=e;}});
-    if(nearest){
-      const dx=nearest.x-s.px,dy=nearest.y-s.py,d=Math.sqrt(dx*dx+dy*dy)||1;
-      s.bullets.push({x:s.px,y:s.py,vx:dx/d*9,vy:dy/d*9,life:60});
-    }
-  }
-
-  // --- Move bullets ---
-  s.bullets.forEach(b=>{b.x+=b.vx;b.y+=b.vy;b.life--;});
-  s.bullets=s.bullets.filter(b=>b.life>0);
-
-  // Bullet-enemy collision
-  s.bullets.forEach(b=>{
-    s.enemies.forEach(e=>{
-      const dx=b.x-e.x,dy=b.y-e.y;
-      if(dx*dx+dy*dy<(e.r+5)*(e.r+5)){e.hp-=10;b.life=0;}
-    });
-  });
-
-  // Clean up walls
-  s.walls=s.walls.filter(w=>{w.life--;return w.life>0;});
-
-  // Phoenix ult respawn
-  if(s.hp<=0 && psAgent==='phoenix' && s.marker){
-    s.px=s.marker.x;s.py=s.marker.y;s.hp=50;s.marker=null;
-    psMsg('♨️ Run It Back! Respawned!',2000);
-  }
-
-  // --- Death ---
-  if(s.hp<=0 && !s.dead){
-    s.dead=true; psRunning=false;
-    document.getElementById('ps-msg').textContent='💀 Eliminated! Score: '+s.score;
-    document.getElementById('ps-overlay').style.display='block';
-  }
-
-  // --- Draw ---
-  // Background — map-like grid
-  ctx.fillStyle='#1a1a2e';
-  ctx.fillRect(0,0,s.W,s.H);
-  // Grid lines
-  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1;
-  for(let x=0;x<s.W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,s.H);ctx.stroke();}
-  for(let y=0;y<s.H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(s.W,y);ctx.stroke();}
-
-  // Spike bomb objective marker in center
-  ctx.save();
-  ctx.fillStyle='rgba(255,200,0,.12)';
-  ctx.beginPath();ctx.arc(s.W/2,s.H/2,22,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='rgba(255,200,0,.35)';ctx.font='16px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText('💣',s.W/2,s.H/2);
-  ctx.restore();
-
-  // Walls (Phoenix Blaze)
-  s.walls.forEach(w=>{
-    ctx.fillStyle=w.col;ctx.fillRect(w.x,w.y,w.w,w.h);
-  });
-
-  // Flash effect
-  if(s.flash>0){ctx.fillStyle='rgba(255,255,200,'+(s.flash/40*0.7)+')';ctx.fillRect(0,0,s.W,s.H);}
-
-  // Soul orbs (Reyna)
-  s.orbs.forEach(o=>{
-    if(psAgent==='reyna'){
-      ctx.fillStyle='rgba(185,126,245,'+(o.life/200*0.8)+')';
-      ctx.beginPath();ctx.arc(o.x,o.y,5,0,Math.PI*2);ctx.fill();
-    }
-  });
-
-  // Marker (Phoenix ult)
-  if(s.marker){
-    ctx.save();ctx.fillStyle='rgba(255,140,66,.5)';ctx.strokeStyle='#ff8c42';ctx.lineWidth=2;
-    ctx.beginPath();ctx.arc(s.marker.x,s.marker.y,10,0,Math.PI*2);ctx.fill();ctx.stroke();
-    ctx.fillStyle='#ff8c42';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText('♨️',s.marker.x,s.marker.y);ctx.restore();
-  }
-
-  // Enemies
-  s.enemies.forEach(e=>{
-    // Body
-    ctx.fillStyle=e.slow>0?'rgba(150,150,255,.9)':e.stun>0?'rgba(255,255,100,.9)':e.col;
-    ctx.beginPath();ctx.arc(e.x,e.y,e.r,0,Math.PI*2);ctx.fill();
-    // Red outline for elite
-    if(e.elite){ctx.strokeStyle='#ff0000';ctx.lineWidth=2;ctx.beginPath();ctx.arc(e.x,e.y,e.r,0,Math.PI*2);ctx.stroke();}
-    // HP bar
-    const bw=e.r*2+4;
-    ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(e.x-bw/2,e.y-e.r-8,bw,4);
-    ctx.fillStyle='#ff4444';ctx.fillRect(e.x-bw/2,e.y-e.r-8,bw*(e.hp/e.maxHp),4);
-    // Enemy emoji
-    ctx.fillStyle='#fff';ctx.font=(e.elite?'12':'9')+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(e.elite?'💀':'🥔',e.x,e.y);
-  });
-
-  // Bullets
-  ctx.fillStyle=a.color||'#fff';
-  s.bullets.forEach(b=>{ctx.beginPath();ctx.arc(b.x,b.y,4,0,Math.PI*2);ctx.fill();});
-
-  // Player
-  const invFrame=s.invincible>0&&Math.floor(Date.now()/100)%2;
-  if(!invFrame){
-    // Shadow
-    ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(s.px,s.py+16,14,5,0,0,Math.PI*2);ctx.fill();
-    // Agent circle
-    const grad=ctx.createRadialGradient(s.px,s.py,0,s.px,s.py,18);
-    grad.addColorStop(0,a.color||'#fff');grad.addColorStop(1,'rgba(0,0,0,.3)');
-    ctx.fillStyle=grad;ctx.beginPath();ctx.arc(s.px,s.py,18,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(s.px,s.py,18,0,Math.PI*2);ctx.stroke();
-    // Agent emoji
-    ctx.font='16px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(a.icon,s.px,s.py);
-    // Empress aura (Reyna)
-    if(s.empress>0){ctx.strokeStyle='rgba(185,126,245,.6)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(s.px,s.py,24,0,Math.PI*2);ctx.stroke();}
-    // Daggers indicator (Jett)
-    if(s.daggers>0){ctx.fillStyle='rgba(255,255,100,.8)';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('×'+s.daggers+'🗡️',s.px,s.py-28);}
-  }
-
-  // Crosshair at aim
-  ctx.strokeStyle='rgba(255,255,255,.5)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(s.aim.x-8,s.aim.y);ctx.lineTo(s.aim.x+8,s.aim.y);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(s.aim.x,s.aim.y-8);ctx.lineTo(s.aim.x,s.aim.y+8);ctx.stroke();
-
-  // HUD overlays
-  document.getElementById('ps-score-el').textContent=s.score;
-  document.getElementById('ps-wave-el').textContent=s.wave;
-  document.getElementById('ps-hp-el').textContent=s.hp;
-  document.getElementById('ps-hp-bar').style.width=(s.hp/s.maxHp*100)+'%';
-  document.getElementById('ps-q-bar').style.width=
-    psAgent==='reyna'?(s.souls/3*100)+'%':(s.q.cur||0)/(s.q.max||1)*100+'%';
-  document.getElementById('ps-e-bar').style.width=s.e.cd>0?(1-s.e.cd/(s.e.cooldown*60))*100+'%':'100%';
-  document.getElementById('ps-ult-bar').style.width=(s.ultOrbs/PS_AGENTS[psAgent].ult.orbsNeeded*100)+'%';
-  if(s.e.cd>0) document.getElementById('ps-e-label').textContent='E('+Math.ceil(s.e.cd/60)+'s)';
-  else document.getElementById('ps-e-label').textContent='E';
-  psUpdateSkillButtons();
-
-  if(psRunning) psRAF=requestAnimationFrame(psLoop);
+function pdDraw(){
+  if(pdState.deck.length<4) pdState.deck=pdDeck();
+  return pdState.deck.pop();
 }
 
-function psRestart(){
-  if(psAgent) psInit();
+// ── Hit ───────────────────────────────────────────────────────────────────
+function pdHit(){
+  const s=pdState;
+  if(s.phase!=='play') return;
+  const newCard=pdDraw();
+  s.playerCards.push(newCard);
+  pdAudio.play('deal');
+  pdRenderCards();
+  const total=pdHandTotal(s.playerCards);
+  if(total>21){
+    // Pet lucky draw: chance to auto-replace the bad card
+    if(pdPetLuckyDraw() && s.playerCards.length>2){
+      s.playerCards.pop(); // remove the bad card
+      const betterCard = pdDraw();
+      s.playerCards.push(betterCard);
+      pdRenderCards();
+      const newTotal = pdHandTotal(s.playerCards);
+      pdPetFloatText('🍀 Lucky Re-draw!', '#4ade80');
+      pdAudio.play('reward');
+      if(newTotal>21){ pdMsg('Still bust! 💥'); pdResolve('bust'); }
+      else if(newTotal===21){ pdMsg('21! Pet saved you! 🐾🥔'); setTimeout(()=>pdStand(),300); }
+      else pdMsg(`🐾 Lucky re-draw! Total: ${newTotal}`);
+    } else {
+      pdMsg('Bust! 💥 Over 21!'); pdAudio.play('lose'); pdResolve('bust');
+    }
+  }
+  else if(total===21){ pdMsg('21! Perfect! 🥔'); setTimeout(()=>pdStand(),300); }
+  else pdMsg(`Total: ${total} — Hit or Stand?`);
 }
-function psInit_check(){if(document.getElementById('ps-agent-select').style.display==='none'&&psAgent)psInit();}
 
+// ── Stand / Dealer ─────────────────────────────────────────────────────────
+function pdStand(){
+  const s=pdState;
+  if(s.phase!=='play') return;
+  s.phase='dealer';
+  pdAudio.play('flip');
 
+  // Reveal hidden card
+  s.dealerCards.forEach(c=>c.hidden=false);
+  pdRenderCards();
 
+  const boss=PD_BOSSES[s.bossIdx];
+  const target=boss.name==='Udon Worm'?18:boss.name==='Bean Sprout Boss'?18:17;
+
+  setTimeout(()=>{
+    // Dealer draws
+    let extras=s.rageDraw?1:0;
+    if(boss.special==='double_draw'&&Math.random()<.35) extras++;
+    let draws=0;
+    const dealerDraw=()=>{
+      if(pdHandTotal(s.dealerCards)<target||draws<extras){
+        s.dealerCards.push(pdDraw());
+        draws++;
+        pdAudio.play('deal');
+        pdRenderCards();
+        setTimeout(dealerDraw,350);
+      } else {
+        const pt=pdHandTotal(s.playerCards);
+        const dt=pdHandTotal(s.dealerCards);
+        if(pt>21) pdResolve('bust');
+        else if(dt>21) pdResolve('win',true);
+        else if(pt>dt) pdResolve('win');
+        else if(pt===dt) pdResolve('push');
+        else pdResolve('lose');
+      }
+    };
+    dealerDraw();
+  },400);
+}
+
+// ── Resolve ────────────────────────────────────────────────────────────────
+function pdResolve(result, dealerBust=false){
+  const s=pdState;
+  s.phase='end';
+  pdShowActionBtns(false);
+  document.getElementById('pd-deal-btn').style.display='';
+  const boss=PD_BOSSES[s.bossIdx];
+
+  let dmgDealt=0, dmgTaken=0, msg='';
+
+  if(result==='win'){
+    s.ultWins++;
+    s.streakCount++;
+    const nat21=pdHandTotal(s.playerCards)===21&&s.playerCards.length===2;
+    dmgDealt=20+s.streakBonus+(s.bufBlackjackAmp&&nat21?20:0)+(dealerBust&&s.bufDealerPenalty?s.bufDealerPenalty:0)+(s.bufLorMeeDmg||0);
+    if(s.doubleDmg) dmgDealt*=2;
+    // Pet damage bonus
+    const petBonus = pdPetOnWin(s);
+    dmgDealt += petBonus.dmgBonus;
+    // Mirror shield boss: chance to reflect
+    if(boss.special==='mirror'&&Math.random()<.5) {
+      const reflected=Math.floor(dmgDealt*.15);
+      s.hp-=reflected;
+      msg+=` (boss reflected ${reflected}!)`;
+    }
+    s.bossHp-=dmgDealt;
+    if(s.bufWinHeal) s.hp=Math.min(s.maxHp,s.hp+s.bufWinHeal);
+    // Pet heal bonus
+    if(petBonus.healBonus) s.hp=Math.min(s.maxHp,s.hp+petBonus.healBonus);
+    // Pet coin bonus
+    if(petBonus.coinBonus){ s.bonusCoins=(s.bonusCoins||0)+petBonus.coinBonus; }
+    if(s.fortuneNext){ s.hp=Math.min(s.maxHp,s.hp+30); s.fortuneNext=false; }
+    if(s.charDef===PD_CHARS.dudu){ s.streakBonus+=6+(s.bufMegaStreak?0:0); }
+    pdPlayerWinAnim();
+    pdBossShakeAnim();
+    pdAudio.play('win');
+    const petTxt = petBonus.dmgBonus>0?` +${petBonus.dmgBonus}🐾`:'';
+    pdFloatMsg('⚔️ +'+dmgDealt+' dmg!'+petTxt);
+    msg=`Win! ⚔️ ${dmgDealt} damage to boss!`+msg;
+    if(petBonus.healBonus>0) msg += ` 🐾+${petBonus.healBonus}HP`;
+    if(dealerBust) msg='Dealer bust! '+msg;
+    if(s.bufUltRefund&&s.ultWins>=s.ultCost) s.ultWins=Math.max(0,s.ultWins-1);
+  } else if(result==='lose'||result==='bust'){
+    s.streakBonus=pdState.bufMegaStreak?s.streakBonus:0;
+    s.streakCount=0;
+    dmgTaken=Math.max(0,boss.atk-(s.bufBossWeak||0));
+    if(boss.special==='freeze'&&Math.random()<.3){s.ab1Cd+=2;s.ab2Cd+=2;msg+=' ❄️ Abilities frozen!';}
+    // Pet block chance
+    const petBlock = Math.random() < pdPetBlockChance();
+    if(!s.shield && !petBlock) s.hp-=dmgTaken;
+    else if(s.shield){
+      if(s.bufMirrorShield) s.bossHp-=12;
+      msg+=' 🥔 Shield blocked it!';
+    } else if(petBlock){
+      pdPetAnimTrigger(PD_PET_DEFS.find(p=>p.id===P.pdEquippedPet)||{emoji:'🛡️'}, 'shield');
+      msg+=' 🐾 Pet blocked it!';
+    }
+    s.shield=false;
+    pdAudio.play('lose');
+    pdFloatMsg(result==='bust'?'💥 Bust!':'💔 Ouch!');
+    msg=(result==='bust'?'Bust! ':'')+`Took ${(s.shield||petBlock)?0:dmgTaken} dmg.`+msg;
+  } else { // push
+    if(s.bufPushHeal) s.hp=Math.min(s.maxHp,s.hp+s.bufPushHeal);
+    pdMsg('Push! 🤝 A tie — no damage.');
+    pdUpdateHpBars(); pdUpdateAbilityBtns();
+    s.round++;
+    pdUpdateWaveInfo();
+    return;
+  }
+
+  pdUpdateHpBars();
+  pdUpdateAbilityBtns();
+  pdMsg(msg);
+  s.round++;
+  pdUpdateWaveInfo();
+  pdUpdateActiveBuffDisplay();
+
+  // Check hero death
+  if(s.hp<=0){
+    // Try pet revive
+    if(pdPetCanRevive()){
+      pdPetRevive(s);
+      pdMsg('🔥 Pet revived you! ' + (PD_PET_DEFS.find(p=>p.id===P.pdEquippedPet)?.emoji||'') + ' saved your life!');
+      pdUpdateHpBars();
+    } else {
+      setTimeout(()=>pdEndGame(false),1000); return;
+    }
+  }
+  // Check boss defeat
+  if(s.bossHp<=0){
+    setTimeout(()=>pdShowRewards(),700);
+    return;
+  }
+}
+
+// ── Abilities ─────────────────────────────────────────────────────────────
+function pdUseAbility(which){
+  const s=pdState;
+  if(s.phase!=='play') return;
+  const def=s.charDef;
+
+  if(which===1){
+    if(s.ab1Cd>0){ pdMsg(`⏳ On cooldown: ${s.ab1Cd} hand(s)`); return; }
+    const ab=def.abilities[0];
+    s.ab1Cd=Math.max(1,ab.cooldown-(s.bufReducedCd1||0));
+    if(ab.id==='shield'){ s.shield=true; pdMsg('🥔 Potato Shield! Next hit blocked!'); }
+    else if(ab.id==='rage'){ s.rageDraw=true; pdMsg('😡 Rage Draw! Dealer draws one more!'); }
+    else if(ab.id==='peek'){
+      const h=s.dealerCards.find(c=>c.hidden);
+      if(h) pdMsg(`👁️ Dealer's hidden card: ${h.rank}${h.suit}!`);
+      else pdMsg('👁️ No hidden cards right now!');
+    }
+    pdAudio.play('ability_'+ab.id);
+  } else if(which===2){
+    if(s.ab2Cd>0){ pdMsg(`⏳ On cooldown: ${s.ab2Cd} hand(s)`); return; }
+    const ab=def.abilities[1];
+    s.ab2Cd=Math.max(1,ab.cooldown-(s.bufReducedCd2||0));
+    if(ab.id==='double'){ s.doubleDmg=true; pdMsg('💥 Double Luck! Win = 2× damage!'); }
+    else if(ab.id==='streak'){ pdMsg(`🔥 Angry Aura active! Current streak bonus: +${s.streakBonus} dmg.`); s.ab2Cd=0;}
+    else if(ab.id==='lucky'){
+      const total=pdHandTotal(s.playerCards);
+      if(total>15&&s.playerCards.length>2){
+        // Replace the highest-value card that's making us risky
+        let worstIdx=0; let worstScore=-Infinity;
+        s.playerCards.forEach((c,i)=>{ const v=pdCardVal(c.rank); if(v>worstScore){worstScore=v;worstIdx=i;} });
+        s.playerCards[worstIdx]=pdDraw();
+        pdRenderCards();
+        pdMsg('⭐ Lucky Star! Replaced worst card!');
+      } else pdMsg('⭐ Hand looks fine already!');
+    }
+    pdAudio.play('ability_'+ab.id);
+  } else if(which==='ult'){
+    if(s.ultWins<s.ultCost){ pdMsg(`✨ Need ${s.ultCost-s.ultWins} more win(s) for Ultimate!`); return; }
+    s.ultWins=0;
+    const ult=def.ult;
+    if(ult.id==='nomnom'){
+      s.hp=Math.min(s.maxHp,s.hp+40); s.freeCards=2;
+      pdMsg('🍟 NOMNOM FEAST! +40 HP & 2 free cards next hand!');
+      pdUpdateHpBars();
+    } else if(ult.id==='bearrage'){
+      const dmg=35+s.streakBonus*2;
+      s.bossHp-=dmg;
+      pdMsg(`🐾 BEAR RAGE! ${dmg} direct damage!`);
+      pdBossShakeAnim();
+      pdUpdateHpBars();
+      if(s.bossHp<=0){ setTimeout(()=>pdShowRewards(),500); return; }
+    } else if(ult.id==='fortune'){
+      s.fortuneNext=true;
+      s.playerCards=[pdDraw(),pdDraw()];
+      pdRenderCards();
+      pdMsg('🌟 FORTUNE PAW! Next win guaranteed + 30 HP heal!');
+    }
+    pdAudio.play('ult');
+    pdUpdateAbilityBtns();
+  }
+  pdUpdateAbilityBtns();
+}
+
+// ── Ability Button UI ─────────────────────────────────────────────────────
+function pdUpdateAbilityBtns(){
+  const s=pdState;
+  if(!s.charDef) return;
+  const def=s.charDef;
+  const abs=def.abilities;
+  document.getElementById('pd-ab1-icon').textContent=abs[0].icon;
+  document.getElementById('pd-ab1-name').textContent=abs[0].name;
+  document.getElementById('pd-ab1-cd').textContent=s.ab1Cd>0?s.ab1Cd+' hand(s)':'Ready ✓';
+  document.getElementById('pd-ab1-btn').style.opacity=s.ab1Cd>0?'.45':'1';
+  document.getElementById('pd-ab1-btn').title=abs[0].desc+(abs[0].cooldown?` (CD: ${abs[0].cooldown} hands)`:'');
+  const ab1Desc=document.getElementById('pd-ab1-desc');
+  if(ab1Desc){ab1Desc.textContent=abs[0].desc;ab1Desc.style.display='';}
+  document.getElementById('pd-ab2-icon').textContent=abs[1].icon;
+  document.getElementById('pd-ab2-name').textContent=abs[1].name;
+  document.getElementById('pd-ab2-cd').textContent=s.ab2Cd>0?s.ab2Cd+' hand(s)':'Ready ✓';
+  document.getElementById('pd-ab2-btn').style.opacity=s.ab2Cd>0?'.45':'1';
+  document.getElementById('pd-ab2-btn').title=abs[1].desc+(abs[1].cooldown?` (CD: ${abs[1].cooldown} hands)`:' (Passive)');
+  const ab2Desc=document.getElementById('pd-ab2-desc');
+  if(ab2Desc){ab2Desc.textContent=abs[1].desc;ab2Desc.style.display='';}
+  document.getElementById('pd-ult-icon').textContent=def.ult.icon;
+  document.getElementById('pd-ult-name').textContent=def.ult.name;
+  document.getElementById('pd-ult-btn').title=def.ult.desc+` (Cost: ${s.ultCost} wins)`;
+  const ultDesc=document.getElementById('pd-ult-desc');
+  if(ultDesc){ultDesc.textContent=def.ult.desc;ultDesc.style.display='';}
+  const ready=s.ultWins>=s.ultCost;
+  document.getElementById('pd-ult-cd').textContent=ready?'READY! ✨':`${s.ultWins}/${s.ultCost}`;
+  document.getElementById('pd-ult-btn').style.background=ready?'linear-gradient(135deg,var(--gold),#e8c068)':'linear-gradient(135deg,rgba(212,168,83,.12),rgba(212,168,83,.04))';
+  document.getElementById('pd-ult-btn').style.opacity=ready?'1':'.55';
+}
+
+function pdUpdateActiveBuffDisplay(){
+  const s=pdState;
+  const buffs=[];
+  if(s.shield) buffs.push('🥔');
+  if(s.doubleDmg) buffs.push('💥×2');
+  if(s.streakBonus>0) buffs.push(`🔥+${s.streakBonus}`);
+  if(s.fortuneNext) buffs.push('⭐Win');
+  if(s.freeCards>0) buffs.push(`🎴×${s.freeCards}`);
+  if(s.bufWinHeal>0) buffs.push(`🫛+${s.bufWinHeal}hp`);
+  if(s.bufLorMeeDmg>0) buffs.push(`🍜+${s.bufLorMeeDmg}dmg`);
+  document.getElementById('pd-active-buffs').textContent=buffs.join(' ')||'—';
+}
+
+function pdShowActionBtns(show){
+  document.getElementById('pd-hit-btn').style.display=show?'':'none';
+  document.getElementById('pd-stand-btn').style.display=show?'':'none';
+}
+
+// ── Rewards ────────────────────────────────────────────────────────────────
+function pdShowRewards(){
+  const s=pdState;
+  const boss=PD_BOSSES[s.bossIdx];
+  const tier=boss.tier<=1?1:boss.tier<=3?2:3;
+  const pool=PD_REWARD_POOL[tier].filter(r=>!s.acquiredBuffs.includes(r.id));
+  // Pick 3 random distinct rewards
+  const shuffled=[...pool].sort(()=>Math.random()-.5).slice(0,Math.min(3,pool.length));
+
+  document.getElementById('pd-game-area').style.display='none';
+  document.getElementById('pd-reward-screen').style.display='block';
+  document.getElementById('pd-reward-emoji').textContent=boss.sprite;
+  document.getElementById('pd-reward-title').textContent=boss.name+' Defeated! 🎉';
+  document.getElementById('pd-reward-subtitle').textContent=tier===3?'🌟 Epic Reward — Choose one':'Choose your reward';
+  pdAudio.play('reward');
+
+  // Show current HP bar + acquired buffs to help player decide
+  const hpPct=Math.round((s.hp/s.maxHp)*100);
+  const hpColor=s.hp>s.maxHp*.6?'#4ade80':s.hp>s.maxHp*.3?'#facc15':'#f87171';
+  let rewardStatusEl=document.getElementById('pd-reward-status');
+  if(!rewardStatusEl){
+    rewardStatusEl=document.createElement('div');
+    rewardStatusEl.id='pd-reward-status';
+    const subtitleEl=document.getElementById('pd-reward-subtitle');
+    subtitleEl.parentNode.insertBefore(rewardStatusEl,subtitleEl.nextSibling);
+  }
+  const acquiredNames=s.acquiredBuffs.map(id=>{
+    for(const t of Object.values(PD_REWARD_POOL)){
+      const r=t.find(x=>x.id===id);
+      if(r) return r.icon+' '+r.name;
+    }
+    return id;
+  });
+  rewardStatusEl.innerHTML=`
+    <div style="margin:.6rem 0 .35rem;display:flex;align-items:center;gap:.5rem;">
+      <span style="font-size:.72rem;font-family:'Lora',serif;opacity:.7;">❤️ HP</span>
+      <div style="flex:1;background:rgba(61,43,31,.12);border-radius:99px;height:9px;overflow:hidden;">
+        <div style="width:${hpPct}%;background:${hpColor};height:100%;border-radius:99px;transition:width .4s;"></div>
+      </div>
+      <span style="font-size:.7rem;font-family:'Playfair Display',serif;font-weight:bold;color:${hpColor};">${s.hp}/${s.maxHp}</span>
+    </div>
+    ${acquiredNames.length?`<div style="font-size:.63rem;font-family:'Lora',serif;opacity:.6;margin-bottom:.3rem;">📦 Buffs: ${acquiredNames.join(' · ')}</div>`:''}
+  `;
+
+  const choicesEl=document.getElementById('pd-reward-choices');
+  choicesEl.innerHTML='';
+  s.pendingRewards=shuffled;
+  s.selectedReward=null;
+  document.getElementById('pd-continue-btn').style.display='none';
+
+  shuffled.forEach((r,i)=>{
+    const el=document.createElement('div');
+    el.className='pd-reward-card';
+    el.style.animationDelay=(i*100)+'ms';
+    el.innerHTML=`
+      <div style="display:flex;align-items:center;gap:.8rem;text-align:left;">
+        <div style="font-size:1.8rem;flex-shrink:0;">${r.icon}</div>
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-size:.88rem;color:var(--deep);font-weight:bold;">${r.name}</div>
+          <div style="font-size:.7rem;color:var(--deep);opacity:.7;margin-top:.1rem;font-style:italic;">${r.desc}</div>
+          <div style="font-size:.62rem;color:var(--gold);margin-top:.15rem;">${r.type==='instant'?'⚡ Instant':r.type==='hybrid'?'⚡ Instant + 📦 Permanent':'📦 Permanent buff'} · Tier ${tier}</div>
+        </div>
+      </div>`;
+    el.onclick=()=>{
+      document.querySelectorAll('.pd-reward-card').forEach(c=>c.classList.remove('selected'));
+      el.classList.add('selected');
+      s.selectedReward=r;
+      document.getElementById('pd-continue-btn').style.display='block';
+      pdAudio.play('ability');
+    };
+    choicesEl.appendChild(el);
+  });
+
+  // If no rewards left
+  if(shuffled.length===0){
+    choicesEl.innerHTML='<div style="text-align:center;font-family:\'Lora\',serif;font-style:italic;color:var(--deep);opacity:.7;">You\'ve collected all rewards! Incredible!</div>';
+    document.getElementById('pd-continue-btn').style.display='block';
+  }
+}
+
+function pdContinueAfterReward(){
+  const s=pdState;
+  if(s.pendingRewards&&s.pendingRewards.length>0&&!s.selectedReward) return;
+
+  // Apply selected reward
+  if(s.selectedReward){
+    const r=s.selectedReward;
+    s.acquiredBuffs.push(r.id);
+    if(r.type==='instant'){
+      s.hp=Math.min(s.maxHp,s.hp+(r.val||0));
+    } else if(r.type==='hybrid'){
+      // Hybrid: instant heal + permanent passive
+      s.hp=Math.min(s.maxHp,s.hp+(r.val||0));
+      if(r.passiveId==='siji_sustain') s.bufWinHeal+=6;   // Grandma's love: +6 HP every win
+      if(r.passiveId==='lormee_power') s.bufLorMeeDmg=(s.bufLorMeeDmg||0)+10;  // Thick sauce: +10 dmg on wins
+    } else {
+      // Apply passive buffs
+      if(r.id==='win_heal') s.bufWinHeal+=5;
+      if(r.id==='boss_weak') s.bufBossWeak+=4;
+      if(r.id==='blackjack_amp') s.bufBlackjackAmp=true;
+      if(r.id==='push_heal') s.bufPushHeal+=8;
+      if(r.id==='mirror_shield') s.bufMirrorShield=true;
+      if(r.id==='mega_streak') s.bufMegaStreak=true;
+      if(r.id==='dealer_penalty') s.bufDealerPenalty+=15;
+      if(r.id==='ult_refund') s.bufUltRefund=true;
+      if(r.id==='lucky_draw') s.bufLuckyDraw=true;
+      if(r.id==='start_bonus') s.bufStartBonus=true;
+      if(r.id==='reduced_cd_1') s.bufReducedCd1=(s.bufReducedCd1||0)+1;
+      if(r.id==='double_cd') s.bufReducedCd2=(s.bufReducedCd2||0)+1;
+      if(r.id==='streak_amp') s.streakBonus+=4;
+      if(r.id==='ult_charge') s.ultCost=Math.max(1,s.ultCost-1);
+      if(r.id==='shield_charge') s.shieldCharges=(s.shieldCharges||0)+1;
+    }
+    s.selectedReward=null;
+  }
+
+  // Advance to next boss
+  s.bossIdx++;
+  if(s.bossIdx>=PD_BOSSES.length){ pdEndGame(true); return; }
+
+  const newBoss=PD_BOSSES[s.bossIdx];
+  s.bossHp=newBoss.hp;
+  s.bossMaxHp=newBoss.hp;
+  if(!s.bufMegaStreak){ s.streakBonus=0; s.streakCount=0; }
+  s.ultWins=0;
+  s.round=1;
+
+  document.getElementById('pd-reward-screen').style.display='none';
+  document.getElementById('pd-game-area').style.display='block';
+  pdUpdateBoss();
+  pdUpdateAbilityBtns();
+  pdUpdateHpBars();
+  pdDeal();
+}
+
+// ── End Game ───────────────────────────────────────────────────────────────
+function pdEndGame(won){
+  const s=pdState;
+  s.running=false;
+  document.getElementById('pd-game-area').style.display='none';
+  document.getElementById('pd-reward-screen').style.display='none';
+  document.getElementById('pd-end-screen').style.display='block';
+  document.getElementById('pd-end-emoji').textContent=won?'🏆':'💔';
+  document.getElementById('pd-end-title').textContent=won?'All Bosses Defeated! 🌟':'You fell in battle...';
+  document.getElementById('pd-end-msg').textContent=won
+    ?'Bao would be proud! You conquered every dislike boss! 💕'
+    :'The bosses were too strong this time. Try again! 🥔';
+  const bufList=s.acquiredBuffs;
+  document.getElementById('pd-acquired-buffs').textContent=bufList.length
+    ?'Buffs earned: '+bufList.map(id=>{const r=Object.values(PD_REWARD_POOL).flat().find(x=>x.id===id);return r?r.icon+r.name:'';}).filter(Boolean).join(', '):'';
+  // Bet-based coin rewards
+  const betAmt = s.betAmount || 5;
+  const petCoins = s.bonusCoins || 0;
+  let coinsEarned = 0;
+  if(won){
+    // Win: earn back bet + same amount + pet bonus (capped at 2× bet to prevent runaway)
+    coinsEarned = Math.min(betAmt * 2, betAmt + petCoins + 5);
+  } else {
+    // Lose: small consolation (20% of bet back)
+    coinsEarned = Math.max(1, Math.floor(betAmt * 0.2));
+  }
+  P.coins=(P.coins||0)+coinsEarned;
+  P.coinsEarned=(P.coinsEarned||0)+coinsEarned;
+  saveP();
+  pdUpdateCoinDisplay();
+  updateWalletDisplays();
+  document.getElementById('pd-coins-earned-msg').textContent=won
+    ?`💰 +${coinsEarned} coins earned! (bet: ${betAmt}) Visit the Shop tab for the Casino!`
+    :`💰 +${coinsEarned} consolation coins (bet ${betAmt} lost)`;
+  // Hide the old inline slot — it's now in the Shop sub-tab
+  document.getElementById('pd-slot-wrap').style.display='none';
+  pdAudio.play(won?'ult':'lose');
+}
+
+// ── Potato Dealer Slot Machine ──────────────────────────────────────────────
+const PD_SLOT_SYMBOLS = ['🥔','🌸','🍟','💥','⭐','🌟'];
+const PD_SLOT_WEIGHTS = [35,25,20,12,6,2]; // 🌟 = super rare ~2%
+const PD_SLOT_PETS = [
+  {syms:['🌟','🌟','🌟'], name:'🌟 LEGENDARY PET: Tater Sprite', msg:'Unlock: TaterSprite pet! ✨', rarity:'legendary', fn:()=>{
+    if(!P.gachaInventory.includes('pet_potato_sprite')){ P.gachaInventory.push('pet_potato_sprite'); }
+    if(!P.bubuUnlocked){ P.bubuUnlocked=true; refreshBubuCard(); showAchievement('🐼 BUBU UNLOCKED via Slot Machine! 🎰'); }
+  }},
+  {syms:['⭐','⭐','⭐'], name:'🌟 Epic reward: Stardust pet!',    msg:'Unlock: Stardust pet!',   rarity:'epic', fn:()=>{ if(!P.gachaInventory.includes('pet_stardust')){ P.gachaInventory.push('pet_stardust'); } }},
+  {syms:['💥','💥','💥'], name:'🎆 Jackpot! +50 coins!',          msg:'+50 coins! 💰',             rarity:'rare', fn:()=>{ P.coins+=50; P.coinsEarned+=50; }},
+  {syms:['🍟','🍟','🍟'], name:'🍟 Triple Fries! +20 coins!',    msg:'+20 coins! 🍟',             rarity:'uncommon', fn:()=>{ P.coins+=20; P.coinsEarned+=20; }},
+  {syms:['🌸','🌸','🌸'], name:'🌸 Lucky! +10 coins!',           msg:'+10 coins! 🌸',             rarity:'common', fn:()=>{ P.coins+=10; P.coinsEarned+=10; }},
+  {syms:['🥔','🥔','🥔'], name:'🥔 Potato! +5 coins back!',      msg:'Refunded 5 🪙!',            rarity:'common', fn:()=>{ P.coins+=5; P.coinsEarned+=5; }},
+];
+
+function _pdSlotRoll(){
+  const tot=PD_SLOT_WEIGHTS.reduce((a,b)=>a+b,0);
+  let r=Math.random()*tot,acc=0;
+  for(let i=0;i<PD_SLOT_SYMBOLS.length;i++){ acc+=PD_SLOT_WEIGHTS[i]; if(r<acc) return PD_SLOT_SYMBOLS[i]; }
+  return PD_SLOT_SYMBOLS[0];
+}
+
+let _pdSlotBusy=false;
+function pdSlotPull(){
+  if(_pdSlotBusy) return;
+  const cost=5;
+  if((P.coins||0)<cost){ document.getElementById('pd-slot-result').textContent='Need 5 🪙 coins to pull!'; return; }
+  P.coins-=cost; saveP(); updateWalletDisplays();
+  _pdSlotBusy=true;
+  document.getElementById('pd-slot-btn').disabled=true;
+  document.getElementById('pd-slot-result').textContent='🎰 Spinning...';
+
+  // Animate reels with staggered delay
+  const reels=['pd-slot-r1','pd-slot-r2','pd-slot-r3'];
+  const results=[_pdSlotRoll(),_pdSlotRoll(),_pdSlotRoll()];
+
+  // Play slot spin sound
+  pdAudio.play('deal');
+
+  reels.forEach((id,i)=>{
+    let ticks=8+i*4;
+    let tickInterval=null;
+    let count=0;
+    tickInterval=setInterval(()=>{
+      const el=document.getElementById(id);
+      el.textContent=PD_SLOT_SYMBOLS[Math.floor(Math.random()*PD_SLOT_SYMBOLS.length)];
+      el.classList.remove('spinning');
+      void el.offsetWidth;
+      el.classList.add('spinning');
+      count++;
+      if(count>=ticks){
+        clearInterval(tickInterval);
+        el.textContent=results[i];
+        el.classList.remove('spinning');
+        void el.offsetWidth;
+        el.classList.add('spinning');
+        if(i===2){
+          setTimeout(()=>_pdSlotReveal(results),200);
+        }
+      }
+    },80+i*20);
+  });
+}
+
+function _pdSlotReveal(results){
+  const [a,b,c]=results;
+  let matched=null;
+  if(a===b&&b===c){
+    matched=PD_SLOT_PETS.find(p=>p.syms[0]===a);
+  }
+  const resEl=document.getElementById('pd-slot-result');
+  if(matched){
+    matched.fn(); saveP(); updateWalletDisplays();
+    resEl.textContent='🎉 '+matched.msg;
+    resEl.style.color=matched.rarity==='legendary'?'#ffd700':matched.rarity==='epic'?'#a78bfa':matched.rarity==='rare'?'#38bdf8':'#4ade80';
+    pdAudio.play('win');
+    showAchievement('🎰 '+matched.name);
+  } else {
+    // Small consolation for near-miss: 2 same symbols = +1 coin back
+    if(a===b||b===c||a===c){ P.coins+=1; P.coinsEarned+=1; saveP(); updateWalletDisplays(); resEl.textContent='So close! +1 🪙 consolation'; }
+    else { resEl.textContent='No match. Try again! 🥔'; }
+    resEl.style.color='rgba(255,255,255,.7)';
+    pdAudio.play('lose');
+  }
+  document.getElementById('pd-slot-btn').disabled=false;
+  _pdSlotBusy=false;
+}
+
+function pdRestartGame(){
+  pdState={};
+  document.querySelectorAll('.pd-char-btn').forEach(b=>b.style.opacity='1');
+  document.getElementById('pd-game-area').style.display='none';
+  document.getElementById('pd-reward-screen').style.display='none';
+  document.getElementById('pd-end-screen').style.display='none';
+  document.getElementById('pd-char-select').style.marginBottom='';
+  document.getElementById('pd-bet-panel').style.display='block';
+  pdUpdateCoinDisplay();
+}
+
+// ===================== POTATO DEALER SUB-TABS =====================
+function pdSubTab(tab){
+  ['play','shop','pets'].forEach(t=>{
+    const el=document.getElementById('pd-subtab-'+t+'-content');
+    const btn=document.getElementById('pd-subtab-'+t);
+    if(el) el.style.display=t===tab?'block':'none';
+    if(btn) btn.classList.toggle('active',t===tab);
+  });
+  if(tab==='pets') pdRenderPetGrid();
+  if(tab==='shop') pdUpdateCoinDisplay();
+  pdUpdateCoinDisplay();
+}
+
+// ===================== COIN DISPLAY =====================
+function pdUpdateCoinDisplay(){
+  const cd=document.getElementById('pd-coins-display');
+  const dd=document.getElementById('pd-diamonds-display');
+  const pb=document.getElementById('pd-pet-badge');
+  if(cd) cd.textContent=P.coins||0;
+  if(dd) dd.textContent=P.diamonds||0;
+  if(pb){
+    if(P.pdEquippedPet){
+      const pet=PD_PET_DEFS.find(p=>p.id===P.pdEquippedPet);
+      pb.textContent=pet?`${pet.emoji} ${pet.name}`:'No pet';
+    } else pb.textContent='No pet';
+  }
+}
+
+// ===================== BETTING SYSTEM =====================
+let pdCurrentBet = 5;
+
+function pdGetMaxBet(){
+  // Max bet scales with total coins earned to prevent runaway wealth
+  // Start: max 50, scales up slowly. Never more than 25% of current coins or 100 absolute max
+  const baseMax = 50;
+  const scaled = Math.min(100, baseMax + Math.floor((P.coinsEarned||0) / 200) * 10);
+  const pctCap = Math.max(5, Math.floor((P.coins||0) * 0.25)); // can't bet more than 25% of holdings
+  return Math.min(scaled, Math.max(5, pctCap));
+}
+
+function pdAdjustBet(delta){
+  const maxBet = pdGetMaxBet();
+  pdCurrentBet = Math.max(5, Math.min(maxBet, pdCurrentBet + delta));
+  document.getElementById('pd-bet-amount').textContent = pdCurrentBet;
+  document.getElementById('pd-bet-limit-info').textContent = `Max bet: ${maxBet} coins (25% of wallet cap)`;
+  document.getElementById('pd-bet-error').textContent = '';
+}
+
+function pdSetBet(amt){
+  const maxBet = pdGetMaxBet();
+  pdCurrentBet = Math.max(5, Math.min(maxBet, amt));
+  document.getElementById('pd-bet-amount').textContent = pdCurrentBet;
+  document.getElementById('pd-bet-limit-info').textContent = `Max bet: ${maxBet} coins (25% of wallet cap)`;
+  document.getElementById('pd-bet-error').textContent = '';
+}
+
+// ===================== PET DEFINITIONS FOR BLACKJACK =====================
+const PD_PET_DEFS = [
+  // COMMON — subtle bonuses
+  {id:'pd_pet_cat',     rarity:'common',   emoji:'🐱', name:'Whiskers',    bjSkill:'heal',   bjVal:3,  desc:'Heals 3 HP on win',        sound:'pet_heal'},
+  {id:'pd_pet_chick',   rarity:'common',   emoji:'🐥', name:'Peepster',    bjSkill:'coins',  bjVal:1,  desc:'+1 bonus coin on win',     sound:'pet_coin'},
+  {id:'pd_pet_frog',    rarity:'common',   emoji:'🐸', name:'Hopkins',     bjSkill:'heal',   bjVal:2,  desc:'Heals 2 HP on win',        sound:'pet_heal'},
+  {id:'pd_pet_bunny',   rarity:'common',   emoji:'🐰', name:'Cottontail',  bjSkill:'coins',  bjVal:1,  desc:'+1 bonus coin on win',     sound:'pet_coin'},
+  {id:'pd_pet_hamster', rarity:'common',   emoji:'🐹', name:'Cheekums',    bjSkill:'heal',   bjVal:2,  desc:'Heals 2 HP on win',        sound:'pet_heal'},
+  {id:'pd_pet_turtle',  rarity:'common',   emoji:'🐢', name:'Shellbert',   bjSkill:'shield', bjVal:8,  desc:'8% block chance',          sound:'pet_shield'},
+  {id:'pd_pet_duck',    rarity:'common',   emoji:'🦆', name:'Quackers',    bjSkill:'coins',  bjVal:1,  desc:'+1 bonus coin on win',     sound:'pet_coin'},
+  {id:'pd_pet_ladybug', rarity:'common',   emoji:'🐞', name:'Dotty',       bjSkill:'lucky',  bjVal:3,  desc:'3% chance free re-draw',   sound:'pet_lucky'},
+  // UNCOMMON — decent bonuses
+  {id:'pd_pet_fox',     rarity:'uncommon', emoji:'🦊', name:'Foxy',        bjSkill:'damage', bjVal:3,  desc:'+3 bonus damage on win',   sound:'pet_atk'},
+  {id:'pd_pet_penguin', rarity:'uncommon', emoji:'🐧', name:'Waddles',     bjSkill:'shield', bjVal:15, desc:'15% block chance',         sound:'pet_shield'},
+  {id:'pd_pet_bee',     rarity:'uncommon', emoji:'🐝', name:'Buzzy',       bjSkill:'coins',  bjVal:2,  desc:'+2 bonus coins on win',    sound:'pet_coin'},
+  {id:'pd_pet_owl',     rarity:'uncommon', emoji:'🦉', name:'Hootsworth',  bjSkill:'damage', bjVal:4,  desc:'+4 bonus damage on win',   sound:'pet_atk'},
+  {id:'pd_pet_crab',    rarity:'uncommon', emoji:'🦀', name:'Snappy',      bjSkill:'heal',   bjVal:5,  desc:'Heals 5 HP on win',        sound:'pet_heal'},
+  {id:'pd_pet_otter',   rarity:'uncommon', emoji:'🦦', name:'Bubbles',     bjSkill:'lucky',  bjVal:6,  desc:'6% chance free re-draw',   sound:'pet_lucky'},
+  // RARE — strong bonuses
+  {id:'pd_pet_dragon',  rarity:'rare',     emoji:'🐲', name:'Longlong',    bjSkill:'damage', bjVal:6,  desc:'+6 bonus damage on win',   sound:'pet_atk'},
+  {id:'pd_pet_panda',   rarity:'rare',     emoji:'🐼', name:'Mochi',       bjSkill:'heal',   bjVal:8,  desc:'Heals 8 HP on win',        sound:'pet_heal'},
+  {id:'pd_pet_unicorn', rarity:'rare',     emoji:'🦄', name:'Sparkle',     bjSkill:'shield', bjVal:22, desc:'22% block chance',         sound:'pet_shield'},
+  {id:'pd_pet_wolf',    rarity:'rare',     emoji:'🐺', name:'Howler',      bjSkill:'damage', bjVal:7,  desc:'+7 bonus damage + 3% lifesteal', sound:'pet_atk'},
+  {id:'pd_pet_deer',    rarity:'rare',     emoji:'🦌', name:'Deerling',    bjSkill:'lucky',  bjVal:10, desc:'10% free re-draw chance',  sound:'pet_lucky'},
+  {id:'pd_pet_tiger',   rarity:'rare',     emoji:'🐯', name:'Tigeroo',     bjSkill:'coins',  bjVal:4,  desc:'+4 bonus coins on win',    sound:'pet_coin'},
+  // EPIC — powerful abilities
+  {id:'pd_pet_phoenix', rarity:'epic',     emoji:'🔥', name:'Blaze',       bjSkill:'revive', bjVal:30, desc:'Revive once with 30 HP!',  sound:'pet_ult'},
+  {id:'pd_pet_dino',    rarity:'epic',     emoji:'🦕', name:'Nomnom Jr.',  bjSkill:'damage', bjVal:10, desc:'+10 bonus damage on win',  sound:'pet_atk'},
+  {id:'pd_pet_lion',    rarity:'epic',     emoji:'🦁', name:'Simba',       bjSkill:'shield', bjVal:30, desc:'30% block + reflect 5 dmg',sound:'pet_shield'},
+  {id:'pd_pet_dolphin', rarity:'epic',     emoji:'🐬', name:'Flipper',     bjSkill:'heal',   bjVal:12, desc:'Heals 12 HP on win',       sound:'pet_heal'},
+  {id:'pd_pet_narwhal', rarity:'epic',     emoji:'🦑', name:'Narwhal',     bjSkill:'lucky',  bjVal:15, desc:'15% free re-draw + heal 5',sound:'pet_lucky'},
+  // LEGENDARY — game-changing (super rare)
+  {id:'pd_pet_minibao', rarity:'legendary',emoji:'🥟', name:'Mini Bao',    bjSkill:'ultimate',bjVal:0, desc:'All abilities: heal 8, +8 dmg, 25% block, +3 coins', sound:'pet_ult'},
+  {id:'pd_pet_lildudu', rarity:'legendary',emoji:'🐻', name:'Lil Dudu',    bjSkill:'ultimate',bjVal:0, desc:'Rage mode: 2× damage for 3 hands after boss hit',     sound:'pet_ult'},
+  {id:'pd_pet_royaldragon',rarity:'legendary',emoji:'🔱',name:'Royal Dragon',bjSkill:'ultimate',bjVal:0,desc:'Dragon fire: 15 dmg on win + 20% block + heal 5',    sound:'pet_ult'},
+];
+
+// Casino-grade probabilities for pet egg machine
+const PD_PET_EGG_WEIGHTS = {common:55, uncommon:28, rare:12, epic:4, legendary:0.8};
+if(!P.pdPets) P.pdPets = [];
+if(!P.pdEquippedPet) P.pdEquippedPet = null;
+if(!P.pdEggPity) P.pdEggPity = 0;
+if(!P.pdPetReviveUsed) P.pdPetReviveUsed = false;
+
+// ── Pet Egg Machine ──────────────────────────────────────────────────────
+function pdEggPull(){
+  const cost = 25;
+  if((P.coins||0) < cost){
+    document.getElementById('pd-egg-result').textContent = 'Need 25 coins! 💰';
+    document.getElementById('pd-egg-result').style.color = '#f87171';
+    return;
+  }
+  P.coins -= cost;
+  P.pdEggPity = (P.pdEggPity||0) + 1;
+  
+  // Roll rarity with casino odds
+  let rarity;
+  if(P.pdEggPity >= 50){
+    // Pity: guaranteed rare+
+    const w = {rare:65, epic:25, legendary:10};
+    const tot = 100; let r = Math.random()*tot, acc = 0;
+    for(const rv of ['rare','epic','legendary']){ acc += w[rv]; if(r < acc){ rarity = rv; break; } }
+    P.pdEggPity = 0;
+  } else {
+    const tot = Object.values(PD_PET_EGG_WEIGHTS).reduce((a,b)=>a+b,0);
+    let r = Math.random()*tot, acc = 0;
+    for(const rv of ['common','uncommon','rare','epic','legendary']){
+      acc += PD_PET_EGG_WEIGHTS[rv];
+      if(r < acc){ rarity = rv; break; }
+    }
+    if(rarity !== 'common' && rarity !== 'uncommon') P.pdEggPity = 0;
+  }
+  
+  const pool = PD_PET_DEFS.filter(p => p.rarity === rarity);
+  const fresh = pool.filter(p => !(P.pdPets||[]).includes(p.id));
+  const chosen = (fresh.length ? fresh : pool)[Math.floor(Math.random()*(fresh.length||pool.length))];
+  
+  if(!P.pdPets.includes(chosen.id)) P.pdPets.push(chosen.id);
+  if(rarity === 'legendary') P.legendaryRolled = (P.legendaryRolled||0) + 1;
+  
+  saveP();
+  pdUpdateCoinDisplay();
+  
+  // Egg hatch animation
+  const eggEl = document.getElementById('pd-egg-display');
+  eggEl.textContent = '🥚';
+  eggEl.style.animation = 'none';
+  void eggEl.offsetWidth;
+  eggEl.style.animation = 'pdBossShake .3s ease 3';
+  
+  setTimeout(()=>{
+    eggEl.textContent = chosen.emoji;
+    eggEl.style.animation = 'pdRewardReveal .5s ease';
+    const rarColors = {common:'#aaa',uncommon:'#4CAF50',rare:'#2196F3',epic:'#9C27B0',legendary:'#FFD700'};
+    const resEl = document.getElementById('pd-egg-result');
+    resEl.innerHTML = `<span style="color:${rarColors[rarity]};font-weight:bold;">${rarity.toUpperCase()}</span> — ${chosen.emoji} ${chosen.name}!<br><span style="font-size:.6rem;opacity:.7;">${chosen.desc}</span>`;
+    resEl.style.color = rarColors[rarity];
+    
+    // Sound
+    if(rarity === 'legendary') playHighScoreSound();
+    else if(rarity === 'epic') pdAudio.play('ult');
+    else if(rarity === 'rare') pdAudio.play('reward');
+    else pdAudio.play('win');
+  }, 900);
+}
+
+// ── Shop Slot Machine (always accessible) ────────────────────────────────
+const PD_SHOP_SLOT_SYMBOLS = ['🥔','🌸','🍟','💥','⭐','🌟'];
+const PD_SHOP_SLOT_WEIGHTS_NORMAL = [35,25,20,12,6,2];
+const PD_SHOP_SLOT_WEIGHTS_SUPER = [30,22,18,14,10,6]; // better legendary odds
+
+let _pdShopSlotBusy = false;
+function pdShopSlotPull(cost){
+  if(_pdShopSlotBusy) return;
+  if((P.coins||0) < cost){
+    document.getElementById('pd-shop-slot-result').textContent = `Need ${cost} coins! 💰`;
+    return;
+  }
+  P.coins -= cost;
+  saveP();
+  pdUpdateCoinDisplay();
+  _pdShopSlotBusy = true;
+  
+  const isSuper = cost >= 15;
+  const weights = isSuper ? PD_SHOP_SLOT_WEIGHTS_SUPER : PD_SHOP_SLOT_WEIGHTS_NORMAL;
+  
+  function rollSym(){
+    const tot = weights.reduce((a,b)=>a+b,0);
+    let r = Math.random()*tot, acc = 0;
+    for(let i=0;i<PD_SHOP_SLOT_SYMBOLS.length;i++){
+      acc += weights[i];
+      if(r < acc) return PD_SHOP_SLOT_SYMBOLS[i];
+    }
+    return PD_SHOP_SLOT_SYMBOLS[0];
+  }
+  
+  const results = [rollSym(), rollSym(), rollSym()];
+  const reels = ['pd-shop-slot-r1','pd-shop-slot-r2','pd-shop-slot-r3'];
+  
+  document.getElementById('pd-shop-slot-result').textContent = '🎰 Spinning...';
+  pdAudio.play('deal');
+  
+  reels.forEach((id,i)=>{
+    let ticks = 8+i*4, count = 0;
+    const iv = setInterval(()=>{
+      const el = document.getElementById(id);
+      el.textContent = PD_SHOP_SLOT_SYMBOLS[Math.floor(Math.random()*PD_SHOP_SLOT_SYMBOLS.length)];
+      el.classList.remove('spinning'); void el.offsetWidth; el.classList.add('spinning');
+      count++;
+      if(count >= ticks){
+        clearInterval(iv);
+        el.textContent = results[i];
+        el.classList.remove('spinning'); void el.offsetWidth; el.classList.add('spinning');
+        if(i === 2) setTimeout(()=>pdShopSlotReveal(results, isSuper), 200);
+      }
+    }, 80+i*20);
+  });
+}
+
+function pdShopSlotReveal(results, isSuper){
+  const [a,b,c] = results;
+  const resEl = document.getElementById('pd-shop-slot-result');
+  
+  if(a===b && b===c){
+    // Triple match!
+    const rewards = {
+      '🌟': {msg:'🌟 LEGENDARY PET UNLOCKED!', coins:0, rarity:'legendary', pet:true,
+        fn:()=>{
+          // Unlock a random legendary pet
+          const legends = PD_PET_DEFS.filter(p=>p.rarity==='legendary'&&!P.pdPets.includes(p.id));
+          if(legends.length){
+            const pet = legends[Math.floor(Math.random()*legends.length)];
+            P.pdPets.push(pet.id);
+            resEl.innerHTML = `🌟 LEGENDARY: ${pet.emoji} ${pet.name}!`;
+            showAchievement(`🌟 LEGENDARY PET: ${pet.emoji} ${pet.name}!`);
+          } else {
+            P.coins += 200; P.coinsEarned += 200;
+            resEl.textContent = '🌟 All legendaries owned! +200 coins!';
+          }
+          playHighScoreSound();
+        }},
+      '⭐': {msg:'⭐ EPIC PET UNLOCKED!', coins:0, rarity:'epic', pet:true,
+        fn:()=>{
+          const epics = PD_PET_DEFS.filter(p=>p.rarity==='epic'&&!P.pdPets.includes(p.id));
+          if(epics.length){
+            const pet = epics[Math.floor(Math.random()*epics.length)];
+            P.pdPets.push(pet.id);
+            resEl.innerHTML = `⭐ Epic: ${pet.emoji} ${pet.name}!`;
+            showAchievement(`⭐ Epic Pet: ${pet.emoji} ${pet.name}!`);
+          } else {
+            P.coins += 80; P.coinsEarned += 80;
+            resEl.textContent = '⭐ All epics owned! +80 coins!';
+          }
+          pdAudio.play('ult');
+        }},
+      '💥': {msg:'+50 coins! 💥', coins:50, fn:()=>{P.coins+=50;P.coinsEarned+=50;pdAudio.play('reward');}},
+      '🍟': {msg:'+20 coins! 🍟', coins:20, fn:()=>{P.coins+=20;P.coinsEarned+=20;pdAudio.play('win');}},
+      '🌸': {msg:'+10 coins! 🌸', coins:10, fn:()=>{P.coins+=10;P.coinsEarned+=10;pdAudio.play('win');}},
+      '🥔': {msg:'Refund 5 coins! 🥔',coins:5, fn:()=>{P.coins+=5;P.coinsEarned+=5;pdAudio.play('deal');}},
+    };
+    const reward = rewards[a];
+    if(reward){
+      reward.fn();
+      resEl.textContent = '🎉 ' + reward.msg;
+      const rc = {legendary:'#ffd700',epic:'#a78bfa',rare:'#38bdf8',uncommon:'#4ade80',common:'#ddd'};
+      resEl.style.color = reward.rarity ? rc[reward.rarity] : '#4ade80';
+    }
+  } else if(a===b || b===c || a===c){
+    P.coins += 1; P.coinsEarned += 1;
+    resEl.textContent = 'Almost! +1 consolation coin 🪙';
+    resEl.style.color = 'rgba(255,255,255,.65)';
+    pdAudio.play('lose');
+  } else {
+    resEl.textContent = 'No match. Try again! 🎰';
+    resEl.style.color = 'rgba(255,255,255,.5)';
+    pdAudio.play('lose');
+  }
+  
+  saveP();
+  pdUpdateCoinDisplay();
+  _pdShopSlotBusy = false;
+}
+
+// ── Pet Grid Rendering ───────────────────────────────────────────────────
+function pdRenderPetGrid(){
+  const grid = document.getElementById('pd-pet-grid');
+  if(!grid) return;
+  
+  const owned = (P.pdPets||[]).map(id => PD_PET_DEFS.find(p=>p.id===id)).filter(Boolean);
+  
+  if(owned.length === 0){
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;font-style:italic;opacity:.5;font-size:.8rem;padding:1rem;">No pets yet! Try the Casino 🎰</div>';
+  } else {
+    const rarOrder = {legendary:0,epic:1,rare:2,uncommon:3,common:4};
+    owned.sort((a,b) => rarOrder[a.rarity] - rarOrder[b.rarity]);
+    
+    grid.innerHTML = '';
+    for(const pet of owned){
+      const isEquipped = P.pdEquippedPet === pet.id;
+      const rarColors = {common:'var(--common)',uncommon:'var(--uncommon)',rare:'var(--rare)',epic:'var(--epic)',legendary:'var(--legendary)'};
+      const div = document.createElement('div');
+      div.className = 'pd-pet-card' + (isEquipped ? ' equipped' : '');
+      div.style.borderColor = rarColors[pet.rarity];
+      div.style.background = isEquipped ? `rgba(212,168,83,.08)` : `rgba(0,0,0,.02)`;
+      div.innerHTML = `
+        <div class="pet-emoji">${pet.emoji}</div>
+        <div class="pet-name" style="color:${rarColors[pet.rarity]}">${pet.name}</div>
+        <div class="pet-skill">${pet.desc}</div>
+        <div style="font-size:.55rem;margin-top:.2rem;color:${rarColors[pet.rarity]};text-transform:uppercase;letter-spacing:.05em;">${pet.rarity}</div>
+        ${isEquipped ? '<div style="font-size:.6rem;color:var(--gold);margin-top:.15rem;">✅ Equipped</div>' : '<div style="font-size:.6rem;color:var(--deep);opacity:.5;margin-top:.15rem;">Tap to equip</div>'}
+      `;
+      div.onclick = () => {
+        P.pdEquippedPet = pet.id;
+        saveP();
+        pdRenderPetGrid();
+        pdUpdateCoinDisplay();
+        pdUpdateEquippedDisplay();
+        pdAudio.play('ability');
+        showToast(`${pet.emoji} ${pet.name} equipped!`);
+      };
+      grid.appendChild(div);
+    }
+  }
+  pdUpdateEquippedDisplay();
+}
+
+function pdUpdateEquippedDisplay(){
+  const infoEl = document.getElementById('pd-equipped-pet-info');
+  const abilEl = document.getElementById('pd-equipped-pet-ability');
+  if(!P.pdEquippedPet){
+    if(infoEl) infoEl.textContent = 'None equipped — tap a pet below!';
+    if(abilEl) abilEl.textContent = '';
+    return;
+  }
+  const pet = PD_PET_DEFS.find(p=>p.id===P.pdEquippedPet);
+  if(!pet) return;
+  const rarColors = {common:'#9E9E9E',uncommon:'#4CAF50',rare:'#2196F3',epic:'#9C27B0',legendary:'#FFD700'};
+  if(infoEl) infoEl.innerHTML = `<span style="font-size:1.5rem;">${pet.emoji}</span> <span style="color:${rarColors[pet.rarity]};font-weight:bold;">${pet.name}</span>`;
+  if(abilEl) abilEl.textContent = `🎲 ${pet.desc}`;
+}
+
+// ── Pet Ability Triggers in Blackjack ────────────────────────────────────
+function pdPetOnWin(s){
+  if(!P.pdEquippedPet) return {healBonus:0, dmgBonus:0, coinBonus:0};
+  const pet = PD_PET_DEFS.find(p=>p.id===P.pdEquippedPet);
+  if(!pet) return {healBonus:0, dmgBonus:0, coinBonus:0};
+  
+  let result = {healBonus:0, dmgBonus:0, coinBonus:0};
+  const sk = pet.bjSkill;
+  
+  if(sk === 'heal') result.healBonus = pet.bjVal;
+  else if(sk === 'damage') result.dmgBonus = pet.bjVal;
+  else if(sk === 'coins') result.coinBonus = pet.bjVal;
+  else if(sk === 'ultimate'){
+    // Legendary: all bonuses
+    if(pet.id === 'pd_pet_minibao') { result.healBonus=8; result.dmgBonus=8; result.coinBonus=3; }
+    else if(pet.id === 'pd_pet_lildudu') { result.dmgBonus=12; }
+    else if(pet.id === 'pd_pet_royaldragon') { result.dmgBonus=15; result.healBonus=5; }
+  }
+  
+  // Trigger animation
+  if(result.healBonus>0 || result.dmgBonus>0 || result.coinBonus>0){
+    pdPetAnimTrigger(pet, sk==='damage'||sk==='ultimate'?'attack':sk==='shield'?'shield':'heal');
+  }
+  return result;
+}
+
+function pdPetBlockChance(){
+  if(!P.pdEquippedPet) return 0;
+  const pet = PD_PET_DEFS.find(p=>p.id===P.pdEquippedPet);
+  if(!pet) return 0;
+  if(pet.bjSkill === 'shield') return pet.bjVal / 100;
+  if(pet.bjSkill === 'ultimate'){
+    if(pet.id === 'pd_pet_minibao') return 0.25;
+    if(pet.id === 'pd_pet_lion') return 0.30;
+    if(pet.id === 'pd_pet_royaldragon') return 0.20;
+  }
+  return 0;
+}
+
+function pdPetLuckyDraw(){
+  if(!P.pdEquippedPet) return false;
+  const pet = PD_PET_DEFS.find(p=>p.id===P.pdEquippedPet);
+  if(!pet || pet.bjSkill !== 'lucky') return false;
+  return Math.random() < (pet.bjVal / 100);
+}
+
+function pdPetCanRevive(){
+  if(!P.pdEquippedPet || P.pdPetReviveUsed) return false;
+  const pet = PD_PET_DEFS.find(p=>p.id===P.pdEquippedPet);
+  return pet && pet.bjSkill === 'revive';
+}
+
+function pdPetRevive(s){
+  if(!pdPetCanRevive()) return false;
+  const pet = PD_PET_DEFS.find(p=>p.id===P.pdEquippedPet);
+  P.pdPetReviveUsed = true;
+  s.hp = pet.bjVal;
+  pdPetAnimTrigger(pet, 'heal');
+  pdAudio.play('ult');
+  return true;
+}
+
+// ── Pet Animation ────────────────────────────────────────────────────────
+function pdPetAnimTrigger(pet, type){
+  const sprite = document.getElementById('pd-boss-sprite');
+  const heroPort = document.getElementById('pd-hero-portrait');
+  if(!sprite || !heroPort) return;
+  
+  // Play sound
+  pdPetPlaySound(type);
+  
+  if(type === 'attack'){
+    sprite.classList.add('boss-shake');
+    setTimeout(()=>sprite.classList.remove('boss-shake'), 400);
+    // Floating damage text
+    pdPetFloatText(`${pet.emoji} +DMG!`, '#FF6633');
+  } else if(type === 'heal'){
+    pdPetFloatText(`${pet.emoji} +HP!`, '#4ade80');
+  } else if(type === 'shield'){
+    pdPetFloatText(`${pet.emoji} BLOCKED!`, '#38bdf8');
+  }
+}
+
+function pdPetFloatText(text, color){
+  const area = document.getElementById('pd-game-area');
+  if(!area) return;
+  const el = document.createElement('div');
+  el.className = 'pd-pet-heal';
+  el.textContent = text;
+  el.style.color = color;
+  el.style.left = '50%';
+  el.style.top = '40%';
+  el.style.transform = 'translateX(-50%)';
+  el.style.zIndex = '10';
+  el.style.fontFamily = "'Playfair Display',serif";
+  el.style.fontWeight = 'bold';
+  el.style.textShadow = '0 2px 6px rgba(0,0,0,.3)';
+  area.style.position = 'relative';
+  area.appendChild(el);
+  setTimeout(()=>el.remove(), 750);
+}
+
+function pdPetPlaySound(type){
+  const c = typeof pdAudio!=='undefined' ? pdAudio : null;
+  if(!c) return;
+  if(type === 'heal') c.play('reward');
+  else if(type === 'attack') c.play('boss_hurt');
+  else if(type === 'shield') c.play('ability_shield');
+  else c.play('ability');
+}
 
 // ===================== LANDING =====================
 document.getElementById('envBtn').addEventListener('click',()=>{
   document.getElementById('landing').classList.add('gone');
   document.getElementById('main').classList.add('visible');
+  showTab('game');
   spawnHeartsBg();updateStatsPanel();renderShop();
 });
 function spawnHeartsBg(){
@@ -4584,6 +5829,15 @@ function c4Win(){
   // Award a diamond for defeating a boss! 💎
   if(!P.diamonds) P.diamonds=0;
   P.diamonds+=1;
+  // Track consecutive win streak for Bubu unlock
+  if(!P.c4WinStreak) P.c4WinStreak=0;
+  P.c4WinStreak++;
+  // Unlock Bubu at 5 consecutive Connect Bao wins!
+  if(!P.bubuUnlocked && P.c4WinStreak>=5){
+    P.bubuUnlocked=true;
+    refreshBubuCard();
+    showAchievement('🐼 BUBU UNLOCKED! 5-win streak in Connect Bao! 🔥');
+  }
   saveP();
   document.getElementById('coinsDisplay').textContent=P.coins;
   updateWalletDisplays();
@@ -4607,6 +5861,9 @@ function c4Win(){
 
 function c4Lose(){
   c4.active=false; c4.lastWon=false;
+  if(!P.c4WinStreak) P.c4WinStreak=0;
+  P.c4WinStreak=0; // reset streak on loss
+  saveP();
   const lv=c4.enemy;
   document.getElementById('c4-ov-title').textContent='Defeated... 💀';
   document.getElementById('c4-ov-body').innerHTML=
@@ -4646,7 +5903,13 @@ function c4Render(){
     document.getElementById('c4-e-hp').textContent=c4.eHP+'/'+c4.eMaxHP+' HP';
   }
   document.getElementById('c4-round-text').textContent='Level '+(c4.level+1)+' / '+C4_LEVELS_COUNT;
-  document.getElementById('c4-streak-hud').textContent=(c4.enemy?c4.enemy.emoji+' '+c4.enemy.name:'');
+  // Show streak + Bubu unlock progress if not yet unlocked
+  const streak=P.c4WinStreak||0;
+  if(!P.bubuUnlocked){
+    document.getElementById('c4-streak-hud').textContent=`Win streak: ${streak}/5 🔥 (unlock 🐼 Bubu!)`;
+  } else {
+    document.getElementById('c4-streak-hud').textContent=(c4.enemy?c4.enemy.emoji+' '+c4.enemy.name:'Win streak: '+streak+' 🔥');
+  }
 
   // Board cells
   document.querySelectorAll('.c4-cell').forEach(cell=>{
@@ -4906,7 +6169,7 @@ function gachaRoll(){
   return chosen;
 }
 
-function openGacha(){showTab('shop');}
+function openGacha(){showTab('game');setTimeout(()=>document.getElementById('tab-game-shop')?.scrollIntoView({behavior:'smooth'}),100);}
 function closeGacha(){}
 
 function refreshBubuCard(){
@@ -5704,7 +6967,8 @@ document.getElementById('note-card').addEventListener('pointerleave',()=>clearTi
 
 // ── Trigger: tap "Bao's Shop" heading 4 times ─────────────────────────────
 let _shopTaps=0,_shopTimer=null;
-document.querySelector('#tab-shop h3').addEventListener('click',()=>{
+const _shopH3=document.querySelector('#tab-game-shop .shop-header h3')||document.querySelector('#tab-game-shop h3');
+if(_shopH3) _shopH3.addEventListener('click',()=>{
   _shopTaps++;
   clearTimeout(_shopTimer);
   _shopTimer=setTimeout(()=>_shopTaps=0,1400);
